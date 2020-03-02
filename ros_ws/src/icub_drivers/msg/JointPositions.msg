@@ -1,0 +1,20 @@
+Header header
+float32[] head
+float32[] torso
+float32[] left_arm 
+float32[] left_hand
+float32[] left_hand_thumb
+float32[] left_hand_index
+float32[] left_hand_middle
+float32[] left_hand_finger
+float32[] left_hand_pinky
+float32[] left_foot
+float32[] right_arm
+float32[] right_hand
+float32[] right_hand_thumb
+float32[] right_hand_index
+float32[] right_hand_middle
+float32[] right_hand_finger
+float32[] right_hand_pinky
+float32[] right_foot
+

@@ -1,0 +1,12 @@
+<application>
+<name>intrinsic motivation</name>
+<dependencies>
+</dependencies>
+    <module>
+        <name>iCub_SIM</name>
+        <node>localhost</node>
+        <parameters></parameters>
+        <stdio></stdio>
+        <tag>iCub_SIM</tag>
+    </module>
+</application>
