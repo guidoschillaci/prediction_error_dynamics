@@ -22,7 +22,7 @@ class Memory:
     def is_memory_empty(self):
         if len(self.input_variables) == 0:
             return True
-	else:
+        else:
             return False
 
     def is_memory_still_not_full(self):
