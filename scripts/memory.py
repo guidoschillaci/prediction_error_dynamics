@@ -20,7 +20,7 @@ class Memory:
         self.learning_progress = [] # derivative of the prediction errors (for the moment, just simply pe(t) - pe(t-1)
 
     def is_memory_empty(self):
-	if len(self.input_variables) == 0:
+        if len(self.input_variables) == 0:
             return True
 	else:
             return False
@@ -34,18 +34,18 @@ class Memory:
     def update(self, input, output):
 
         counter_of_changed_elements = 0
-	#print ('memory ', np.asarray(input).shape)
+        #print ('memory ', np.asarray(input).shape)
         if self.parameters.get('memory_size') != 0:
             # if the size of the stored samples has not reached the full size of the memory, then just append the samples
             if len(self.input_variables) < self.parameters.get('memory_size'):
-            	ran = random.random()
-            	if ran < self.parameters.get('memory_update_probability'):
-	            self.input_variables.append(input)
+                ran = random.random()
+                if ran < self.parameters.get('memory_update_probability'):
+                    self.input_variables.append(input)
                     self.output_variables.append(output)
-		    self.prediction_errors.append([])
+                    self.prediction_errors.append([])
                     self.learning_progress.append(np.nan)
             else:
-		#print ('self.parameters.getmemory_update_strategy) ' , self.parameters.get('memory_update_strategy'))
+                #print ('self.parameters.getmemory_update_strategy) ' , self.parameters.get('memory_update_strategy'))
                 if self.parameters.get('memory_update_strategy') == MemUpdateStrategy.RANDOM.value:
                     # iterate the memory and decide whether to assign the current sample to an element or not, with probability p
                     #for i in range(len(self.input_variables)):
@@ -56,7 +56,7 @@ class Memory:
                         self.output_variables[i] = output
                         self.prediction_errors[i] = []
                         self.learning_progress[i] = np.nan
-                            #counter_of_changed_elements = counter_of_changed_elements + 1
+                        #counter_of_changed_elements = counter_of_changed_elements + 1
                 elif self.parameters.get('memory_update_strategy') == MemUpdateStrategy.LOW_LEARNING_PROGRESS.value:
                     # select the element with the highest or lowest learning progress (which of the two is the best?
                     # and substitute it with the new sample - with probability p
@@ -68,7 +68,7 @@ class Memory:
                         self.output_variables[index] = output
                         self.prediction_errors[index] = []
                         self.learning_progress[index] = np.nan
-                            #counter_of_changed_elements = counter_of_changed_elements +1
+                        #counter_of_changed_elements = counter_of_changed_elements +1
                 elif self.parameters.get('memory_update_strategy') == MemUpdateStrategy.HIGH_LEARNING_PROGRESS.value:
                     # select the element with the highest or lowest learning progress (which of the two is the best?
                     # and substitute it with the new sample - with probability p
@@ -80,7 +80,7 @@ class Memory:
                         self.output_variables[index] = output
                         self.prediction_errors[index] = []
                         self.learning_progress[index] = np.nan
-                            #counter_of_changed_elements = counter_of_changed_elements +1
+                        #counter_of_changed_elements = counter_of_changed_elements +1
                 else:
                     print ('Wrong parameter memory_update_strategy')
                 counter_of_changed_elements = counter_of_changed_elements + 1
