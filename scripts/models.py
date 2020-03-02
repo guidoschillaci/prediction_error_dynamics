@@ -242,7 +242,7 @@ class Models:
 
     def load_som(self, param, encoder=None, train_images=None):
         #filename = param.get('directory') + param.get('som_filename')
-	filename = './pretrained_models/' + param.get('som_filename')
+        filename = './pretrained_models/' + param.get('som_filename')
         print ('Looking for som file: ', filename)
         goal_som = None
         if os.path.isfile(filename):
@@ -288,10 +288,10 @@ class Models:
 
     def save_logs(self, show=True):
         self.logger_fwd.save_log()
-	self.logger_fwd.plot_mse(show=show)
+        self.logger_fwd.plot_mse(show=show)
 
         self.logger_inv.save_log()
-	self.logger_inv.plot_mse(show=show)
+        self.logger_inv.plot_mse(show=show)
 
     def save_models(self, param):
 
