@@ -61,7 +61,7 @@ class Models:
         #cae_file = param.get('directory') + param.get('cae_filename')
         #e_file = param.get('directory') + param.get('encoder_filename')
         #d_file = param.get('directory') + param.get('decoder_filename')
-	    cae_file = './pretrained_models/' + param.get('cae_filename')
+        cae_file = './pretrained_models/' + param.get('cae_filename')
         e_file = './pretrained_models/' + param.get('encoder_filename')
         d_file = './pretrained_models/' + param.get('decoder_filename')
 
