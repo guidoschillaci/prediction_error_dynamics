@@ -197,9 +197,11 @@ class GoalBabbling():
 				elif param.get('goal_selection_mode') == 'som':
 					goals_pos = self.models.inv_model.predict(self.models.goal_som._weights.reshape(len(self.models.goal_som._weights)*len(self.models.goal_som._weights[0]), len(self.models.goal_som._weights[0][0]) ))
 
-				plot_exploration(positions=self.pos,goals=goals_pos,iteration=self.iteration,param=param)
-				# plot memory positions
-				self.models.memory_fwd.plot_input_variables(iteration=self.iteration, goals=goals_pos)
+				# plot observations and goals
+				plot_exploration(positions=self.pos,goals=goals_pos,iteration=self.iteration,param=param, title = param.get('goal_selection_mode')+'_'+str(iteration))
+				# plot memory positions and goals
+				plot_exploration(positions=self.models.memory_fwd.input_variables,goals=goals_pos,iteration=self.iteration,param=param, title = 'memory_inputs_'+str(iteration))
+
 
 			if self.iteration % param.get('im_pe_buffer_size_update_frequency') == 0:
 				self.intrinsic_motivation.update_mse_dynamics(self.models.logger_fwd.get_last_mse())

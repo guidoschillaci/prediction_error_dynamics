@@ -26,9 +26,9 @@ def imscatter(x, y, ax, imageData, zoom, imageSize):
 	ax.update_datalim(np.column_stack([x, y]))
 	ax.autoscale()
 
-def plot_exploration(positions, goals, iteration, param, save = True):
+def plot_exploration(positions, goals, iteration, param, title, save = True):
 	print ('position shape ', np.asarray(positions).shape)
-	title = param.get('goal_selection_mode')+'_'+str(iteration)
+
 	fig2 = plt.figure(figsize=(10, 10))
 	#print (log_goal)
 	if param.get('romi_input_dim') ==2:
