@@ -28,7 +28,8 @@ def imscatter(x, y, ax, imageData, zoom, imageSize):
 
 def plot_exploration(positions, goals, iteration, param, title, save = True):
 	print ('position shape ', np.asarray(positions).shape)
-
+	if len(positions) ==0:
+		return
 	fig2 = plt.figure(figsize=(10, 10))
 	#print (log_goal)
 	if param.get('romi_input_dim') ==2:
