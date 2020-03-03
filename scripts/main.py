@@ -57,11 +57,11 @@ class GoalBabbling():
 	def __init__(self, param):
 
 		# reset
-		print('Clearing TF session')
-		if tf.__version__ < "1.8.0":
-			tf.reset_default_graph()
-		else:
-			tf.compat.v1.reset_default_graph()
+		#print('Clearing TF session')
+		#if tf.__version__ < "1.8.0":
+		#	tf.reset_default_graph()
+		#else:
+		#	tf.compat.v1.reset_default_graph()
 
 		# this simulates cameras and positions
 		self.cam_sim = Cam_sim("./romi_data/")
