@@ -188,7 +188,7 @@ class IntrinsicMotivation():
 		x = np.arange(0, len(self.slopes_mse_buffer))
 		y = self.slopes_mse_buffer
 		f = interpolate.interp1d(x, y,fill_value="extrapolate")
-		x_correct= np.arange(0, float(len(self.slopes_mse_buffer))/float(len(self.movements_amplitude)), len(self.slopes_mse_buffer))
+		x_correct= np.linspace(0, len(self.slopes_mse_buffer), num=len(self.movements_amplitude) )
 		print ('x', x)
 		print('xcorrect', x_correct)
 		print ('shapes x', x.shape, ' x_correct ', x_correct.shape)
