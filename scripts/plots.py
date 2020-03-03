@@ -32,8 +32,9 @@ def plot_exploration(positions, goals, iteration, param, save = True):
 	fig2 = plt.figure(figsize=(10, 10))
 	#print (log_goal)
 	if param.get('romi_input_dim') ==2:
-		plt.scatter(np.transpose(positions)[0],np.transpose(positions)[1], s=2, color='g')
-		plt.plot( np.asarray(goals[:,0]).astype('float32'), np.asarray(goals[:,1]).astype('float32'), 'ro')
+		plt.scatter(np.transpose(positions)[0],np.transpose(positions)[1], s=1, color='g')
+		if len(goals)>0:
+			plt.plot( np.asarray(goals[:,0]).astype('float32'), np.asarray(goals[:,1]).astype('float32'), 'ro')
 
 		plt.xlabel('Pos x')
 		plt.ylabel('Pos y')
@@ -41,15 +42,17 @@ def plot_exploration(positions, goals, iteration, param, save = True):
 		plt.ylim(-1.2,1.2)
 	elif param.get('romi_input_dim')==4:
 		plt.subplot(1,2,1)
-		plt.scatter(positions[:,0],positions[:,1], s=2, color='g')
-		plt.plot( np.asarray(goals[:,0]).astype('float32'), np.asarray(goals[:,1]).astype('float32'), 'ro')
+		plt.scatter(positions[:,0],positions[:,1], s=1, color='g')
+		if len(goals) > 0:
+			plt.plot( np.asarray(goals[:,0]).astype('float32'), np.asarray(goals[:,1]).astype('float32'), 'ro')
 		plt.xlim(-0.4,0.4)
 		plt.ylim(-0.4,0.4)
 		plt.xlabel('Dim 0')
 		plt.ylabel('Dim 1')
 		plt.subplot(1,2,2)
-		plt.scatter(positions[:,0],positions[:,1], s=2, color='g')
-		plt.plot(np.asarray( goals[:,2]).astype('float32'), np.asarray(goals[:,3]).astype('float32'), 'ro')
+		plt.scatter(positions[:,0],positions[:,1], s=1, color='g')
+		if len(goals) > 0:
+			plt.plot(np.asarray( goals[:,2]).astype('float32'), np.asarray(goals[:,3]).astype('float32'), 'ro')
 		plt.xlim(-0.4,0.4)
 		plt.ylim(-0.4,0.4)
 		plt.xlabel('Dim 2')

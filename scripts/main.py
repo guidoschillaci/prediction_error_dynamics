@@ -163,7 +163,7 @@ class GoalBabbling():
 				else:
 					goal_decoded = self.models.decoder.predict(self.goal_code)
 					motor_pred = self.models.inv_model.predict(self.goal_code)
-				image_pred = self.models.decoder.predict(self.models.fwd_model.predict(np.asarray(motor_pred)))
+				#image_pred = self.models.decoder.predict(self.models.fwd_model.predict(np.asarray(motor_pred)))
 
 				noise_x = np.random.normal(0,0.02)
 				noise_y = np.random.normal(0,0.02)
@@ -198,6 +198,8 @@ class GoalBabbling():
 					goals_pos = self.models.inv_model.predict(self.models.goal_som._weights.reshape(len(self.models.goal_som._weights)*len(self.models.goal_som._weights[0]), len(self.models.goal_som._weights[0][0]) ))
 
 				plot_exploration(positions=self.pos,goals=goals_pos,iteration=self.iteration,param=param)
+				# plot memory positions
+				self.models.memory_fwd.plot_input_variables(iteration=self.iteration, goals=goals_pos)
 
 			if self.iteration % param.get('im_pe_buffer_size_update_frequency') == 0:
 				self.intrinsic_motivation.update_mse_dynamics(self.models.logger_fwd.get_last_mse())
@@ -282,6 +284,7 @@ class GoalBabbling():
 			observed_img_code = np.asarray(self.models.encoder.predict(observed_img.reshape(1, param.get('image_size'), param.get('image_size'), param.get('image_channels')))).reshape(param.get('code_size'))
 			self.models.memory_fwd.update(observed_pos, observed_img_code)
 			self.models.memory_inv.update(observed_img_code, observed_pos)
+
 
 		self.lock.release()
 
