@@ -85,11 +85,12 @@ class IntrinsicMotivation():
 	def update_pe_buffer_size(self):
 		if len(self.pe_max_buffer_size_history)==0:
 			self.pe_max_buffer_size_history.append(self.param.get('im_initial_pe_buffer_size'))
+
 		else:
 			if self.param.get('im_fixed_pe_buffer_size'):
 				self.pe_max_buffer_size_history.append(self.param.get('im_initial_pe_buffer_size'))
 			else:
-				new_buffer_size = self.pe_max_buffer_size_history[-1]
+				new_buffer_size = self.pe_buffer_size_history[-1]
 				if self.slopes_mse_buffer[-1] > 0:
 					if new_buffer_size < self.param.get('im_max_pe_buffer_size'):
 						new_buffer_size = new_buffer_size + 1 # or decrease?
@@ -144,7 +145,7 @@ class IntrinsicMotivation():
 				print ('calculating regression on goal ', str(i))
 				model = LinearRegression().fit(regr_x, np.asarray(self.pe_buffer[i]))
 				current_slopes_err_dynamics.append(model.coef_[0]) # add the slope of the regression
-		self.pe_buffer_size_history.append(len(self.pe_buffer[goal_id]))
+		self.pe_buffer_size_history.append(len(self.pe_buffer[0]))
 
 		if _append:
 			# keep track of the goal that have been selected
