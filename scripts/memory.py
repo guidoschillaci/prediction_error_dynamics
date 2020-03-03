@@ -117,7 +117,7 @@ class Memory:
                     self.prediction_errors[i].append(deepcopy(prediction_error))
 
     def plot_input_variables(self, iteration, goals=[], save=True):
-        def plot_exploration(positions, goals, iteration, param, save=True):
+        
         title = "mem_input_var"
         fig2 = plt.figure(figsize=(10, 10))
         # print (log_goal)
