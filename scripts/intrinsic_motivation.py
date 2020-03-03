@@ -272,13 +272,50 @@ class IntrinsicMotivation():
 			plt.show()
 		plt.close()
 
+	def plot_correlations(self, save=True):
+		fig = plt.figure(figsize=(10, 10))
+
+
+		ax1 = plt.subplot(4, 1, 1)
+		plt.scatter(  np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.movements_amplitude))
+		plt.title('MSE dynamics VS movement distances')
+		string = 'r='+self.pearson_corr_mse_raw[0] + '\np<'+self.pearson_corr_mse_raw[1]
+		plt.text(0.5, 0.5, string, transform = ax1.transAxes)
+
+
+		ax1 = plt.subplot(4, 1, 2)
+		plt.scatter(  np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.slopes_movements))
+		plt.title('MSE dynamics VS movement distances dynamics')
+		string = 'r='+self.pearson_corr_mse_slopes[0] + '\np<'+self.pearson_corr_mse_slopes[1]
+		plt.text(0.5, 0.5, string, transform = ax1.transAxes)
+
+		ax1 = plt.subplot(4, 1, 3)
+		plt.scatter(  np.asarray(self.slopes_of_goals), np.asarray(self.movements_amplitude))
+		plt.title('Current Goal PE dynamics VS movement distances')
+		string = 'r='+self.pearson_corr_pe_raw[0] + '\np<'+self.pearson_corr_pe_raw[1]
+		plt.text(0.5, 0.5, string, transform = ax1.transAxes)
+
+
+		ax1 = plt.subplot(4, 1, 4)
+		plt.scatter(  np.asarray(self.slopes_of_goals), np.asarray(self.slopes_movements))
+		plt.title('Current Goal PE dynamics VS movement distances dynamics')
+		string = 'r='+self.pearson_corr_pe_slopes[0] + '\np<'+self.pearson_corr_pe_slopes[1]
+		plt.text(0.5, 0.5, string, transform = ax1.transAxes)
+
+		if save:
+			plt.savefig(self.param.get('results_directory')+'/plots/im_correlations.jpg')
+		if self.param.get('show_plots'):
+			plt.show()
+		plt.close()
+
+
+
 	def plot_buffer_size(self, save=True):
 		num_goals = self.param.get('goal_size') * self.param.get('goal_size')
 
 		fig = plt.figure(figsize=(10, 10))
 
-		ax1 = plt.subplot(num_goals + 1, 1, 1
-						  )
+		ax1 = plt.subplot(num_goals + 1, 1, 1)
 		plt.plot(self.pe_max_buffer_size_history)
 		plt.ylabel('Max PE buffer size')
 		plt.xlabel('time')
