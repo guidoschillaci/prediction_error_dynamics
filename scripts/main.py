@@ -32,9 +32,9 @@ from copy import deepcopy
 #from doepy import build, read_write # pip install doepy - it may require also diversipy
 
 #import tensorflow.compat.v1 as tf
-#import os
-#os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-#os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import os
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
 import tensorflow as tf
 
 
