@@ -24,14 +24,14 @@ class Parameters:
 
 	   
             'normalise_with_zero_mean': False, 
-	        'load_data_reshape': True,
+            'load_data_reshape': True,
             'batch_size':16, # for the fwd/inv models update
             'epochs': 1, # online fwd/inv models
             'goal_selection_mode':'som',
             'exp_iteration': 0,
             'show_plots': False,
 
-            'max_iterations':1000,
+            'max_iterations':3000,
 
             'cae_filename': 'autoencoder.h5',
             'encoder_filename': 'encoder.h5',
@@ -54,7 +54,7 @@ class Parameters:
             'plot_exploration_iter': 50,
 
             'random_cmd_flag': False,
-            'random_cmd_rate': 0.2,
+            'random_cmd_rate': 0.1,
 
 
             'im_competence_measure': 'euclidean',
