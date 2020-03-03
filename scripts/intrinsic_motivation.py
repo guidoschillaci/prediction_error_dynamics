@@ -5,9 +5,11 @@ import random
 import sys
 from sklearn.linear_model import LinearRegression
 from scipy.stats.stats import pearsonr
+from scipy import interpolate
 import matplotlib.pyplot as plt
 import os
 import utils
+
 
 class IntrinsicMotivation():
 
@@ -48,6 +50,10 @@ class IntrinsicMotivation():
 		# slopes of the movement amplitudes over time
 		self.slopes_movements = []
 
+		self.pearson_corr_pe_raw = []
+		self.pearson_corr_pe_slopes = []
+		self.pearson_corr_mse_raw = []
+		self.pearson_corr_mse_slopes = []
 
 		#self.learning_progress= np.resize(self.learning_progress, (self.param.get('goal_size')*self.param.get('goal_size') ,))
 		#for i in range (0, self.param.get('goal_size')*self.param.get('goal_size')):
@@ -177,10 +183,20 @@ class IntrinsicMotivation():
 			self.slopes_movements.append(model.coef_[0])  # add the slope of the regression
 
 	def get_linear_correlation_btw_amplitude_and_mse_dynamics(self):
-		self.pearson_corr_mse_raw = pearsonr(np.asarray(self.slopes_mse_buffer), np.asarray(self.movements_amplitude))
+		# mse_buffer is updated at a slower rate than movements recording. Interpolate to match the sizes
+		x = np.arange(0,len(self.slopes_mse_buffer))
+		y = self.slopes_mse_buffer
+		f = interpolate.interp1d(x, y)
+
+		x_correct= np.arange(0,len(self.movements_amplitude))
+		self.interpolated_slopes_mse_buffer= f(x_correct)
+
+		#self.pearson_corr_mse_raw = pearsonr(np.asarray(self.slopes_mse_buffer), np.asarray(self.movements_amplitude))
+		self.pearson_corr_mse_raw = pearsonr(np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.movements_amplitude))
 		print ('Pearson correlation btw MSE and raw movements', self.pearson_corr_mse_raw)
 
-		self.pearson_corr_mse_slopes = pearsonr(np.asarray(self.slopes_mse_buffer), np.asarray(self.slopes_movements))
+		#self.pearson_corr_mse_slopes = pearsonr(np.asarray(self.slopes_mse_buffer), np.asarray(self.slopes_movements))
+		self.pearson_corr_mse_slopes = pearsonr(np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.slopes_movements))
 		#self.pearson_corr = pearsonr(slope_array[positive_indexes], movement_array[positive_indexes])
 		print ('Pearson correlation btw MSE and slope of movements', self.pearson_corr_mse_slopes)
 
@@ -215,6 +231,7 @@ class IntrinsicMotivation():
 
 	def save_im(self):
 		np.save(os.path.join(self.param.get('results_directory'), 'im_slopes_of_mse_dynamics'), self.slopes_mse_buffer)
+		np.save(os.path.join(self.param.get('results_directory'), 'im_interpolated_slopes_of_mse_dynamics'), self.interpolated_slopes_mse_buffer)
 		np.save(os.path.join(self.param.get('results_directory'), 'im_slopes_of_pe_dynamics'), self.slopes_pe_buffer)
 		np.save(os.path.join(self.param.get('results_directory'), 'im_slopes_of_goals'), self.slopes_of_goals)
 		np.save(os.path.join(self.param.get('results_directory'), 'im_pe_max_buffer_size_history'), self.pe_max_buffer_size_history)
@@ -286,8 +303,8 @@ class IntrinsicMotivation():
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
 		ax1 = plt.subplot(6, 1, 6)
-		plt.plot(self.slopes_mse_buffer)
-		plt.ylabel('Slopes MSE buff.')
+		plt.plot(self.interpolated_slopes_mse_buffer)
+		plt.ylabel('Int.Slopes MSE buff')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
