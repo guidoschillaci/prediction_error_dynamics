@@ -74,7 +74,7 @@ class Models:
             # load convolutional autoencoder
             print ('Loading existing pre-trained autoencoder: ', cae_file)
             # clear tensorflow graph
-            utils.clear_tensorflow_graph()
+            #utils.clear_tensorflow_graph()
             autoencoder = load_model(cae_file) # keras.load_model function
 
             # Create a separate encoder model
