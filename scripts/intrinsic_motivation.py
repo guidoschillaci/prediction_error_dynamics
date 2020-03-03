@@ -290,7 +290,7 @@ class IntrinsicMotivation():
 			ax = plt.subplot(num_goals + 1, 1, i + 2)
 			plt.plot(data[i])
 
-			plt.ylabel('Buf size ', i)
+			plt.ylabel('buf_size{}'.format(i))
 			plt.xlabel('time')
 			ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
