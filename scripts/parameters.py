@@ -68,7 +68,7 @@ class Parameters:
             'im_min_pe_buffer_size': 20, # max size of the prediction error buffer
             'im_max_pe_buffer_size': 100, # max size of the prediction error buffer
             'im_fixed_pe_buffer_size': False, # make the size of the prediction error buffer fixed or dependent on the dinamics of the FWD MSE
-            'im_pe_buffer_size_update_frequency': 20, # every how many iteration to wait for updating the pe_buffer_size according to the slope of the higher level?
+            'im_pe_buffer_size_update_frequency': 10, # every how many iteration to wait for updating the pe_buffer_size according to the slope of the higher level?
             'im_random_goal_prob': 0.05, # probability of selecting a random goal instead of the best one
 
             'loss': 'mean_squared_error',
