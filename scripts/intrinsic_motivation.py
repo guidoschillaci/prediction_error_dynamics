@@ -253,7 +253,7 @@ class IntrinsicMotivation():
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
-	if save:
+		if save:
 			plt.savefig(self.param.get('results_directory')+'/plots/im_slopes_of_goals.jpg')
 		if param.get('show_plots'):
 			plt.show()
