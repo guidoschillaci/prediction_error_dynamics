@@ -189,7 +189,8 @@ class IntrinsicMotivation():
 		y = self.slopes_mse_buffer
 		f = interpolate.interp1d(x, y,fill_value="extrapolate")
 		x_correct= np.arange(0, float(len(self.slopes_mse_buffer))/float(len(self.movements_amplitude)), len(self.slopes_mse_buffer))
-
+		print ('x', x)
+		print('xcorrect', x_correct)
 		print ('shapes x', x.shape, ' x_correct ', x_correct.shape)
 
 		self.interpolated_slopes_mse_buffer= f(x_correct)
@@ -204,7 +205,7 @@ class IntrinsicMotivation():
 		#self.pearson_corr = pearsonr(slope_array[positive_indexes], movement_array[positive_indexes])
 		print ('Pearson correlation btw MSE and slope of movements', self.pearson_corr_mse_slopes)
 
-		self.plot_slopes_of_goals(self.param)
+		#self.plot_slopes_of_goals(self.param)
 		return self.pearson_corr_mse_raw, self.pearson_corr_mse_slopes
 
 	def get_linear_correlation_btw_amplitude_and_pe_dynamics(self):
@@ -229,7 +230,7 @@ class IntrinsicMotivation():
 		#self.pearson_corr = pearsonr(slope_array[positive_indexes], movement_array[positive_indexes])
 		print ('Pearson correlation btw current goals slope and slope of movements', self.pearson_corr_pe_slopes)
 
-		self.plot_slopes_of_goals(self.param)
+
 		return self.pearson_corr_pe_raw, self.pearson_corr_pe_slopes
 
 
@@ -270,7 +271,7 @@ class IntrinsicMotivation():
 			plt.show()
 		plt.close()
 
-	def plot_slopes_of_goals(self, param, save=True):
+	def plot_slopes_of_goals(self, save=True):
 		fig = plt.figure(figsize=(10, 10))
 		num_goals= self.param.get('goal_size')*self.param.get('goal_size')
 		ax1 = plt.subplot(6, 1, 1)

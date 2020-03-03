@@ -297,8 +297,9 @@ class GoalBabbling():
 		self.models.save_logs(self.parameters)
 
 		self.intrinsic_motivation.get_linear_correlation_btw_amplitude_and_mse_dynamics()
-		self.intrinsic_motivation.get_linear_correlation_btw_amplitude_and_pe_dynamics()
+		self.get_linear_correlation_btw_amplitude_and_pe_dynamics()
 
+		self.intrinsic_motivation.plot_slopes_of_goals()
 		self.intrinsic_motivation.save_im()
 		self.intrinsic_motivation.plot_slopes(param)
 		#self.lock.release()
