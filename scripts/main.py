@@ -303,6 +303,7 @@ class GoalBabbling():
 		self.intrinsic_motivation.plot_buffer_size()
 		self.intrinsic_motivation.save_im()
 		self.intrinsic_motivation.plot_slopes(param)
+		self.intrinsic_motivation.plot_correlations()
 		#self.lock.release()
 		print ('Models saved')
 		
