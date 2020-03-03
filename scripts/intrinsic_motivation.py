@@ -194,12 +194,8 @@ class IntrinsicMotivation():
 		y = self.slopes_mse_buffer
 		f = interpolate.interp1d(x, y,fill_value="extrapolate")
 		x_correct= np.linspace(0, len(self.slopes_mse_buffer)-1, num=len(self.movements_amplitude) )
-		print ('x', x)
-		print('xcorrect', x_correct)
-		print ('shapes x', x.shape, ' x_correct ', x_correct.shape)
 
 		self.interpolated_slopes_mse_buffer= f(x_correct)
-		print ('len ', len(self.interpolated_slopes_mse_buffer))
 
 		#self.pearson_corr_mse_raw = pearsonr(np.asarray(self.slopes_mse_buffer), np.asarray(self.movements_amplitude))
 		self.pearson_corr_mse_raw = pearsonr(np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.movements_amplitude))
@@ -294,7 +290,7 @@ class IntrinsicMotivation():
 			ax = plt.subplot(num_goals + 1, 1, i + 2)
 			plt.plot(data[i])
 
-			plt.ylabel('Buf size ', str(i))
+			plt.ylabel('Buf size ', i)
 			plt.xlabel('time')
 			ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
