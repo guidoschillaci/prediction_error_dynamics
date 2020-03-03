@@ -266,7 +266,7 @@ class GoalBabbling():
 			self.cmd.append([utils.normalise_x(float(int(cmd.x)), param), utils.normalise_y(float(int(cmd.y)), param) ])
 			#self.cmd.append( utils.normalise(cmd) )
 			cv2_img = cv2.imread(trn[i])#,1 )
-			cv2.imshow('image',cv2_img)
+			#cv2.imshow('image',cv2_img)
 			if param.get('image_channels') ==1:
 				cv2_img = cv2.cvtColor(cv2_img, cv2.COLOR_BGR2GRAY)
 			cv2_img = cv2.resize(cv2_img,(param.get('image_size'), param.get('image_size')), interpolation = cv2.INTER_LINEAR)
@@ -293,7 +293,7 @@ class GoalBabbling():
 		
 		self.intrinsic_motivation.get_linear_correlation_btw_amplitude_and_pe_dynamics()
 		self.intrinsic_motivation.save_im()
-		self.intrinsic_motivation.plot_slopes()
+		self.intrinsic_motivation.plot_slopes(param)
 		#self.lock.release()
 		print ('Models saved')
 		

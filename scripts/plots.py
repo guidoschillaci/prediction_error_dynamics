@@ -26,7 +26,7 @@ def imscatter(x, y, ax, imageData, zoom, imageSize):
 	ax.update_datalim(np.column_stack([x, y]))
 	ax.autoscale()
 
-def plot_exploration(positions, goals, iteration, param, save = True, show = False):
+def plot_exploration(positions, goals, iteration, param, save = True):
 	print ('position shape ', np.asarray(positions).shape)
 	title = param.get('goal_selection_mode')+'_'+str(iteration)
 	fig2 = plt.figure(figsize=(10, 10))
@@ -58,7 +58,7 @@ def plot_exploration(positions, goals, iteration, param, save = True, show = Fal
 	if save:
 		filename =param.get('results_directory')+ 'plots/plot_'+title+'_'+str(iteration)+'.jpg'
 		plt.savefig(filename)
-	if show:
+	if param.get('show_plots'):
 		plt.show()
 	plt.close()
 

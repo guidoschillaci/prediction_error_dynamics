@@ -24,11 +24,12 @@ class Parameters:
 
 	   
             'normalise_with_zero_mean': False, 
-	    'load_data_reshape': True, 
+	        'load_data_reshape': True,
             'batch_size':16, # for the fwd/inv models update
             'epochs': 1, # online fwd/inv models
             'goal_selection_mode':'som',
             'exp_iteration': 0,
+            'show_plots': False,
 
             'max_iterations':1000,
 
@@ -40,7 +41,7 @@ class Parameters:
             'cae_max_pool_size': 2,
             'cae_conv_size': 3,
 
-            'romi_input_dim': 2,
+            'romi_input_dim': 2, # xy motors
             'romi_dataset_pkl': 'romi_data/compressed_dataset.pkl',
             #'romi_test_data_step': 500,
             'romi_test_size': 100,

@@ -169,7 +169,7 @@ class IntrinsicMotivation():
 		self.pearson_corr = pearsonr(np.asarray(self.slopes_of_goals), np.asarray(self.movements_amplitude))
 		#self.pearson_corr = pearsonr(slope_array[positive_indexes], movement_array[positive_indexes])
 		print ('Pearson correlation', self.pearson_corr)
-		self.plot_slopes_of_goals()
+		self.plot_slopes_of_goals(self.param)
 		return self.pearson_corr
 
 
@@ -181,7 +181,7 @@ class IntrinsicMotivation():
 		np.save(os.path.join(self.param.get('results_directory'), 'im_goal_id_history'), self.goal_id_history)
 		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr'), self.pearson_corr)
 
-	def plot_slopes(self, save=True, show=True):
+	def plot_slopes(self, param, save=True):
 		fig = plt.figure(figsize=(10, 10))
 		num_goals = self.param.get('goal_size') * self.param.get('goal_size')
 		ax1 = plt.subplot(num_goals + 1, 1, 1)
@@ -202,11 +202,11 @@ class IntrinsicMotivation():
 
 		if save:
 			plt.savefig(self.param.get('results_directory') + '/plots/im_slopes_pe_buffer.jpg')
-		if show:
+		if param.get('show_plots'):
 			plt.show()
 		plt.close()
 
-	def plot_slopes_of_goals(self, save=True, show=True):
+	def plot_slopes_of_goals(self, param, save=True):
 		fig = plt.figure(figsize=(10, 10))
 		num_goals= self.param.get('goal_size')*self.param.get('goal_size')
 		ax1 = plt.subplot(2, 1, 1)
@@ -223,6 +223,6 @@ class IntrinsicMotivation():
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 		if save:
 			plt.savefig(self.param.get('results_directory')+'/plots/im_slopes_of_goals.jpg')
-		if show:
+		if param.get('show_plots'):
 			plt.show()
 		plt.close()
