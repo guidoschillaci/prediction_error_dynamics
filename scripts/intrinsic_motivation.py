@@ -28,8 +28,11 @@ class IntrinsicMotivation():
 		# for each goal, keep track of the trend of the PE_dynamics (slope of the regression over the pe_buffer)
 		self.slopes_pe_buffer = [] 
 
-		# keep track of the buffer size over time (all goals' buffers have the same size)
-		self.pe_max_buffer_size_history = [] 
+		# keep track of the MAX PE buffer size over time (all goals' buffers have the same size)
+		self.pe_max_buffer_size_history = []
+
+		# keep track of the current PE buffer size over time (all goals' buffers have the same size)
+		self.pe_buffer_size_history = []
 
 		# buffer of MSE fwd model. Its slope determines whether to increase or decrease the size of each pe_buffer
 		self.mse_buffer = [] 
@@ -141,6 +144,7 @@ class IntrinsicMotivation():
 				print ('calculating regression on goal ', str(i))
 				model = LinearRegression().fit(regr_x, np.asarray(self.pe_buffer[i]))
 				current_slopes_err_dynamics.append(model.coef_[0]) # add the slope of the regression
+		self.pe_buffer_size_history.append(len(self.pe_buffer[goal_id]))
 
 		if _append:
 			# keep track of the goal that have been selected
@@ -234,22 +238,36 @@ class IntrinsicMotivation():
 	def plot_slopes_of_goals(self, param, save=True):
 		fig = plt.figure(figsize=(10, 10))
 		num_goals= self.param.get('goal_size')*self.param.get('goal_size')
-		ax1 = plt.subplot(3, 1, 1)
+		ax1 = plt.subplot(5, 1, 1)
 		plt.plot(self.slopes_of_goals)
 		plt.ylabel('slope of PE_dynamics for selected goal')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
 		#print ('movement amplitude ', self.movements_amplitude)
-		ax1 = plt.subplot(3, 1, 2)
+		ax1 = plt.subplot(5, 1, 2)
 		plt.plot(self.movements_amplitude)
 		plt.ylabel('Movement amplitude')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
-		ax1 = plt.subplot(3, 1, 3)
+		ax1 = plt.subplot(5, 1, 3)
 		plt.plot(self.slopes_movements)
 		plt.ylabel('Slopes of movements')
+		plt.xlabel('time')
+		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
+
+
+		ax1 = plt.subplot(5, 1, 4)
+		plt.plot(self.pe_max_buffer_size_history)
+		plt.ylabel('Max PE buffer history')
+		plt.xlabel('time')
+		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
+
+
+		ax1 = plt.subplot(5, 1, 5)
+		plt.plot(self.pe_buffer_size_history)
+		plt.ylabel('Current PE buffer history')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
