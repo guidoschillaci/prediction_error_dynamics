@@ -2,12 +2,12 @@ import numpy as np
 import datetime
 import os
 import utils
-from tensorflow.python.keras.layers import Dense, Input, Flatten
+#from tensorflow.python.keras.layers import Dense, Input, Flatten
 from tensorflow.python.keras.models import Model, Sequential, load_model, Input
 from tensorflow.python.keras.layers import Input, Dense, Dropout, Reshape, Flatten, Conv2D, Conv2DTranspose, MaxPooling2D, UpSampling2D, Activation, BatchNormalization
-from tensorflow.keras import optimizers
+#from tensorflow.keras import optimizers
 
-import tensorflow as tf
+#import tensorflow as tf
 import sys
 import h5py
 
@@ -16,16 +16,16 @@ import model_logger
 import memory
 
 
-import random
-from copy import deepcopy
+#import random
+#from copy import deepcopy
 
-from tensorflow.python.keras.models import Sequential
+#from tensorflow.python.keras.models import Sequential
 
-from tensorflow.python.keras.layers import LSTM
-from tensorflow.python.keras.layers import BatchNormalization
-from tensorflow.python.keras.activations import sigmoid
-from tensorflow.python.keras.activations import hard_sigmoid
-from tensorflow.python.keras.utils import plot_model
+#from tensorflow.python.keras.layers import LSTM
+#from tensorflow.python.keras.layers import BatchNormalization
+#from tensorflow.python.keras.activations import sigmoid
+#from tensorflow.python.keras.activations import hard_sigmoid
+#from tensorflow.python.keras.utils import plot_model
 
 
 #from parameters import Parameters, MemUpdateStrategy
