@@ -61,10 +61,10 @@ class Parameters:
             'im_decay_factor': 0.9,
             # there is a hierarchical dynamics monitoring: over the mean squared error of the fwd model (higher level) and over each goal (lower)
             # the slope of the MSE buffer controls the size of the goal PE buffer (in case im_fixed_pe_buffer_size is False)
-            'im_mse_buffer_size': 50, # initial size of the mean squared error buffer (should be bigger than max PE_buffer_size
+            'im_mse_buffer_size': 100, # initial size of the mean squared error buffer (should be bigger than max PE_buffer_size
             'im_initial_pe_buffer_size': 10, # initial size of the prediction error buffer
             'im_min_pe_buffer_size': 5, # max size of the prediction error buffer
-            'im_max_pe_buffer_size': 40, # max size of the prediction error buffer
+            'im_max_pe_buffer_size': 60, # max size of the prediction error buffer
             'im_fixed_pe_buffer_size': False, # make the size of the prediction error buffer fixed or dependent on the dinamics of the FWD MSE
             'im_pe_buffer_size_update_frequency': 20, # every how many iteration to wait for updating the pe_buffer_size according to the slope of the higher level?
             'im_random_goal_prob': 0.05, # probability of selecting a random goal instead of the best one
