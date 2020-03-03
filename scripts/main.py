@@ -128,8 +128,8 @@ class GoalBabbling():
 		for _ in range(param.get('max_iterations')):
 
 			# record logs and data
-			#self.log_current_inv_mse(param)
-			#self.log_current_fwd_mse(param)
+			self.log_current_inv_mse(param)
+			self.log_current_fwd_mse(param)
 
 			#print ('Mode ', self.goal_selection_mode, ' hist_size ', str(self.history_size), ' prob ', str(self.history_buffer_update_prob), ' iteration : ', self.iteration)
 			print ('Iteration ', self.iteration)
