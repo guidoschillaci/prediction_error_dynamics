@@ -175,6 +175,17 @@ class IntrinsicMotivation():
 			model = LinearRegression().fit(regr_x, np.asarray(self.movements_buffer))
 			self.slopes_movements.append(model.coef_[0])  # add the slope of the regression
 
+	def get_linear_correlation_btw_amplitude_and_mse_dynamics(self):
+		self.pearson_corr_mse_raw = pearsonr(np.asarray(self.slopes_mse_buffer), np.asarray(self.movements_amplitude))
+		print ('Pearson correlation btw MSE and raw movements', self.pearson_corr_mse_raw)
+
+		self.pearson_corr_mse_slopes = pearsonr(np.asarray(self.slopes_mse_buffer), np.asarray(self.slopes_movements))
+		#self.pearson_corr = pearsonr(slope_array[positive_indexes], movement_array[positive_indexes])
+		print ('Pearson correlation btw MSE and slope of movements', self.pearson_corr_mse_slopes)
+
+		self.plot_slopes_of_goals(self.param)
+		return self.pearson_corr_mse_raw, self.pearson_corr_mse_slopes
+
 	def get_linear_correlation_btw_amplitude_and_pe_dynamics(self):
 		# first make a vector storing the pe_dynamics of the current goals over time
 		#self.slopes_of_goals = np.asarray([[ self.slopes_pe_buffer[elem][self.goal_id_history[elem]] ] for elem in self.goal_id_history]).flatten()
@@ -189,16 +200,16 @@ class IntrinsicMotivation():
 		#movement_array= np.asarray(self.movements_amplitude)
 		#self.positive_indexes = np.argwhere(slope_array>0)
 		#print ('corre shape np.asarray(self.slopes_of_goals)', np.asarray(self.slopes_of_goals).shape, ' mov ',np.asarray(self.movements_amplitude).shape)
-		self.pearson_corr_raw = pearsonr(np.asarray(self.slopes_of_goals), np.asarray(self.movements_amplitude))
+		self.pearson_corr_pe_raw = pearsonr(np.asarray(self.slopes_of_goals), np.asarray(self.movements_amplitude))
 		#self.pearson_corr = pearsonr(slope_array[positive_indexes], movement_array[positive_indexes])
-		print ('Pearson correlation with raw movements', self.pearson_corr_raw)
+		print ('Pearson correlation btw current goals slope and raw movements', self.pearson_corr_pe_raw)
 
-		self.pearson_corr_slopes = pearsonr(np.asarray(self.slopes_of_goals), np.asarray(self.slopes_movements))
+		self.pearson_corr_pe_slopes = pearsonr(np.asarray(self.slopes_of_goals), np.asarray(self.slopes_movements))
 		#self.pearson_corr = pearsonr(slope_array[positive_indexes], movement_array[positive_indexes])
-		print ('Pearson correlation with slope of movements', self.pearson_corr_slopes)
+		print ('Pearson correlation btw current goals slope and slope of movements', self.pearson_corr_pe_slopes)
 
 		self.plot_slopes_of_goals(self.param)
-		return self.pearson_corr_raw, self.pearson_corr_slopes
+		return self.pearson_corr_pe_raw, self.pearson_corr_pe_slopes
 
 
 	def save_im(self):
@@ -207,8 +218,10 @@ class IntrinsicMotivation():
 		np.save(os.path.join(self.param.get('results_directory'), 'im_slopes_of_goals'), self.slopes_of_goals)
 		np.save(os.path.join(self.param.get('results_directory'), 'im_pe_max_buffer_size_history'), self.pe_max_buffer_size_history)
 		np.save(os.path.join(self.param.get('results_directory'), 'im_goal_id_history'), self.goal_id_history)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_raw'), self.pearson_corr_raw)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_slopes'), self.pearson_corr_slopes)
+		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_pe_raw'), self.pearson_corr_pe_raw)
+		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_pe_slopes'), self.pearson_corr_pe_slopes)
+		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_mse_raw'), self.pearson_corr_mse_raw)
+		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_mse_slopes'), self.pearson_corr_mse_slopes)
 
 	def plot_slopes(self, param, save=True):
 		fig = plt.figure(figsize=(10, 10))
@@ -238,36 +251,42 @@ class IntrinsicMotivation():
 	def plot_slopes_of_goals(self, param, save=True):
 		fig = plt.figure(figsize=(10, 10))
 		num_goals= self.param.get('goal_size')*self.param.get('goal_size')
-		ax1 = plt.subplot(5, 1, 1)
+		ax1 = plt.subplot(6, 1, 1)
 		plt.plot(self.slopes_of_goals)
 		plt.ylabel('slope of PE_dynamics for selected goal')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
 		#print ('movement amplitude ', self.movements_amplitude)
-		ax1 = plt.subplot(5, 1, 2)
+		ax1 = plt.subplot(6, 1, 2)
 		plt.plot(self.movements_amplitude)
 		plt.ylabel('Movement amplitude')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
-		ax1 = plt.subplot(5, 1, 3)
+		ax1 = plt.subplot(6, 1, 3)
 		plt.plot(self.slopes_movements)
 		plt.ylabel('Slopes of movements')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
 
-		ax1 = plt.subplot(5, 1, 4)
+		ax1 = plt.subplot(6, 1, 4)
 		plt.plot(self.pe_max_buffer_size_history)
 		plt.ylabel('Max PE buffer history')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
 
-		ax1 = plt.subplot(5, 1, 5)
+		ax1 = plt.subplot(6, 1, 5)
 		plt.plot(self.pe_buffer_size_history)
 		plt.ylabel('Current PE buffer history')
+		plt.xlabel('time')
+		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
+
+		ax1 = plt.subplot(6, 1, 6)
+		plt.plot(self.slopes_mse_buffer)
+		plt.ylabel('Slopes of MSE buffer')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
