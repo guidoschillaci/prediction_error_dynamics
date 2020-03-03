@@ -97,7 +97,7 @@ class IntrinsicMotivation():
 			if self.param.get('im_fixed_pe_buffer_size'):
 				self.pe_max_buffer_size_history.append(self.param.get('im_initial_pe_buffer_size'))
 			else:
-				new_buffer_size = self.pe_buffer_size_history[-1]
+				new_buffer_size = self.pe_max_buffer_size_history[-1]
 				if self.slopes_mse_buffer[-1] > 0:
 					if new_buffer_size < self.param.get('im_max_pe_buffer_size'):
 						new_buffer_size = new_buffer_size + 1 # or decrease?
@@ -141,9 +141,12 @@ class IntrinsicMotivation():
 		# - check that all the buffers are within the max buffer size
 		# - compute regression on prediction error and save the slope (trend of error dynamics)
 		current_slopes_err_dynamics = []
+		pe_buffer_size_h = []
 		for i in range(self.param.get('goal_size')*self.param.get('goal_size')):
-			while len(self.pe_buffer[i]) > self.pe_max_buffer_size_history[-1] and len(self.pe_buffer[i])>0:
-				self.pe_buffer[i].pop(0) #remove first element
+			while len(self.pe_buffer[i]) > self.pe_max_buffer_size_history[-1] :
+				if len(self.pe_buffer[i])>0:
+					self.pe_buffer[i].pop(0) #remove first element
+
 			if len(self.pe_buffer[i]) < 2 : # not enough prediction error to calculate the regression
 				current_slopes_err_dynamics.append(0)
 			else:
@@ -152,7 +155,9 @@ class IntrinsicMotivation():
 				print ('calculating regression on goal ', str(i))
 				model = LinearRegression().fit(regr_x, np.asarray(self.pe_buffer[i]))
 				current_slopes_err_dynamics.append(model.coef_[0]) # add the slope of the regression
-		self.pe_buffer_size_history.append(len(self.pe_buffer[0]))
+
+			pe_buffer_size_h.append(len(self.pe_buffer[i]))
+		self.pe_buffer_size_history.append(pe_buffer_size_h)
 
 		if _append:
 			# keep track of the goal that have been selected
@@ -271,43 +276,58 @@ class IntrinsicMotivation():
 			plt.show()
 		plt.close()
 
+	def plot_buffer_size(self, save=True):
+		num_goals = self.param.get('goal_size') * self.param.get('goal_size')
+
+		fig = plt.figure(figsize=(10, 10))
+
+		ax1 = plt.subplot(num_goals + 1, 1, 1
+						  )
+		plt.plot(self.pe_max_buffer_size_history)
+		plt.ylabel('Max PE buffer size')
+		plt.xlabel('time')
+		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
+
+		data = np.transpose(self.pe_buffer_size_history)
+		#data = self.slopes_pe_buffer
+		for i in range(0, num_goals):
+			ax = plt.subplot(num_goals + 1, 1, i + 2)
+			plt.plot(data[i])
+
+			plt.ylabel('Buf size ', str(i))
+			plt.xlabel('time')
+			ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
+
+		if save:
+			plt.savefig(self.param.get('results_directory')+'/plots/im_buffer_size.jpg')
+		if self.param.get('show_plots'):
+			plt.show()
+		plt.close()
+
+
 	def plot_slopes_of_goals(self, save=True):
 		fig = plt.figure(figsize=(10, 10))
 		num_goals= self.param.get('goal_size')*self.param.get('goal_size')
-		ax1 = plt.subplot(6, 1, 1)
+		ax1 = plt.subplot(4, 1, 1)
 		plt.plot(self.slopes_of_goals)
 		plt.ylabel('Slope PE_dyn select. goal')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
 		#print ('movement amplitude ', self.movements_amplitude)
-		ax1 = plt.subplot(6, 1, 2)
+		ax1 = plt.subplot(4, 1, 2)
 		plt.plot(self.movements_amplitude)
 		plt.ylabel('Movement ampl.')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
-		ax1 = plt.subplot(6, 1, 3)
+		ax1 = plt.subplot(4, 1, 3)
 		plt.plot(self.slopes_movements)
 		plt.ylabel('Slopes of mov.')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
-
-		ax1 = plt.subplot(6, 1, 4)
-		plt.plot(self.pe_max_buffer_size_history)
-		plt.ylabel('Max PE buffer size')
-		plt.xlabel('time')
-		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
-
-
-		ax1 = plt.subplot(6, 1, 5)
-		plt.plot(self.pe_buffer_size_history)
-		plt.ylabel('PE buffer size')
-		plt.xlabel('time')
-		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
-
-		ax1 = plt.subplot(6, 1, 6)
+		ax1 = plt.subplot(4, 1, 4)
 		plt.plot(self.interpolated_slopes_mse_buffer)
 		plt.ylabel('Int.Slopes MSE buff')
 		plt.xlabel('time')

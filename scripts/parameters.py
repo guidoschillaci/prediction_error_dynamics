@@ -61,7 +61,7 @@ class Parameters:
             'im_decay_factor': 0.9,
             # there is a hierarchical dynamics monitoring: over the mean squared error of the fwd model (higher level) and over each goal (lower)
             # the slope of the MSE buffer controls the size of the goal PE buffer (in case im_fixed_pe_buffer_size is False)
-            'im_mse_buffer_size': 200, # initial size of the mean squared error buffer (should be bigger than max PE_buffer_size
+            'im_mse_buffer_size': 5, # initial size of the mean squared error buffer (should be bigger than max PE_buffer_size
             'im_movements_buffer_size': 50, # buffer size of the movement amplitudeds
             # initial size of the mean squared error buffer (should be bigger than max PE_buffer_size
             'im_initial_pe_buffer_size': 25, # initial size of the prediction error buffer

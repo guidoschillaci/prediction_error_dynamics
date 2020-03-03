@@ -300,6 +300,7 @@ class GoalBabbling():
 		self.intrinsic_motivation.get_linear_correlation_btw_amplitude_and_pe_dynamics()
 
 		self.intrinsic_motivation.plot_slopes_of_goals()
+		self.intrinsic_motivation.plot_buffer_size()
 		self.intrinsic_motivation.save_im()
 		self.intrinsic_motivation.plot_slopes(param)
 		#self.lock.release()
