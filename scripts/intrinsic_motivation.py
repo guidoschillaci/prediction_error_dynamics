@@ -188,7 +188,8 @@ class IntrinsicMotivation():
 		y = self.slopes_mse_buffer
 		f = interpolate.interp1d(x, y)
 
-		x_correct= np.arange(0,len(self.movements_amplitude))
+
+		x_correct= np.arange(0,len(self.slopes_mse_buffer),  float(len(self.slopes_mse_buffer))/float(len(self.movements_amplitude)))
 		self.interpolated_slopes_mse_buffer= f(x_correct)
 
 		#self.pearson_corr_mse_raw = pearsonr(np.asarray(self.slopes_mse_buffer), np.asarray(self.movements_amplitude))
