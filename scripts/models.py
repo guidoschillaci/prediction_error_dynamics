@@ -226,8 +226,9 @@ class Models:
         command = Dense(param.get('romi_input_dim'), activation='tanh', name='command')(x)
 
         inv_model = Model(input_code, command)
-        sgd = optimizers.SGD(lr=0.0014, decay=0.0, momentum=0.8, nesterov=True)
-        inv_model.compile(optimizer=sgd, loss='mean_squared_error')
+        #sgd = optimizers.SGD(lr=0.0014, decay=0.0, momentum=0.8, nesterov=True)
+        #inv_model.compile(optimizer=sgd, loss='mean_squared_error')
+        inv_model.compile(optimizer='adadelta', loss='mean_squared_error')
         print ('inverse code model')
         inv_model.summary()
         return inv_model

@@ -39,6 +39,12 @@ class IntrinsicMotivation():
 		# keep track of the displacement of the last movement 
 		self.movements_amplitude = []
 
+		# keep track of the displacement of the last movement in a buffer for calculating the slopes
+		self.movements_buffer = []
+
+		# slopes of the movement amplitudes over time
+		self.slopes_movements = []
+
 
 		#self.learning_progress= np.resize(self.learning_progress, (self.param.get('goal_size')*self.param.get('goal_size') ,))
 		#for i in range (0, self.param.get('goal_size')*self.param.get('goal_size')):
@@ -150,7 +156,20 @@ class IntrinsicMotivation():
 		#return np.argmax(self.slopes_pe_buffer[-1])
 
 	def log_last_movement(self, pos_a, pos_b):
-		self.movements_amplitude.append(utils.distance(pos_a,pos_b))
+		movement = utils.distance(pos_a,pos_b)
+		self.movements_amplitude.append(movement) # this will log all the movements
+		self.movements_buffer.append(movement) # this is a moving buffer
+		if len(self.movements_buffer) < 2:  # not enough prediction error to calculate the regression
+			self.slopes_movements.append(0)
+		else:
+			while len(self.movements_buffer) > self.param.get('im_movements_buffer_size'):
+				self.movements_buffer.pop(0)  # remove first element
+
+			# get the slopes of the prediction error dynamics
+			regr_x = np.asarray(range(len(self.movements_buffer))).reshape((-1, 1))
+			print ('calculating regression on movement buffer')
+			model = LinearRegression().fit(regr_x, np.asarray(self.movements_buffer))
+			self.slopes_movements.append(model.coef_[0])  # add the slope of the regression
 
 	def get_linear_correlation_btw_amplitude_and_pe_dynamics(self):
 		# first make a vector storing the pe_dynamics of the current goals over time
@@ -166,11 +185,16 @@ class IntrinsicMotivation():
 		#movement_array= np.asarray(self.movements_amplitude)
 		#self.positive_indexes = np.argwhere(slope_array>0)
 		#print ('corre shape np.asarray(self.slopes_of_goals)', np.asarray(self.slopes_of_goals).shape, ' mov ',np.asarray(self.movements_amplitude).shape)
-		self.pearson_corr = pearsonr(np.asarray(self.slopes_of_goals), np.asarray(self.movements_amplitude))
+		self.pearson_corr_raw = pearsonr(np.asarray(self.slopes_of_goals), np.asarray(self.movements_amplitude))
 		#self.pearson_corr = pearsonr(slope_array[positive_indexes], movement_array[positive_indexes])
-		print ('Pearson correlation', self.pearson_corr)
+		print ('Pearson correlation with raw movements', self.pearson_corr_raw)
+
+		self.pearson_corr_slopes = pearsonr(np.asarray(self.slopes_of_goals), np.asarray(self.slopes_movements))
+		#self.pearson_corr = pearsonr(slope_array[positive_indexes], movement_array[positive_indexes])
+		print ('Pearson correlation with slope of movements', self.pearson_corr_slopes)
+
 		self.plot_slopes_of_goals(self.param)
-		return self.pearson_corr
+		return self.pearson_corr_raw, self.pearson_corr_slopes
 
 
 	def save_im(self):
@@ -179,7 +203,8 @@ class IntrinsicMotivation():
 		np.save(os.path.join(self.param.get('results_directory'), 'im_slopes_of_goals'), self.slopes_of_goals)
 		np.save(os.path.join(self.param.get('results_directory'), 'im_pe_max_buffer_size_history'), self.pe_max_buffer_size_history)
 		np.save(os.path.join(self.param.get('results_directory'), 'im_goal_id_history'), self.goal_id_history)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr'), self.pearson_corr)
+		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_raw'), self.pearson_corr_raw)
+		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_slopes'), self.pearson_corr_slopes)
 
 	def plot_slopes(self, param, save=True):
 		fig = plt.figure(figsize=(10, 10))
@@ -209,19 +234,26 @@ class IntrinsicMotivation():
 	def plot_slopes_of_goals(self, param, save=True):
 		fig = plt.figure(figsize=(10, 10))
 		num_goals= self.param.get('goal_size')*self.param.get('goal_size')
-		ax1 = plt.subplot(2, 1, 1)
+		ax1 = plt.subplot(3, 1, 1)
 		plt.plot(self.slopes_of_goals)
 		plt.ylabel('slope of PE_dynamics for selected goal')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
 		#print ('movement amplitude ', self.movements_amplitude)
-		ax1 = plt.subplot(2, 1, 2)
+		ax1 = plt.subplot(3, 1, 2)
 		plt.plot(self.movements_amplitude)
 		plt.ylabel('Movement amplitude')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
-		if save:
+
+		ax1 = plt.subplot(3, 1, 3)
+		plt.plot(self.slopes_movements)
+		plt.ylabel('Slopes of movements')
+		plt.xlabel('time')
+		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
+
+	if save:
 			plt.savefig(self.param.get('results_directory')+'/plots/im_slopes_of_goals.jpg')
 		if param.get('show_plots'):
 			plt.show()
