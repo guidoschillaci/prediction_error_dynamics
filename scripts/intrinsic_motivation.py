@@ -185,14 +185,15 @@ class IntrinsicMotivation():
 
 	def get_linear_correlation_btw_amplitude_and_mse_dynamics(self):
 		# mse_buffer is updated at a slower rate than movements recording. Interpolate to match the sizes
-		x = np.arange(0, 1, len(self.slopes_mse_buffer))
+		x = np.arange(0, len(self.slopes_mse_buffer))
 		y = self.slopes_mse_buffer
 		f = interpolate.interp1d(x, y,fill_value="extrapolate")
 		x_correct= np.arange(0, float(len(self.slopes_mse_buffer))/float(len(self.movements_amplitude)), len(self.slopes_mse_buffer))
 
+		print ('shapes x', x.shape, ' x_correct ', x_correct.shape)
+
 		self.interpolated_slopes_mse_buffer= f(x_correct)
 		print ('len ', len(self.interpolated_slopes_mse_buffer))
-		print ('shapes x', x.shape, ' x_correct ', x_correct.shape)
 
 		#self.pearson_corr_mse_raw = pearsonr(np.asarray(self.slopes_mse_buffer), np.asarray(self.movements_amplitude))
 		self.pearson_corr_mse_raw = pearsonr(np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.movements_amplitude))
