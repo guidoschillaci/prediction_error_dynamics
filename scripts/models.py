@@ -190,9 +190,9 @@ class Models:
         x = Dense(param.get('code_size') * 10, activation='tanh')(x)
         code = Dense(param.get('code_size'), activation='tanh',  name='output')(x)
         fwd_model = Model(cmd_fwd_inp, code)
-        sgd = optimizers.SGD(lr=0.0014, decay=0.0, momentum=0.8, nesterov=True)
-        # fwd_model.compile(optimizer='adadelta', loss='mean_squared_error')
-        fwd_model.compile(optimizer=sgd, loss='mean_squared_error')
+        #sgd = optimizers.SGD(lr=0.0014, decay=0.0, momentum=0.8, nesterov=True)
+        fwd_model.compile(optimizer='adadelta', loss='mean_squared_error')
+        #fwd_model.compile(optimizer=sgd, loss='mean_squared_error')
         print ('forward model')
         fwd_model.summary()
         return fwd_model
