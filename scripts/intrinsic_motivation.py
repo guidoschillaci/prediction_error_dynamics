@@ -6,6 +6,7 @@ import sys
 from sklearn.linear_model import LinearRegression
 from scipy.stats.stats import pearsonr
 from scipy import interpolate
+from scipy.interpolate import UnivariateSpline
 import matplotlib.pyplot as plt
 import os
 import utils
@@ -184,10 +185,10 @@ class IntrinsicMotivation():
 
 	def get_linear_correlation_btw_amplitude_and_mse_dynamics(self):
 		# mse_buffer is updated at a slower rate than movements recording. Interpolate to match the sizes
-		x = np.linspace(0, 1, len(self.slopes_mse_buffer))
+		x = np.arange(0, 1, len(self.slopes_mse_buffer))
 		y = self.slopes_mse_buffer
 		f = interpolate.interp1d(x, y,fill_value="extrapolate")
-		x_correct= np.linspace(0, float(len(self.slopes_mse_buffer))/float(len(self.movements_amplitude)), len(self.slopes_mse_buffer))
+		x_correct= np.arange(0, float(len(self.slopes_mse_buffer))/float(len(self.movements_amplitude)), len(self.slopes_mse_buffer))
 
 		self.interpolated_slopes_mse_buffer= f(x_correct)
 		print ('len ', len(self.interpolated_slopes_mse_buffer))
