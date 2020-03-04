@@ -41,8 +41,9 @@ class Cam_sim():
 					# image = bridge.imgmsg_to_cv2(image_msg, "bgr8")
 					# image = cv2.resize(image, (64, 64))
 					cmd = memory['position']
-					self.images[int(cmd.x)][int(cmd.y)] = image
 					print (int(cmd.x), ' ', int(cmd.y))
+					self.images[int(cmd.x)][int(cmd.y)] = image
+
 					#x_vector.append(float(cmd.x))
 					#y_vector.append(float(cmd.y))
 					#title = './romi_data/x' + str(cmd.x) + '_y' + str(cmd.y) + '.jpeg'
