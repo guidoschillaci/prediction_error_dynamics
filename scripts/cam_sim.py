@@ -30,7 +30,7 @@ class Cam_sim():
 		if os.path.isfile(compressed_dataset):
 			print ('loading simulator images from compressed dataset')
 
-			with gzip.open(self.imagesPath, 'rb') as memory_file:
+			with gzip.open(self.compressed_dataset, 'rb') as memory_file:
 				memories = pickle.load(memory_file)
 				print ('loading images...')
 				count = 0
