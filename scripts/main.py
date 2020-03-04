@@ -64,9 +64,9 @@ class GoalBabbling():
 		#else:
 		#	tf.compat.v1.reset_default_graph()
 
-		# this simulates cameras and positions
-		self.cam_sim = Cam_sim("./romi_data/")
 		self.parameters = param
+		# this simulates cameras and positions
+		self.cam_sim = Cam_sim("./romi_data/", self.parameters)
 
 		self.lock = threading.Lock()
 		signal.signal(signal.SIGINT, self.Exit_call)
