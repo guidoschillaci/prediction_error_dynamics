@@ -41,16 +41,16 @@ import tensorflow as tf
 GPU_FRACTION = 1
 
 print ('Tensorflow version ', str(tf.__version__))
-if tf.__version__ < "1.14.0":
-	config = tf.ConfigProto()
-	config.gpu_options.per_process_gpu_memory_fraction = GPU_FRACTION
+#if tf.__version__ < "1.14.0":#
+#	config = tf.ConfigProto()
+#	config.gpu_options.per_process_gpu_memory_fraction = GPU_FRACTION
 	#config.gpu_options.allow_growth = True
-	session = tf.Session(config=config)
-else:
-	config = tf.compat.v1.ConfigProto()
-	config.gpu_options.per_process_gpu_memory_fraction = GPU_FRACTION
+#	session = tf.Session(config=config)
+#else:
+#	config = tf.compat.v1.ConfigProto()
+#	config.gpu_options.per_process_gpu_memory_fraction = GPU_FRACTION
 	#config.gpu_options.allow_growth = True
-	session = tf.compat.v1.Session(config=config)
+#	session = tf.compat.v1.Session(config=config)
 
 
 class GoalBabbling():
