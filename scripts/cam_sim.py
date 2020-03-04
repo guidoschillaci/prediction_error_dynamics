@@ -13,7 +13,8 @@ import pickle
 from utils import Position
 
 class Cam_sim():
-	def __init__(self,imagesPath):
+	def __init__(self,imagesPath, param):
+		self.param = param
 		self.imagesPath = imagesPath
 		if self.imagesPath[-1] != '/':
 			self.imagesPath += '/'
@@ -41,7 +42,10 @@ class Cam_sim():
 					# image = bridge.imgmsg_to_cv2(image_msg, "bgr8")
 					# image = cv2.resize(image, (64, 64))
 					cmd = memory['position']
-					print (int(cmd.x)/5, ' ', int(cmd.y)/5)
+
+					image= image.astype('float32') / 255
+					image.reshape(1, self.param.get('image_size'), self.param.get('image_size'), self.param.get('image_channels'))
+					print (int(cmd.x) / 5, ' ', int(cmd.y) / 5)
 					self.images[int(cmd.x)/5][int(cmd.y)/5] = image
 
 					#x_vector.append(float(cmd.x))
@@ -64,8 +68,6 @@ class Cam_sim():
 		trajectory =  np.array(self.get_line(start, end))
 		return trajectory
 
-
-
 	def get_trajectory_names(self,start,end):
 		trajectory = self.get_trajectory(start,end)
 		t_rounded = self.round2mul(trajectory,5) #there is only images every 5 mm, use closer image to real coordinate
@@ -74,6 +76,15 @@ class Cam_sim():
 			img_name = self.imagesPath + "x{:03d}_y{:03d}.jpeg".format(i[0],i[1])
 			t_images.append(img_name)
 		return t_images
+
+	def get_trajectory_images(self, start, end):
+		trajectory = self.get_trajectory(start,end)
+		t_rounded = self.round2mul(trajectory,5) #there is only images every 5 mm, use closer image to real coordinate
+		t_images = []
+		for i in t_rounded:
+			t_images.append(self.images[ int(i[0])/5 ][ int(i[1])/5 ])
+		return t_images
+
 
 	def get_line(self,start, end):
 		# Setup initial conditions
