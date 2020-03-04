@@ -21,34 +21,37 @@ class Cam_sim():
 
 	def load_images_in_mem(self):
 		print('loading simulator images in memory')
-		self.images = [] * 158
+		self.images = [None] * 158
 		for i in range(len(self.images)):
-			self.images[i] = [] * 158
+			self.images[i] = [None] * 158
 
 		print ('images sim size ', np.asarray(self.images).shape)
+		compressed_dataset = self.imagesPath + '/compressed_dataset.pkl'
+		if os.path.isfile(compressed_dataset):
+			print ('loading simulator images from compressed dataset')
 
-		with gzip.open(self.imagesPath, 'rb') as memory_file:
-			memories = pickle.load(memory_file)
-			print ('loading images...')
-			count = 0
-			x_vector = []
-			y_vector = []
-			for memory in memories:
-				image = memory['image']
-				# image = bridge.imgmsg_to_cv2(image_msg, "bgr8")
-				# image = cv2.resize(image, (64, 64))
-				cmd = memory['position']
-				self.images[cmd.x][cmd.y] = image
-				#x_vector.append(float(cmd.x))
-				#y_vector.append(float(cmd.y))
-				#title = './romi_data/x' + str(cmd.x) + '_y' + str(cmd.y) + '.jpeg'
-				#cv2.imwrite(title, image)
-			#print ('x len', len(np.asarray(x_vector)), 'x max ', np.max(np.asarray(x_vector)), ' x_min ',np.min(np.asarray(x_vector)))
-			#print ('y len', len(np.asarray(y_vector)), 'y max ', np.max(np.asarray(y_vector)), ' y_min ',np.min(np.asarray(y_vector)))
-			#horiz = np.max(np.asarray(x_vector)) / 5 + 1
-			#vert = np.max(np.asarray(y_vector)) / 5 + 1
-			#print ('hori ', horiz, ' vert ', vert, ' prod ', (horiz * vert))
-			print('Simulator images loaded')
+			with gzip.open(self.imagesPath, 'rb') as memory_file:
+				memories = pickle.load(memory_file)
+				print ('loading images...')
+				count = 0
+				x_vector = []
+				y_vector = []
+				for memory in memories:
+					image = memory['image']
+					# image = bridge.imgmsg_to_cv2(image_msg, "bgr8")
+					# image = cv2.resize(image, (64, 64))
+					cmd = memory['position']
+					self.images[cmd.x][cmd.y] = image
+					#x_vector.append(float(cmd.x))
+					#y_vector.append(float(cmd.y))
+					#title = './romi_data/x' + str(cmd.x) + '_y' + str(cmd.y) + '.jpeg'
+					#cv2.imwrite(title, image)
+				#print ('x len', len(np.asarray(x_vector)), 'x max ', np.max(np.asarray(x_vector)), ' x_min ',np.min(np.asarray(x_vector)))
+				#print ('y len', len(np.asarray(y_vector)), 'y max ', np.max(np.asarray(y_vector)), ' y_min ',np.min(np.asarray(y_vector)))
+				#horiz = np.max(np.asarray(x_vector)) / 5 + 1
+				#vert = np.max(np.asarray(y_vector)) / 5 + 1
+				#print ('hori ', horiz, ' vert ', vert, ' prod ', (horiz * vert))
+				print('Simulator images loaded')
 
 	def round2mul(self,number, multiple):
 		half_mult = multiple/2.
