@@ -253,7 +253,7 @@ class GoalBabbling():
 		self.save_models(param)
 
 	def create_simulated_data(self, pos, cmd, param):
-		self.lock.acquire()
+		#self.lock.acquire()
 		a = [int(pos.x), int(pos.y)]
 		b = [int(cmd.x),int(cmd.y)]
 
@@ -278,7 +278,8 @@ class GoalBabbling():
 			#cv2.imshow('image',cv2_img)
 			if param.get('image_channels') ==1:
 				cv2_img = cv2.cvtColor(cv2_img, cv2.COLOR_BGR2GRAY)
-			cv2_img = cv2.resize(cv2_img,(param.get('image_size'), param.get('image_size')), interpolation = cv2.INTER_LINEAR)
+			if param.get('image_resize'):
+				cv2_img = cv2.resize(cv2_img,(param.get('image_size'), param.get('image_size')), interpolation = cv2.INTER_LINEAR)
 			cv2_img = cv2_img.astype('float32') / 255
 			cv2_img.reshape(1, param.get('image_size'), param.get('image_size'), param.get('image_channels'))
 			self.img.append(cv2_img)
@@ -293,7 +294,7 @@ class GoalBabbling():
 			self.models.memory_inv.update(observed_img_code, observed_pos)
 
 
-		self.lock.release()
+		#self.lock.release()
 
 
 	def save_models(self, param):
