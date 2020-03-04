@@ -26,14 +26,14 @@ class Cam_sim():
 		for i in range(len(self.images)):
 			self.images[i] = [None] * 158
 
-		print ('images sim size ', np.asarray(self.images).shape)
+		#print ('images sim size ', np.asarray(self.images).shape)
 		compressed_dataset = self.imagesPath + '/compressed_dataset.pkl'
 		if os.path.isfile(compressed_dataset):
 			print ('loading simulator images from compressed dataset')
 
 			with gzip.open(compressed_dataset, 'rb') as memory_file:
 				memories = pickle.load(memory_file)
-				print ('loading images...')
+				#print ('loading images...')
 				count = 0
 				x_vector = []
 				y_vector = []
@@ -45,7 +45,7 @@ class Cam_sim():
 
 					image= image.astype('float32') / 255
 					image.reshape(1, self.param.get('image_size'), self.param.get('image_size'), self.param.get('image_channels'))
-					print (int(cmd.x) / 5, ' ', int(cmd.y) / 5)
+					#print (int(cmd.x) / 5, ' ', int(cmd.y) / 5)
 					self.images[int(cmd.x)/5][int(cmd.y)/5] = image
 
 					#x_vector.append(float(cmd.x))
