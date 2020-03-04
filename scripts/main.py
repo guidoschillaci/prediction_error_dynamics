@@ -276,7 +276,7 @@ class GoalBabbling():
 			#self.cmd.append( utils.normalise(cmd) )
 			cv2_img = cv2.imread(trn[i])#,1 )
 			#cv2.imshow('image',cv2_img)
-			if param.get('image_channels') ==1:
+			if param.get('image_channels') ==1 and (cv2_img.ndim == 3):
 				cv2_img = cv2.cvtColor(cv2_img, cv2.COLOR_BGR2GRAY)
 			if param.get('image_resize'):
 				cv2_img = cv2.resize(cv2_img,(param.get('image_size'), param.get('image_size')), interpolation = cv2.INTER_LINEAR)
@@ -325,7 +325,7 @@ class GoalBabbling():
 		print ('Terminating...')
 		self.save_models(self.parameters)
 		self.goto_starting_pos()
-		sys.exit(1)
+		#sys.exit(1)
 
 	def get_starting_pos(self):
 		p = utils.Position()
@@ -365,7 +365,8 @@ class RomiDataLoader:
 				image = memory['image']
 				if (channels == 1) and (image.ndim == 3):
 					image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-				image = cv2.resize(image, (pixels, pixels))
+				if self.param.get('image_resize'):
+					image = cv2.resize(image, (pixels, pixels))
 
 				images.append(np.asarray(image).astype('float32') / 255)
 
