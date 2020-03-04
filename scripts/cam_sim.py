@@ -98,8 +98,8 @@ def extract_images(file_name):
 			#image = bridge.imgmsg_to_cv2(image_msg, "bgr8")
 			image = cv2.resize(image, (64, 64))
 			cmd = memory['position']
-			x_vector.append(cmd.x)
-			y_vector.append(cmd.y)
+			x_vector.append(float(cmd.x))
+			y_vector.append(float(cmd.y))
 			title = './romi_data/x'+str(cmd.x)+'_y'+str(cmd.y)+'.jpeg'
 			cv2.imwrite(title,image)
 		print ('x len', len(np.asarray(x_vector)), 'x max ', np.max(np.asarray(x_vector)), ' x_min ', np.min(np.asarray(x_vector)))
