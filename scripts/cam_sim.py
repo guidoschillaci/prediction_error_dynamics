@@ -46,7 +46,7 @@ class Cam_sim():
 					image= image.astype('float32') / 255
 					image.reshape(1, self.param.get('image_size'), self.param.get('image_size'), self.param.get('image_channels'))
 					#print (int(cmd.x) / 5, ' ', int(cmd.y) / 5)
-					self.images[int(cmd.x)/5][int(cmd.y)/5] = image
+					self.images[int(float(cmd.x)/5)][int(float(cmd.y)/5)] = image
 
 					#x_vector.append(float(cmd.x))
 					#y_vector.append(float(cmd.y))
