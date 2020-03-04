@@ -18,6 +18,7 @@ class Parameters:
             'directory': '',
             'results_directory': '',
             'image_size': 64,
+            'image_resize':False, # resize images to specified image_size? only if you are not sure that input images are of the desired size
             'image_channels': 1,
             'code_size': 32, # dimensions of the latent space of convoltioanl autoencoder
             'goal_size': 3, # SOMs size. There will be goal_size*goal_size  goal. TODO: improve this
