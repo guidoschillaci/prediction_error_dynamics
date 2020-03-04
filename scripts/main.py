@@ -32,24 +32,24 @@ from copy import deepcopy
 #from doepy import build, read_write # pip install doepy - it may require also diversipy
 
 #import tensorflow.compat.v1 as tf
-import os
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = ""
+#import os
+#os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+#os.environ["CUDA_VISIBLE_DEVICES"] = ""
 import tensorflow as tf
 
 
-GPU_FRACTION = 0.7
+GPU_FRACTION = 1
 
 print ('Tensorflow version ', str(tf.__version__))
 if tf.__version__ < "1.14.0":
 	config = tf.ConfigProto()
-	#config.gpu_options.per_process_gpu_memory_fraction = GPU_FRACTION
-	config.gpu_options.allow_growth = True
+	config.gpu_options.per_process_gpu_memory_fraction = GPU_FRACTION
+	#config.gpu_options.allow_growth = True
 	session = tf.Session(config=config)
 else:
 	config = tf.compat.v1.ConfigProto()
-	#config.gpu_options.per_process_gpu_memory_fraction = GPU_FRACTION
-	config.gpu_options.allow_growth = True
+	config.gpu_options.per_process_gpu_memory_fraction = GPU_FRACTION
+	#config.gpu_options.allow_growth = True
 	session = tf.compat.v1.Session(config=config)
 
 
