@@ -27,6 +27,8 @@ class Cam_sim():
 		trajectory =  np.array(self.get_line(start, end))
 		return trajectory
 
+
+
 	def get_trajectory_names(self,start,end):
 		trajectory = self.get_trajectory(start,end)
 		t_rounded = self.round2mul(trajectory,5) #there is only images every 5 mm, use closer image to real coordinate
@@ -89,13 +91,20 @@ def extract_images(file_name):
 		memories = pickle.load(memory_file)
 		print ('extracting images...')
 		count = 0
+		x_vector=[]
+		y_vector=[]
 		for memory in memories:
 			image = memory['image']
 			#image = bridge.imgmsg_to_cv2(image_msg, "bgr8")
 			image = cv2.resize(image, (64, 64))
 			cmd = memory['position']
+			x_vector.append(cmd.x)
+			y_vector.append(cmd.y)
 			title = './romi_data/x'+str(cmd.x)+'_y'+str(cmd.y)+'.jpeg'
 			cv2.imwrite(title,image)
+		print ('x len', len(np.asarray(x_vector)), 'x max ', np.max(np.asarray(x_vector)), ' x_min ', np.min(np.asarray(x_vector)))
+		print ('y len', len(np.asarray(y_vector)), 'y max ', np.max(np.asarray(y_vector)), ' y_min ', np.min(np.asarray(y_vector)))
+
 
 if __name__ == '__main__':
 
