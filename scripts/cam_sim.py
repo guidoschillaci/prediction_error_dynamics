@@ -104,7 +104,9 @@ def extract_images(file_name):
 			cv2.imwrite(title,image)
 		print ('x len', len(np.asarray(x_vector)), 'x max ', np.max(np.asarray(x_vector)), ' x_min ', np.min(np.asarray(x_vector)))
 		print ('y len', len(np.asarray(y_vector)), 'y max ', np.max(np.asarray(y_vector)), ' y_min ', np.min(np.asarray(y_vector)))
-
+		horiz = np.max(np.asarray(x_vector)) / 5
+		vert = np.max(np.asarray(y_vector)) / 5
+		print ('hori ', horiz, ' vert ', vert, ' prod ', (horiz*vert))
 
 if __name__ == '__main__':
 
