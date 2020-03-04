@@ -341,28 +341,34 @@ class IntrinsicMotivation():
 	def plot_slopes_of_goals(self, save=True):
 		fig = plt.figure(figsize=(10, 10))
 		num_goals= self.param.get('goal_size')*self.param.get('goal_size')
-		ax1 = plt.subplot(4, 1, 1)
+		ax1 = plt.subplot(5, 1, 1)
 		plt.plot(self.slopes_of_goals)
 		plt.ylabel('Slope PE_dyn select. goal')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
 		#print ('movement amplitude ', self.movements_amplitude)
-		ax1 = plt.subplot(4, 1, 2)
+		ax1 = plt.subplot(5, 1, 2)
 		plt.plot(self.movements_amplitude)
 		plt.ylabel('Movement ampl.')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
-		ax1 = plt.subplot(4, 1, 3)
+		ax1 = plt.subplot(5, 1, 3)
 		plt.plot(self.slopes_movements)
 		plt.ylabel('Slopes of mov.')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
-		ax1 = plt.subplot(4, 1, 4)
+		ax1 = plt.subplot(5, 1, 4)
 		plt.plot(self.interpolated_slopes_mse_buffer)
 		plt.ylabel('Int.Slopes MSE buff')
+		plt.xlabel('time')
+		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
+
+		ax1 = plt.subplot(5, 1, 5)
+		plt.plot(self.pe_max_buffer_size_history)
+		plt.ylabel('Max PE buffer size')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
