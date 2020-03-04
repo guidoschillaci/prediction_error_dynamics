@@ -82,7 +82,7 @@ class Cam_sim():
 		t_rounded = self.round2mul(trajectory,5) #there is only images every 5 mm, use closer image to real coordinate
 		t_images = []
 		for i in t_rounded:
-			t_images.append(self.images[ int(i[0])/5 ][ int(i[1])/5 ])
+			t_images.append(self.images[ int(float(i[0])/5) ][ int(float(i[1])/5) ])
 		return t_images
 
 
