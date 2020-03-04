@@ -92,7 +92,7 @@ def extract_images(file_name):
 		for memory in memories:
 			image = memory['image']
 			#image = bridge.imgmsg_to_cv2(image_msg, "bgr8")
-
+			image = cv2.resize(image, (64, 64))
 			cmd = memory['position']
 			title = './romi_data/x'+str(cmd.x)+'_y'+str(cmd.y)+'.jpeg'
 			cv2.imwrite(title,image)
