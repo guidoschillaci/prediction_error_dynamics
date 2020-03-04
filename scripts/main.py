@@ -64,9 +64,9 @@ class GoalBabbling():
 		#else:
 		#	tf.compat.v1.reset_default_graph()
 
-		# this simulates cameras and positions
-		self.cam_sim = Cam_sim("./romi_data/")
 		self.parameters = param
+		# this simulates cameras and positions
+		self.cam_sim = Cam_sim("./romi_data/", self.parameters)
 
 		self.lock = threading.Lock()
 		signal.signal(signal.SIGINT, self.Exit_call)
@@ -258,24 +258,16 @@ class GoalBabbling():
 		b = [int(cmd.x),int(cmd.y)]
 
 		tr = self.cam_sim.get_trajectory(a,b)
-		trn = self.cam_sim.get_trajectory_names(a,b)
+		#trn = self.cam_sim.get_trajectory_names(a,b)
+		tr_img = self.cam_sim.get_trajectory_images(a, b)
 		#print ('image size ', str(param.get('image_size')))
 		rounded  = self.cam_sim.round2mul(tr,5) # only images every 5mm
 		for i in range(len(tr)):
-			#pp = utils.Position()
-			#pp.x = float(rounded[i][0])
-			#pp.y = float(rounded[i][1])
-			#pp.z = -90
-			#pp.speed = 1400
-
-			#print ('pp ',pp)
-			#self.pos.append(utils.normalise(pp))
 			self.pos.append([utils.normalise_x(float(rounded[i][0]), param), utils.normalise_y(float(rounded[i][1]), param) ])
-			#self.cmd.append([float(int(cmd.x)) / utils.x_lims[1], float(int(cmd.y)) / utils.y_lims[1]] )
 			self.cmd.append([utils.normalise_x(float(int(cmd.x)), param), utils.normalise_y(float(int(cmd.y)), param) ])
-			#self.cmd.append( utils.normalise(cmd) )
+			self.img.append(tr_img[i])
+			'''
 			cv2_img = cv2.imread(trn[i])#,1 )
-			#cv2.imshow('image',cv2_img)
 			if param.get('image_channels') ==1 and (cv2_img.ndim == 3):
 				cv2_img = cv2.cvtColor(cv2_img, cv2.COLOR_BGR2GRAY)
 			if param.get('image_resize'):
@@ -283,12 +275,13 @@ class GoalBabbling():
 			cv2_img = cv2_img.astype('float32') / 255
 			cv2_img.reshape(1, param.get('image_size'), param.get('image_size'), param.get('image_channels'))
 			self.img.append(cv2_img)
-
+			'''
 
 			# update memory 
 			# first update the memory, then update the models
 			observed_pos = self.pos[-1]
-			observed_img = cv2_img
+			#observed_img = cv2_img
+			observed_img = tr_img[i]
 			observed_img_code = np.asarray(self.models.encoder.predict(observed_img.reshape(1, param.get('image_size'), param.get('image_size'), param.get('image_channels')))).reshape(param.get('code_size'))
 			self.models.memory_fwd.update(observed_pos, observed_img_code)
 			self.models.memory_inv.update(observed_img_code, observed_pos)
@@ -358,7 +351,7 @@ class RomiDataLoader:
 		positions = []
 		commands = []
 		with gzip.open(file_name, 'rb') as memory_file:
-			memories = pickle.load(memory_file, encoding='bytes')
+			memories = pickle.load(memory_file)#, encoding='bytes')
 			print ('converting data...')
 			count = 0
 			for memory in memories:
