@@ -46,7 +46,7 @@ class Cam_sim():
 					image= image.astype('float32') / 255
 					image.reshape(1, self.param.get('image_size'), self.param.get('image_size'), self.param.get('image_channels'))
 					#print (int(cmd.x) / 5, ' ', int(cmd.y) / 5)
-					self.images[int(cmd.x)/5][int(cmd.y)/5] = image
+					self.images[int(float(cmd.x)/5)][int(float(cmd.y)/5)] = image
 
 					#x_vector.append(float(cmd.x))
 					#y_vector.append(float(cmd.y))
@@ -82,7 +82,7 @@ class Cam_sim():
 		t_rounded = self.round2mul(trajectory,5) #there is only images every 5 mm, use closer image to real coordinate
 		t_images = []
 		for i in t_rounded:
-			t_images.append(self.images[ int(i[0])/5 ][ int(i[1])/5 ])
+			t_images.append(self.images[ int(float(i[0])/5) ][ int(float(i[1])/5) ])
 		return t_images
 
 
