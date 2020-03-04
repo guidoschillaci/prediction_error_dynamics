@@ -43,10 +43,8 @@ class Cam_sim():
 				#y_vector.append(float(cmd.y))
 				#title = './romi_data/x' + str(cmd.x) + '_y' + str(cmd.y) + '.jpeg'
 				#cv2.imwrite(title, image)
-			#print ('x len', len(np.asarray(x_vector)), 'x max ', np.max(np.asarray(x_vector)), ' x_min ',
-				   np.min(np.asarray(x_vector)))
-			#print ('y len', len(np.asarray(y_vector)), 'y max ', np.max(np.asarray(y_vector)), ' y_min ',
-				   np.min(np.asarray(y_vector)))
+			#print ('x len', len(np.asarray(x_vector)), 'x max ', np.max(np.asarray(x_vector)), ' x_min ',np.min(np.asarray(x_vector)))
+			#print ('y len', len(np.asarray(y_vector)), 'y max ', np.max(np.asarray(y_vector)), ' y_min ',np.min(np.asarray(y_vector)))
 			#horiz = np.max(np.asarray(x_vector)) / 5 + 1
 			#vert = np.max(np.asarray(y_vector)) / 5 + 1
 			#print ('hori ', horiz, ' vert ', vert, ' prod ', (horiz * vert))
