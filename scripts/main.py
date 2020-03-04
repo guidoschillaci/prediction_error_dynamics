@@ -292,6 +292,7 @@ class GoalBabbling():
 
 	def save_models(self, param):
 		#self.lock.acquire()
+		self.parameters.save()
 		self.models.save_models(param)
 		self.models.save_logs(self.parameters)
 
