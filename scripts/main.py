@@ -97,6 +97,7 @@ class GoalBabbling():
 
 		self.goal_image = np.zeros((1, param.get('image_size'), param.get('image_size'), param.get('image_channels')), np.float32)	
 
+
 		np.random.seed() # change the seed
 
 		self.prev_pos=self.get_starting_pos()
@@ -227,9 +228,13 @@ class GoalBabbling():
 			# fit models	
 			if (len(self.img) > param.get('batch_size')) and (len(self.img) == len(self.pos)):
 
+
 				observed_codes_batch = self.models.encoder.predict(np.asarray(self.img[-(param.get('batch_size')):]).reshape(param.get('batch_size'), param.get('image_size'), param.get('image_size'), param.get('image_channels'))  )
 				observed_pos_batch = self.pos[-(param.get('batch_size')):]
 
+				if param.get('update_goal_som'):
+					self.models.update_som(np.asarray(observed_codes_batch).reshape((param.get('batch_size'), param.get('code_size'))))
+				
 				# fit the model with the current batch of observations and the memory!
 				# create then temporary input and output tensors containing batch and memory
 

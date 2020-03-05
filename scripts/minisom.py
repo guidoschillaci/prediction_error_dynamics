@@ -193,9 +193,10 @@ class MiniSom(object):
             rand_i = self._random_generator.randint(len(data))
             self.update(data[rand_i], self.winner(data[rand_i]), iteration)
 
-    def train_batch(self, data, num_iteration):
+    def train_batch(self, data, num_iteration, reinit_T = True):
         """Trains using all the vectors in data sequentially"""
-        self._init_T(len(data)*num_iteration)
+        if reinit_T:
+            self._init_T(len(data)*num_iteration)
         iteration = 0
         while iteration < num_iteration:
             idx = iteration % (len(data)-1)

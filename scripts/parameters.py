@@ -22,7 +22,7 @@ class Parameters:
             'image_channels': 1,
             'code_size': 32, # dimensions of the latent space of convoltioanl autoencoder
             'goal_size': 3, # SOMs size. There will be goal_size*goal_size  goal. TODO: improve this
-
+            'update_goal_som': True,
 	   
             'normalise_with_zero_mean': False, 
             'load_data_reshape': True,

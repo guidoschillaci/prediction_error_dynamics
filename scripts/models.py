@@ -43,7 +43,7 @@ class Models:
         self.fwd_model = self.load_forward_code_model(self.parameters)
         self.inv_model = self.load_inverse_code_model(self.parameters)
         self.goal_som = self.load_som(self.parameters)
-
+        self.reduce_som_learning_rate() # by a factor of 1/10, if not otherwise specified
         # initialise memory (one per model - autoencoder is kept fixed for the moment)
         # how many elements to keep in memory?
         self.memory_size = self.parameters.get('memory_size')
@@ -286,6 +286,12 @@ class Models:
             som_file.close()
             print("SOM trained and saved!")
         return goal_som
+
+    def reduce_som_learning_rate(self, factor = 10.0):
+        self.goal_som._learning_rate = self.goal_som._learning_rate / factor
+
+    def update_som(self, data, iterations=2):
+        self.goal_som.train_batch(data, iterations, reinit_T=False)
 
     def save_logs(self, show=True):
         self.logger_fwd.save_log()
