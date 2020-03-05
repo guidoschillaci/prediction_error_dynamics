@@ -234,7 +234,7 @@ class GoalBabbling():
 
 				if param.get('update_goal_som'):
 					self.models.update_som(np.asarray(observed_codes_batch).reshape((param.get('batch_size'), param.get('code_size'))))
-				
+
 				# fit the model with the current batch of observations and the memory!
 				# create then temporary input and output tensors containing batch and memory
 
