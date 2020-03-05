@@ -5,12 +5,14 @@ import random
 import sys
 from sklearn.linear_model import LinearRegression
 from scipy.stats.stats import pearsonr
+from scipy.stats import linregress
 from scipy import interpolate
 from scipy.interpolate import UnivariateSpline
 import matplotlib.pyplot as plt
 import os
 import utils
 
+class Stats
 
 class IntrinsicMotivation():
 
@@ -51,10 +53,12 @@ class IntrinsicMotivation():
 		# slopes of the movement amplitudes over time
 		self.slopes_movements = []
 
-		self.pearson_corr_pe_raw = []
-		self.pearson_corr_pe_slopes = []
-		self.pearson_corr_mse_raw = []
-		self.pearson_corr_mse_slopes = []
+		self.linregr_pe_vs_raw_mov = []
+		self.linregr_pe_vs_slopes_mov = []
+		self.linregr_mse_vs_raw_mov = []
+		self.linregr_mse_vs_slopes_mov = []
+
+
 
 		#self.learning_progress= np.resize(self.learning_progress, (self.param.get('goal_size')*self.param.get('goal_size') ,))
 		#for i in range (0, self.param.get('goal_size')*self.param.get('goal_size')):
@@ -198,16 +202,16 @@ class IntrinsicMotivation():
 		self.interpolated_slopes_mse_buffer= f(x_correct)
 
 		#self.pearson_corr_mse_raw = pearsonr(np.asarray(self.slopes_mse_buffer), np.asarray(self.movements_amplitude))
-		self.pearson_corr_mse_raw = pearsonr(np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.movements_amplitude))
-		print ('Pearson correlation btw MSE and raw movements', self.pearson_corr_mse_raw)
+		self.linregr_mse_vs_raw_mov = linregress(np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.movements_amplitude))
+		print ('Pearson correlation btw MSE and raw movements', self.linregr_mse_vs_raw_mov)
 
 		#self.pearson_corr_mse_slopes = pearsonr(np.asarray(self.slopes_mse_buffer), np.asarray(self.slopes_movements))
-		self.pearson_corr_mse_slopes = pearsonr(np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.slopes_movements))
+		self.linregr_mse_vs_slopes_mov = linregress(np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.slopes_movements))
 		#self.pearson_corr = pearsonr(slope_array[positive_indexes], movement_array[positive_indexes])
-		print ('Pearson correlation btw MSE and slope of movements', self.pearson_corr_mse_slopes)
+		print ('Pearson correlation btw MSE and slope of movements', self.linregr_mse_vs_slopes_mov)
 
 		#self.plot_slopes_of_goals(self.param)
-		return self.pearson_corr_mse_raw, self.pearson_corr_mse_slopes
+		return self.linregr_mse_vs_raw_mov, self.linregr_mse_vs_slopes_mov
 
 	def get_linear_correlation_btw_amplitude_and_pe_dynamics(self):
 		# first make a vector storing the pe_dynamics of the current goals over time
@@ -223,16 +227,16 @@ class IntrinsicMotivation():
 		#movement_array= np.asarray(self.movements_amplitude)
 		#self.positive_indexes = np.argwhere(slope_array>0)
 		#print ('corre shape np.asarray(self.slopes_of_goals)', np.asarray(self.slopes_of_goals).shape, ' mov ',np.asarray(self.movements_amplitude).shape)
-		self.pearson_corr_pe_raw = pearsonr(np.asarray(self.slopes_of_goals), np.asarray(self.movements_amplitude))
+		self.linregr_pe_vs_raw_mov = linregress(np.asarray(self.slopes_of_goals), np.asarray(self.movements_amplitude))
 		#self.pearson_corr = pearsonr(slope_array[positive_indexes], movement_array[positive_indexes])
-		print ('Pearson correlation btw current goals slope and raw movements', self.pearson_corr_pe_raw)
+		print ('Pearson correlation btw current goals slope and raw movements', self.linregr_pe_vs_raw_mov)
 
-		self.pearson_corr_pe_slopes = pearsonr(np.asarray(self.slopes_of_goals), np.asarray(self.slopes_movements))
+		self.linregr_pe_vs_slopes_mov = linregress(np.asarray(self.slopes_of_goals), np.asarray(self.slopes_movements))
 		#self.pearson_corr = pearsonr(slope_array[positive_indexes], movement_array[positive_indexes])
-		print ('Pearson correlation btw current goals slope and slope of movements', self.pearson_corr_pe_slopes)
+		print ('Pearson correlation btw current goals slope and slope of movements', self.linregr_pe_vs_slopes_mov)
 
 
-		return self.pearson_corr_pe_raw, self.pearson_corr_pe_slopes
+		return self.linregr_pe_vs_raw_mov, self.linregr_pe_vs_slopes_mov
 
 
 	def save_im(self):
@@ -242,10 +246,10 @@ class IntrinsicMotivation():
 		np.save(os.path.join(self.param.get('results_directory'), 'im_slopes_of_goals'), self.slopes_of_goals)
 		np.save(os.path.join(self.param.get('results_directory'), 'im_pe_max_buffer_size_history'), self.pe_max_buffer_size_history)
 		np.save(os.path.join(self.param.get('results_directory'), 'im_goal_id_history'), self.goal_id_history)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_pe_raw'), self.pearson_corr_pe_raw)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_pe_slopes'), self.pearson_corr_pe_slopes)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_mse_raw'), self.pearson_corr_mse_raw)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_mse_slopes'), self.pearson_corr_mse_slopes)
+		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_pe_raw'), self.linregr_pe_vs_raw_mov)
+		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_pe_slopes'), self.linregr_pe_vs_slopes_mov)
+		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_mse_raw'), self.linregr_mse_vs_raw_mov)
+		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_mse_slopes'), self.linregr_mse_vs_slopes_mov)
 
 	def plot_slopes(self, param, save=True):
 		fig = plt.figure(figsize=(10, 10))
@@ -275,32 +279,43 @@ class IntrinsicMotivation():
 	def plot_correlations(self, save=True):
 		fig = plt.figure(figsize=(10, 20))
 
-
 		ax1 = plt.subplot(4, 1, 1)
 		plt.scatter(  np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.movements_amplitude), s=1)
 		plt.title('MSE dynamics VS movement distances')
-		string = 'r='+str(self.pearson_corr_mse_raw[0] )+ '\np<'+str(self.pearson_corr_mse_raw[1])
-		plt.text(0.75, 0.75, string, transform = ax1.transAxes)
+		string = 'Pearson\'s r=' + str(self.linregr_mse_vs_raw_mov.r_value) + '\np<' + str(self.linregr_mse_vs_raw_mov.p_value)
+		plt.text(0.75, 0.75, string, transform=ax1.transAxes)
+		x_vals = np.array(ax1.get_xlim())
+		y_vals = self.linregr_mse_vs_raw_mov.intercept + self.linregr_mse_vs_raw_mov.slope * x_vals
+		plt.plot(x_vals, y_vals, '--')
 
 
 		ax1 = plt.subplot(4, 1, 2)
 		plt.scatter(  np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.slopes_movements), s=1)
 		plt.title('MSE dynamics VS movement distances dynamics')
-		string = 'r='+str(self.pearson_corr_mse_slopes[0] )+ '\np<'+ str(self.pearson_corr_mse_slopes[1])
+		string = 'Pearson\'s r=' + str(self.linregr_mse_vs_slopes_mov.r_value) + '\np<' + str(self.linregr_mse_vs_slopes_mov.p_value)
 		plt.text(0.75, 0.75, string, transform = ax1.transAxes)
+		x_vals = np.array(ax1.get_xlim())
+		y_vals = self.linregr_mse_vs_slopes_mov.intercept + self.linregr_mse_vs_slopes_mov.slope * x_vals
+		plt.plot(x_vals, y_vals, '--')
+
 
 		ax1 = plt.subplot(4, 1, 3)
 		plt.scatter(  np.asarray(self.slopes_of_goals), np.asarray(self.movements_amplitude), s=1)
 		plt.title('Current Goal PE dynamics VS movement distances')
-		string = 'r='+ str(self.pearson_corr_pe_raw[0]) + '\np<'+ str(self.pearson_corr_pe_raw[1])
+		string = 'Pearson\'s r=' + str(self.linregr_pe_vs_raw_mov.r_value) + '\np<' + str(self.linregr_pe_vs_raw_mov.p_value)
 		plt.text(0.75, 0.75, string, transform = ax1.transAxes)
-
+		x_vals = np.array(ax1.get_xlim())
+		y_vals = self.linregr_pe_vs_raw_mov.intercept + self.linregr_pe_vs_raw_mov.slope * x_vals
+		plt.plot(x_vals, y_vals, '--')
 
 		ax1 = plt.subplot(4, 1, 4)
 		plt.scatter(  np.asarray(self.slopes_of_goals), np.asarray(self.slopes_movements), s=1)
 		plt.title('Current Goal PE dynamics VS movement distances dynamics')
-		string = 'r='+ str(self.pearson_corr_pe_slopes[0]) + '\np<'+ str(self.pearson_corr_pe_slopes[1])
+		string = 'Pearson\'s r=' + str(self.linregr_pe_vs_slopes_mov.r_value) + '\np<' + str(self.linregr_pe_vs_slopes_mov.p_value)
 		plt.text(0.75, 0.75, string, transform = ax1.transAxes)
+		x_vals = np.array(ax1.get_xlim())
+		y_vals = self.linregr_pe_vs_slopes_mov.intercept + self.linregr_pe_vs_slopes_mov.slope * x_vals
+		plt.plot(x_vals, y_vals, '--')
 
 		if save:
 			plt.savefig(self.param.get('results_directory')+'/plots/im_correlations.jpg')
