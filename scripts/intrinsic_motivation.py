@@ -68,7 +68,7 @@ class IntrinsicMotivation():
 	def select_goal(self):
 		ran = random.random()
 		goal_idx = 0
-		if ran < self.param.get('im_random_goal_prob') or len(self.slopes_pe_buffer)==0:
+		if ran < self.param.get('im_random_goal_prob') or len(self.goal_id_history)==0:
 			# select random goal
 			goal_idx = random.randint(0, self.param.get('goal_size') * self.param.get('goal_size') - 1)
 			print ('Intrinsic motivation: Selected random goal. Id: ', goal_idx)
@@ -173,8 +173,14 @@ class IntrinsicMotivation():
 	# get the index of the goal associated with the lowest slope in the prediction error dynamics
 	def get_best_goal_index(self):
 		if len(self.goal_id_history)>0:
-			if len(self.pe_buffer[ self.goal_id_history[-1] ] ) < self.param.get('im_min_pe_buffer_size'):
+			if (len(self.pe_buffer[self.goal_id_history[-1]]) < (self.param.get('im_min_pe_buffer_size')  )) and not self.param.get('im_fixed_pe_buffer_size'):
 				return self.goal_id_history[-1]
+			if (len(self.pe_buffer[self.goal_id_history[-1]]) < (self.param.get('im_max_pe_buffer_size')-1)) and not self.param.get('im_fixed_pe_buffer_size'):
+				return self.goal_id_history[-1]
+			curr_slopes = self.slopes_pe_buffer[-1]
+			if curr_slopes[self.goal_id_history[-1]] < 0:
+				if np.abs(curr_slopes[self.goal_id_history[-1]]) > self.param.get('im_epsilon_error_dynamics'):
+					return self.goal_id_history[-1]
 
 		return np.argmin(self.slopes_pe_buffer[-1])
 		#return np.argmax(self.slopes_pe_buffer[-1])
