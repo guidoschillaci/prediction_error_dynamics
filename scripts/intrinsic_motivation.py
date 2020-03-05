@@ -172,6 +172,10 @@ class IntrinsicMotivation():
 
 	# get the index of the goal associated with the lowest slope in the prediction error dynamics
 	def get_best_goal_index(self):
+		if len(self.goal_id_history)>0:
+			if len(self.pe_buffer[ self.goal_id_history[-1] ] ) < self.param.get('im_min_pe_buffer_size'):
+				return self.goal_id_history[-1]
+
 		return np.argmin(self.slopes_pe_buffer[-1])
 		#return np.argmax(self.slopes_pe_buffer[-1])
 
