@@ -174,12 +174,15 @@ class IntrinsicMotivation():
 	def get_best_goal_index(self):
 		if len(self.goal_id_history)>0:
 			if (len(self.pe_buffer[self.goal_id_history[-1]]) < (self.param.get('im_min_pe_buffer_size')  )) and not self.param.get('im_fixed_pe_buffer_size'):
+				print('here')
 				return self.goal_id_history[-1]
 			if (len(self.pe_buffer[self.goal_id_history[-1]]) < (self.param.get('im_max_pe_buffer_size') )) and not self.param.get('im_fixed_pe_buffer_size'):
+				print('here here')
 				return self.goal_id_history[-1]
 			curr_slopes = self.slopes_pe_buffer[-1]
 			if curr_slopes[self.goal_id_history[-1]] < 0:
 				if np.abs(curr_slopes[self.goal_id_history[-1]]) > self.param.get('im_epsilon_error_dynamics'):
+					print('here here here')
 					return self.goal_id_history[-1]
 
 		return np.argmin(self.slopes_pe_buffer[-1])
