@@ -175,7 +175,7 @@ class IntrinsicMotivation():
 		if len(self.goal_id_history)>0:
 			if (len(self.pe_buffer[self.goal_id_history[-1]]) < (self.param.get('im_min_pe_buffer_size')  )) and not self.param.get('im_fixed_pe_buffer_size'):
 				return self.goal_id_history[-1]
-			if (len(self.pe_buffer[self.goal_id_history[-1]]) < (self.param.get('im_max_pe_buffer_size')-1)) and not self.param.get('im_fixed_pe_buffer_size'):
+			if (len(self.pe_buffer[self.goal_id_history[-1]]) < (self.param.get('im_max_pe_buffer_size') )) and not self.param.get('im_fixed_pe_buffer_size'):
 				return self.goal_id_history[-1]
 			curr_slopes = self.slopes_pe_buffer[-1]
 			if curr_slopes[self.goal_id_history[-1]] < 0:
