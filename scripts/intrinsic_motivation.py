@@ -5,14 +5,13 @@ import random
 import sys
 from sklearn.linear_model import LinearRegression
 from scipy.stats.stats import pearsonr
-from scipy.stats.stats import linregress
+from scipy.stats import linregress
 from scipy import interpolate
 from scipy.interpolate import UnivariateSpline
 import matplotlib.pyplot as plt
 import os
 import utils
 
-class Stats
 
 class IntrinsicMotivation():
 
