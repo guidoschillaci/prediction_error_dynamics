@@ -186,6 +186,12 @@ class IntrinsicMotivation():
 				if np.abs(curr_slopes[self.goal_id_history[-1]]) > self.param.get('im_epsilon_error_dynamics'):
 					print('here here here')
 					return self.goal_id_history[-1]
+				else:
+					indexes = np.argsort(self.slopes_pe_buffer[-1])
+					if indexes[0] == self.goal_id_history[-1]:
+						return indexes[1]
+					else:
+						return indexes[0]
 
 		return np.argmin(self.slopes_pe_buffer[-1])
 		#return np.argmax(self.slopes_pe_buffer[-1])
