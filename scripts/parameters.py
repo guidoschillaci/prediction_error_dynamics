@@ -23,7 +23,8 @@ class Parameters:
             'code_size': 32, # dimensions of the latent space of convoltioanl autoencoder
             'goal_size': 3, # SOMs size. There will be goal_size*goal_size  goal. TODO: improve this
             'update_goal_som': True,
-	   
+            'reduce_som_learning_rate_factor':100,
+            
             'normalise_with_zero_mean': False, 
             'load_data_reshape': True,
             'batch_size':16, # for the fwd/inv models update
