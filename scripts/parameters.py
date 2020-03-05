@@ -22,7 +22,7 @@ class Parameters:
             'image_channels': 1,
             'code_size': 32, # dimensions of the latent space of convoltioanl autoencoder
             'goal_size': 3, # SOMs size. There will be goal_size*goal_size  goal. TODO: improve this
-            'update_goal_som': True,
+            'update_goal_som': False,
             'reduce_som_learning_rate_factor':1600,
 
             'normalise_with_zero_mean': False, 
@@ -71,7 +71,7 @@ class Parameters:
             'im_max_pe_buffer_size': 100, # max size of the prediction error buffer
             'im_fixed_pe_buffer_size': False, # make the size of the prediction error buffer fixed or dependent on the dinamics of the FWD MSE
             'im_pe_buffer_size_update_frequency': 10, # every how many iteration to wait for updating the pe_buffer_size according to the slope of the higher level?
-            'im_random_goal_prob': 0.0, # probability of selecting a random goal instead of the best one
+            'im_random_goal_prob': 0.01, # probability of selecting a random goal instead of the best one
             'im_epsilon_error_dynamics': 0.05, # switch goal when error slope is smaller than this value
 
             'loss': 'mean_squared_error',
