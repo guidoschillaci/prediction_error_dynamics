@@ -56,7 +56,7 @@ class Parameters:
             'plot_exploration_iter': 50,
 
             'random_cmd_flag': False,
-            'random_cmd_rate': 0.1,
+            'random_cmd_rate': 0.0,
 
 
             'im_competence_measure': 'euclidean',

@@ -226,6 +226,8 @@ class IntrinsicMotivation():
 			#print ('curr slope ', curr_slopes[self.goal_id_history[-1]] )
 			#print ('curr goal ', self.goal_id_history[-1])
 			if curr_slopes[self.goal_id_history[-1]] < 0:
+				return self.goal_id_history[-1]
+				'''
 				if np.abs(curr_slopes[self.goal_id_history[-1]]) > self.param.get('im_epsilon_error_dynamics'):
 					#print('here here here')
 					return self.goal_id_history[-1]
@@ -239,6 +241,7 @@ class IntrinsicMotivation():
 						return indexes[1]
 					else:
 						return indexes[0]
+				'''
 
 		return random.randint(0, self.param.get('goal_size') * self.param.get('goal_size') - 1)
 		#return np.argmin(self.slopes_pe_buffer[-1])
