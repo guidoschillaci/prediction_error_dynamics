@@ -246,6 +246,8 @@ class IntrinsicMotivation():
 
 	# get the standard deviation of the exploration noise, which varies according to the PE dynamics
 	def get_std_dev_exploration_noise(self):
+		if len(self.std_dev_exploration_noise) == 0:
+			return self.param.get('im_max_std_exploration_noise')
 		return self.std_dev_exploration_noise[-1]
 
 
