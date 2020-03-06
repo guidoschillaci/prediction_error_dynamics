@@ -73,6 +73,7 @@ class Parameters:
             'im_pe_buffer_size_update_frequency': 10, # every how many iteration to wait for updating the pe_buffer_size according to the slope of the higher level?
             'im_random_goal_prob': 0.01, # probability of selecting a random goal instead of the best one
             'im_epsilon_error_dynamics': 0.05, # switch goal when error slope is smaller than this value
+            'im_do_not_regress_on_first_x_samples': 10,
 
             'loss': 'mean_squared_error',
             'optimizer': 'adam',
