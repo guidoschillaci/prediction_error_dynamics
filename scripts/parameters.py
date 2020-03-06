@@ -27,7 +27,7 @@ class Parameters:
 
             'normalise_with_zero_mean': False, 
             'load_data_reshape': True,
-            'batch_size':2, # for the fwd/inv models update
+            'batch_size':32, # for the fwd/inv models update
             'epochs': 1, # online fwd/inv models
             'goal_selection_mode':'som',
             'exp_iteration': 0,
