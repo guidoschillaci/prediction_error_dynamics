@@ -150,11 +150,11 @@ class IntrinsicMotivation():
 
 				# update stddev
 				if model.coef_[0] > 0:
-					self.std_dev_exploration_noise[-1] = self.std_dev_exploration_noise[-1] + self.param.get('im_std_exploration_noise_step')
+					self.std_dev_exploration_noise.append(self.std_dev_exploration_noise[-1] + self.param.get('im_std_exploration_noise_step'))
 					if self.std_dev_exploration_noise[-1] > self.param.get('im_max_std_exploration_noise'):
 						self.std_dev_exploration_noise[-1] = self.param.get('im_max_std_exploration_noise')
 				else:
-					self.std_dev_exploration_noise[-1] = self.std_dev_exploration_noise[-1] - self.param.get('im_std_exploration_noise_step')
+					self.std_dev_exploration_noise.append(self.std_dev_exploration_noise[-1] - self.param.get('im_std_exploration_noise_step'))
 					if self.std_dev_exploration_noise[-1] < self.param.get('im_min_std_exploration_noise'):
 						self.std_dev_exploration_noise[-1] = self.param.get('im_min_std_exploration_noise')
 
