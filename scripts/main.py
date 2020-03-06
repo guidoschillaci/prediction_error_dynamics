@@ -171,8 +171,8 @@ class GoalBabbling():
 					motor_pred = self.models.inv_model.predict(self.goal_code)
 				#image_pred = self.models.decoder.predict(self.models.fwd_model.predict(np.asarray(motor_pred)))
 
-				noise_x = np.random.normal(0,0.02)
-				noise_y = np.random.normal(0,0.02)
+				noise_x = np.random.normal(0, self.intrinsic_motivation.get_std_dev_exploration_noise())
+				noise_y = np.random.normal(0, self.intrinsic_motivation.get_std_dev_exploration_noise())
 				print ('prediction ', motor_pred)
 				p.x = utils.clamp_x(utils.unnormalise_x(motor_pred[0][0]+noise_x, param))
 				p.y = utils.clamp_y(utils.unnormalise_y(motor_pred[0][1]+noise_y, param))
@@ -186,9 +186,9 @@ class GoalBabbling():
 			self.create_simulated_data(self.prev_pos, p, param)
 			# store the amplitude of this movement
 			if not self.random_cmd_flag and (self.current_goal_idx == self.prev_goal_idx):
-				self.intrinsic_motivation.log_last_movement(p, self.prev_pos)
-			print ('current_p', p.x, ' ' , p.y)
-			print ('prev_p', self.prev_pos.x, ' ', self.prev_pos.y)	
+				self.intrinsic_motivation.log_last_movement(current_pos=p, previous_pos=self.prev_pos)
+			#print ('current_p', p.x, ' ' , p.y)
+			#print ('prev_p', self.prev_pos.x, ' ', self.prev_pos.y)
 			# update the variables
 			self.prev_pos.x=p.x
 			self.prev_pos.y=p.y

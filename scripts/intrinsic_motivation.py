@@ -52,10 +52,27 @@ class IntrinsicMotivation():
 		# slopes of the movement amplitudes over time
 		self.slopes_movements = []
 
+		# standard deviation of the exploration noise, which varies according to the MSE dynamics
+		self.std_dev_exploration_noise = []
+
+		## keep track of the distnce between motor position and predicted motor position of goal
+		#self.motor_distance_to_goal = []
+		## keep track of the distnce between motor position and predicted motor position of goal, in a buffer for calculating the slopes
+		#self.motor_distance_to_goal_buffer = []
+		## slopes of the  distnce between motor position and predicted motor position of goal
+		#self.slopes_motor_distance_to_goa = []
+
+		# correlatiosn betwee PE or MSE AND movements
 		self.linregr_pe_vs_raw_mov = []
 		self.linregr_pe_vs_slopes_mov = []
 		self.linregr_mse_vs_raw_mov = []
 		self.linregr_mse_vs_slopes_mov = []
+
+		# correlations between PE or MSE and motor distances to goals
+		#self.linregr_pe_vs_raw_motdist = []
+		#self.linregr_pe_vs_slopes_motdist = []
+		#self.linregr_mse_vs_raw_motdist = []
+		#self.linregr_mse_vs_slopes_motdist = []
 
 
 
@@ -117,6 +134,10 @@ class IntrinsicMotivation():
 		if _append:
 			if len(self.mse_buffer) < 2 : # not enough prediction error to calculate the regression
 				self.slopes_mse_buffer.append(0)
+				if len(self.std_dev_exploration_noise) == 0:
+					self.std_dev_exploration_noise.append(self.param.get('im_max_std_exploration_noise'))
+				else:
+					self.std_dev_exploration_noise.append(self.std_dev_exploration_noise[-1])
 			else:
 				while len(self.mse_buffer) > self.param.get('im_mse_buffer_size'):
 					self.mse_buffer.pop(0) #remove first element
@@ -126,6 +147,17 @@ class IntrinsicMotivation():
 				print ('calculating regression on mse')
 				model = LinearRegression().fit(regr_x, np.asarray(self.mse_buffer))
 				self.slopes_mse_buffer.append(model.coef_[0]) # add the slope of the regression
+
+				# update stddev
+				if model.coef_[0] > 0:
+					self.std_dev_exploration_noise[-1] = self.std_dev_exploration_noise[-1] + self.param.get('im_std_exploration_noise_step')
+					if self.std_dev_exploration_noise[-1] > self.param.get('im_max_std_exploration_noise'):
+						self.std_dev_exploration_noise[-1] = self.param.get('im_max_std_exploration_noise')
+				else:
+					self.std_dev_exploration_noise[-1] = self.std_dev_exploration_noise[-1] - self.param.get('im_std_exploration_noise_step')
+					if self.std_dev_exploration_noise[-1] < self.param.get('im_min_std_exploration_noise'):
+						self.std_dev_exploration_noise[-1] = self.param.get('im_min_std_exploration_noise')
+
 			self.update_pe_buffer_size()
 
 	# update the error dynamics for each gaol
@@ -158,7 +190,7 @@ class IntrinsicMotivation():
 				if len(self.pe_buffer[i])>0:
 					self.pe_buffer[i].pop(0) #remove first element
 
-			if len(self.pe_buffer[i]) < 2 : # not enough prediction error to calculate the regression
+			if len(self.pe_buffer[i]) < self.param.get('im_do_not_regress_on_first_x_samples') : # not enough prediction error to calculate the regression
 				current_slopes_err_dynamics.append(0)
 			else:
 				# get the slopes of the prediction error dynamics
@@ -181,6 +213,9 @@ class IntrinsicMotivation():
 	# get the index of the goal associated with the lowest slope in the prediction error dynamics
 	def get_best_goal_index(self):
 		if len(self.goal_id_history)>0:
+			if len(self.pe_buffer[self.goal_id_history[-1]]) < self.param.get('im_do_not_regress_on_first_x_samples'):
+				return self.goal_id_history[-1]
+
 			if (len(self.pe_buffer[self.goal_id_history[-1]]) < (self.param.get('im_min_pe_buffer_size')  )) and not self.param.get('im_fixed_pe_buffer_size'):
 			#	print('here')
 				return self.goal_id_history[-1]
@@ -195,10 +230,10 @@ class IntrinsicMotivation():
 					#print('here here here')
 					return self.goal_id_history[-1]
 				else:
-					return np.argmin(self.slopes_pe_buffer[-1])
-					#idx = np.argmin(self.slopes_pe_buffer[-1])
-					#if idx == self.goal_id_history[-1]:
-					#	return random.randint(0, self.param.get('goal_size') * self.param.get('goal_size') - 1)
+					#return np.argmin(self.slopes_pe_buffer[-1])
+					idx = np.argmin(self.slopes_pe_buffer[-1])
+					if idx == self.goal_id_history[-1]:
+						return random.randint(0, self.param.get('goal_size') * self.param.get('goal_size') - 1)
 					#indexes = np.argsort(self.slopes_pe_buffer[-1])
 					#if indexes[0] == self.goal_id_history[-1]:
 					#	return indexes[1]
@@ -209,8 +244,13 @@ class IntrinsicMotivation():
 		#return np.argmin(self.slopes_pe_buffer[-1])
 		#return np.argmax(self.slopes_pe_buffer[-1])
 
-	def log_last_movement(self, pos_a, pos_b):
-		movement = utils.distance(pos_a,pos_b)
+	# get the standard deviation of the exploration noise, which varies according to the PE dynamics
+	def get_std_dev_exploration_noise(self):
+		return self.std_dev_exploration_noise[-1]
+
+
+	def log_last_movement(self, current_pos,  previous_pos):
+		movement = utils.distance(current_pos, previous_pos)
 		self.movements_amplitude.append(movement) # this will log all the movements
 		self.movements_buffer.append(movement) # this is a moving buffer
 		if len(self.movements_buffer) < 2:  # not enough prediction error to calculate the regression
@@ -224,6 +264,12 @@ class IntrinsicMotivation():
 			print ('calculating regression on movement buffer')
 			model = LinearRegression().fit(regr_x, np.asarray(self.movements_buffer))
 			self.slopes_movements.append(model.coef_[0])  # add the slope of the regression
+
+		# log motor distance to goals
+		#goal_pos = utils.Position()
+		#goal_pos.z = current_pos.z
+		#motor_dist = utils.distance(current_pos)
+
 
 	def get_linear_correlation_btw_amplitude_and_mse_dynamics(self):
 		# mse_buffer is updated at a slower rate than movements recording. Interpolate to match the sizes
@@ -283,6 +329,7 @@ class IntrinsicMotivation():
 		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_pe_slopes'), self.linregr_pe_vs_slopes_mov)
 		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_mse_raw'), self.linregr_mse_vs_raw_mov)
 		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_mse_slopes'), self.linregr_mse_vs_slopes_mov)
+		np.save(os.path.join(self.param.get('results_directory'), 'im_std_dev_exploration_noise'), self.std_dev_exploration_noise)
 
 	def plot_slopes(self, param, save=True):
 		fig = plt.figure(figsize=(10, 10))
@@ -389,32 +436,38 @@ class IntrinsicMotivation():
 	def plot_slopes_of_goals(self, save=True):
 		fig = plt.figure(figsize=(10, 20))
 		num_goals= self.param.get('goal_size')*self.param.get('goal_size')
-		ax1 = plt.subplot(5, 1, 1)
+		ax1 = plt.subplot(6, 1, 1)
 		plt.plot(self.slopes_of_goals)
-		plt.ylabel('Slope PE_dyn select. goal')
+		plt.ylabel('Slope PE selected goal')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
 		#print ('movement amplitude ', self.movements_amplitude)
-		ax1 = plt.subplot(5, 1, 2)
+		ax1 = plt.subplot(6, 1, 2)
 		plt.plot(self.movements_amplitude)
-		plt.ylabel('Movement ampl.')
+		plt.ylabel('Movement ampl')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
-		ax1 = plt.subplot(5, 1, 3)
+		ax1 = plt.subplot(6, 1, 3)
 		plt.plot(self.slopes_movements)
-		plt.ylabel('Slopes of mov.')
+		plt.ylabel('Slopes of mov')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
-		ax1 = plt.subplot(5, 1, 4)
+		ax1 = plt.subplot(6, 1, 4)
+		plt.plot(self.std_dev_exploration_noise)
+		plt.ylabel('stddev expl noise')
+		plt.xlabel('time')
+		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
+
+		ax1 = plt.subplot(6, 1, 5)
 		plt.plot(self.interpolated_slopes_mse_buffer)
 		plt.ylabel('Int.Slopes MSE buff')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
-		ax1 = plt.subplot(5, 1, 5)
+		ax1 = plt.subplot(6, 1, 6)
 		plt.plot(self.pe_max_buffer_size_history)
 		plt.ylabel('Max PE buffer size')
 		plt.xlabel('time')

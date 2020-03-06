@@ -27,8 +27,8 @@ class Parameters:
 
             'normalise_with_zero_mean': False, 
             'load_data_reshape': True,
-            'batch_size':16, # for the fwd/inv models update
-            'epochs': 3, # online fwd/inv models
+            'batch_size':8, # for the fwd/inv models update
+            'epochs': 1, # online fwd/inv models
             'goal_selection_mode':'som',
             'exp_iteration': 0,
             'show_plots': False,
@@ -74,6 +74,10 @@ class Parameters:
             'im_random_goal_prob': 0.01, # probability of selecting a random goal instead of the best one
             'im_epsilon_error_dynamics': 0.05, # switch goal when error slope is smaller than this value
             'im_do_not_regress_on_first_x_samples': 10,
+
+            'im_min_std_exploration_noise': 0.01,
+            'im_max_std_exploration_noise': 0.2,
+            'im_std_exploration_noise_step': 0.01,
 
             'loss': 'mean_squared_error',
             'optimizer': 'adam',
