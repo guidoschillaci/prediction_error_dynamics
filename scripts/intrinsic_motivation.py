@@ -180,20 +180,24 @@ class IntrinsicMotivation():
 			#	print('here here')
 			#	return self.goal_id_history[-1]
 			curr_slopes = self.slopes_pe_buffer[-1]
-			print ('curr slope ', curr_slopes[self.goal_id_history[-1]] )
-			print ('curr goal ', self.goal_id_history[-1])
+			#print ('curr slope ', curr_slopes[self.goal_id_history[-1]] )
+			#print ('curr goal ', self.goal_id_history[-1])
 			if curr_slopes[self.goal_id_history[-1]] < 0:
 				if np.abs(curr_slopes[self.goal_id_history[-1]]) > self.param.get('im_epsilon_error_dynamics'):
-					print('here here here')
+					#print('here here here')
 					return self.goal_id_history[-1]
 				else:
-					indexes = np.argsort(self.slopes_pe_buffer[-1])
-					if indexes[0] == self.goal_id_history[-1]:
-						return indexes[1]
-					else:
-						return indexes[0]
+					idx = np.argmin(self.slopes_pe_buffer[-1])
+					if idx == self.goal_id_history[-1]:
+						return random.randint(0, self.param.get('goal_size') * self.param.get('goal_size') - 1)
+					#indexes = np.argsort(self.slopes_pe_buffer[-1])
+					#if indexes[0] == self.goal_id_history[-1]:
+					#	return indexes[1]
+					#else:
+					#	return indexes[0]
 
-		return np.argmin(self.slopes_pe_buffer[-1])
+		return random.randint(0, self.param.get('goal_size') * self.param.get('goal_size') - 1)
+		#return np.argmin(self.slopes_pe_buffer[-1])
 		#return np.argmax(self.slopes_pe_buffer[-1])
 
 	def log_last_movement(self, pos_a, pos_b):
