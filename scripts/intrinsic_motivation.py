@@ -139,12 +139,14 @@ class IntrinsicMotivation():
 		
 		# append the current predction error to the current goal
 		self.pe_buffer[goal_id].append(prediction_error)
+		'''
 		for i in range(self.param.get('goal_size')*self.param.get('goal_size')):
 			if i != goal_id:
 				if len(self.pe_buffer[i])==0:
 					self.pe_buffer[i].append(0)
 				else:
 					self.pe_buffer[i].append(self.pe_buffer[i][-1])
+		'''
 
 		# for each goal
 		# - check that all the buffers are within the max buffer size
