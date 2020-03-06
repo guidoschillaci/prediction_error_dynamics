@@ -68,6 +68,8 @@ class IntrinsicMotivation():
 		self.linregr_mse_vs_raw_mov = []
 		self.linregr_mse_vs_slopes_mov = []
 
+		self.iterations_on_same_goal = 0
+
 		# correlations between PE or MSE and motor distances to goals
 		#self.linregr_pe_vs_raw_motdist = []
 		#self.linregr_pe_vs_slopes_motdist = []
@@ -213,11 +215,17 @@ class IntrinsicMotivation():
 	# get the index of the goal associated with the lowest slope in the prediction error dynamics
 	def get_best_goal_index(self):
 		if len(self.goal_id_history)>0:
+			if self.iterations_on_same_goal< self.param.get('im_min_iterations_on_same_goal'):
+				self.iterations_on_same_goal = self.iterations_on_same_goal + 1
+				return self.goal_id_history[-1]
+
 			if len(self.pe_buffer[self.goal_id_history[-1]]) < self.param.get('im_do_not_regress_on_first_x_samples'):
+				self.iterations_on_same_goal = self.iterations_on_same_goal+1
 				return self.goal_id_history[-1]
 
 			if (len(self.pe_buffer[self.goal_id_history[-1]]) < (self.param.get('im_min_pe_buffer_size')  )) and not self.param.get('im_fixed_pe_buffer_size'):
 			#	print('here')
+				self.iterations_on_same_goal = self.iterations_on_same_goal + 1
 				return self.goal_id_history[-1]
 			#if (len(self.pe_buffer[self.goal_id_history[-1]]) < (self.param.get('im_max_pe_buffer_size') )) and not self.param.get('im_fixed_pe_buffer_size'):
 			#	print('here here')
@@ -226,6 +234,7 @@ class IntrinsicMotivation():
 			#print ('curr slope ', curr_slopes[self.goal_id_history[-1]] )
 			#print ('curr goal ', self.goal_id_history[-1])
 			if curr_slopes[self.goal_id_history[-1]] < 0:
+				self.iterations_on_same_goal = self.iterations_on_same_goal + 1
 				return self.goal_id_history[-1]
 				'''
 				if np.abs(curr_slopes[self.goal_id_history[-1]]) > self.param.get('im_epsilon_error_dynamics'):
@@ -243,8 +252,9 @@ class IntrinsicMotivation():
 						return indexes[0]
 				'''
 
-		return random.randint(0, self.param.get('goal_size') * self.param.get('goal_size') - 1)
-		#return np.argmin(self.slopes_pe_buffer[-1])
+		self.iterations_on_same_goal = 0
+		#return random.randint(0, self.param.get('goal_size') * self.param.get('goal_size') - 1)
+		return np.argmin(self.slopes_pe_buffer[-1])
 		#return np.argmax(self.slopes_pe_buffer[-1])
 
 	# get the standard deviation of the exploration noise, which varies according to the PE dynamics
