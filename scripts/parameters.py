@@ -15,8 +15,9 @@ class Parameters:
 
     def __init__(self):
         self.dictionary = {
+            #
             'directory': '',
-            'results_directory': '',
+            'results_directory': './results/',
             'image_size': 64,
             'image_resize':False, # resize images to specified image_size? only if you are not sure that input images are of the desired size
             'image_channels': 1,
@@ -27,7 +28,7 @@ class Parameters:
 
             'normalise_with_zero_mean': False, 
             'load_data_reshape': True,
-            'batch_size':32, # for the fwd/inv models update
+            'batch_size':16, # for the fwd/inv models update
             'epochs': 1, # online fwd/inv models
             'goal_selection_mode':'som',
             'exp_iteration': 0,
@@ -59,11 +60,11 @@ class Parameters:
             'random_cmd_rate': 0.1,
 
 
-            'im_competence_measure': 'euclidean',
-            'im_decay_factor': 0.9,
+            #'im_competence_measure': 'euclidean',
+            #'im_decay_factor': 0.9,
             # there is a hierarchical dynamics monitoring: over the mean squared error of the fwd model (higher level) and over each goal (lower)
             # the slope of the MSE buffer controls the size of the goal PE buffer (in case im_fixed_pe_buffer_size is False)
-            'im_mse_buffer_size': 5, # initial size of the mean squared error buffer (should be bigger than max PE_buffer_size
+            'im_mse_buffer_size': 10, # initial size of the mean squared error buffer (should be bigger than max PE_buffer_size
             'im_movements_buffer_size': 20, # buffer size of the movement amplitudeds
             # initial size of the mean squared error buffer (should be bigger than max PE_buffer_size
             'im_initial_pe_buffer_size': 25, # initial size of the prediction error buffer
@@ -86,10 +87,10 @@ class Parameters:
             'memory_update_probability': 0.001,
             'memory_update_strategy': MemUpdateStrategy.RANDOM.value,  # possible choices:  random, learning_progress
             #'batch_size': 32,
-            'batchs_to_update_online': 3,
-            'mse_test_dataset_fraction' : 20,  #   how many samples to use in the MSE calculations? dataset_size / this.
-            'mse_calculation_step': 4, # calculate MSE every X model fits
-            'experiment_repetition': -1,
+            #'batchs_to_update_online': 3,
+            #'mse_test_dataset_fraction' : 20,  #   how many samples to use in the MSE calculations? dataset_size / this.
+            #'mse_calculation_step': 4, # calculate MSE every X model fits
+            #'experiment_repetition': -1,
             'verbosity_level': 1
         }
 
