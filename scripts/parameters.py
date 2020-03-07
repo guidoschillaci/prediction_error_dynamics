@@ -87,7 +87,7 @@ class Parameters:
             'memory_update_probability': 0.001,
             'memory_update_strategy': MemUpdateStrategy.RANDOM.value,  # possible choices:  random, learning_progress
             #'batch_size': 32,
-            #'batchs_to_update_online': 3,
+            'batchs_to_update_online': 3,
             #'mse_test_dataset_fraction' : 20,  #   how many samples to use in the MSE calculations? dataset_size / this.
             #'mse_calculation_step': 4, # calculate MSE every X model fits
             #'experiment_repetition': -1,
