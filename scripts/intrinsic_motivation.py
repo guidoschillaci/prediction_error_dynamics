@@ -216,27 +216,15 @@ class IntrinsicMotivation():
 	def get_best_goal_index(self):
 		if len(self.goal_id_history)>0:
 
-
-			if len(self.pe_buffer[self.goal_id_history[-1]]) < self.param.get('im_do_not_regress_on_first_x_samples'):
+			if (len(self.pe_buffer[self.goal_id_history[-1]]) < self.param.get('im_do_not_regress_on_first_x_samples')) or ( (len(self.pe_buffer[self.goal_id_history[-1]]) < (self.param.get('im_min_pe_buffer_size')  )) and not self.param.get('im_fixed_pe_buffer_size') ):
 				self.iterations_on_same_goal = self.iterations_on_same_goal+1
 				return self.goal_id_history[-1]
 
-			if (len(self.pe_buffer[self.goal_id_history[-1]]) < (self.param.get('im_min_pe_buffer_size')  )) and not self.param.get('im_fixed_pe_buffer_size'):
 
-				self.iterations_on_same_goal = self.iterations_on_same_goal + 1
-				return self.goal_id_history[-1]
-			#if (len(self.pe_buffer[self.goal_id_history[-1]]) < (self.param.get('im_max_pe_buffer_size') )) and not self.param.get('im_fixed_pe_buffer_size'):
-			#	print('here here')
-			#	return self.goal_id_history[-1]
 			curr_slopes = self.slopes_pe_buffer[-1]
-			#print ('curr slope ', curr_slopes[self.goal_id_history[-1]] )
-			#print ('curr goal ', self.goal_id_history[-1])
 			if curr_slopes[self.goal_id_history[-1]] < 0:
-				#self.iterations_on_same_goal = self.iterations_on_same_goal + 1
-				#return self.goal_id_history[-1]
 
 				if np.abs(curr_slopes[self.goal_id_history[-1]]) > self.param.get('im_epsilon_error_dynamics'):
-					#print('here here here')
 					return self.goal_id_history[-1]
 				else:
 
@@ -245,19 +233,23 @@ class IntrinsicMotivation():
 						return self.goal_id_history[-1]
 					else:
 						self.iterations_on_same_goal = 0
-						#return np.argmin(self.slopes_pe_buffer[-1])
-						#idx = np.argmin(self.slopes_pe_buffer[-1])
-						#if idx == self.goal_id_history[-1]:
-						#return random.randint(0, self.param.get('goal_size') * self.param.get('goal_size') - 1)
 						indexes = np.argsort(self.slopes_pe_buffer[-1])
 						if indexes[0] == self.goal_id_history[-1]:
 							return indexes[1]
 						else:
 							return indexes[0]
-			else:
+			else: # positive dynamics
 				if self.iterations_on_same_goal < self.param.get('im_min_iterations_on_same_goal'):
 					self.iterations_on_same_goal = self.iterations_on_same_goal + 1
 					return self.goal_id_history[-1]
+
+				self.iterations_on_same_goal = 0
+				indexes = np.argsort(self.slopes_pe_buffer[-1])
+				if indexes[0] == self.goal_id_history[-1]:
+					return indexes[1]
+				else:
+					return indexes[0]
+
 
 		self.iterations_on_same_goal = 0
 		#return random.randint(0, self.param.get('goal_size') * self.param.get('goal_size') - 1)
