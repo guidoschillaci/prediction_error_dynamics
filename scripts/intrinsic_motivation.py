@@ -186,7 +186,7 @@ class IntrinsicMotivation():
 			return self.get_random_goal()
 
 		# what is the index of the last selected goal?
-		last_goal_idx = self.history_selected_goals[-1]
+		last_goal_idx = int(self.history_selected_goals[-1])
 
 		#if (len(self.buffer_pe_on_goal[last_goal_idx]) < self.param.get('im_size_buffer_pe_minimum_nr_of_sample_for_regression')) or ((len(self.buffer_pe_on_goal[last_goal_idx]) < (self.param.get('im_size_buffer_pe_min'))) and not self.param.get('im_size_buffer_pe_fixed')):
 		#	self.iterations_on_same_goal = self.iterations_on_same_goal+1
@@ -207,7 +207,7 @@ class IntrinsicMotivation():
 					if indexes[i] == last_goal_idx or pe_slopes[i] > 0:
 						pass
 					else:
-						return indexes[i]
+						return int( indexes[i] )
 
 		#self.iterations_on_same_goal = 0
 		#return random.randint(0, self.param.get('goal_size') * self.param.get('goal_size') - 1)
