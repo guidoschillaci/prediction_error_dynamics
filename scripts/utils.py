@@ -6,6 +6,7 @@ import numpy as np
 #import tensorflow.compat.v1 as tf
 import tensorflow as tf
 import time
+from sklearn.linear_model import LinearRegression
 
 x_lims=[0.0,750.0]
 x_mean = (x_lims[1] - x_lims[0]) /2.0
@@ -103,8 +104,8 @@ class Position:
     def __init__(self):
         self.x = 0
         self.y = 0
-        self.z = 0
-        self.speed = 0
+        self.z = -90
+        self.speed = 1400
 
 def distance (pos_a, pos_b):
 	return np.sqrt( np.power(pos_a.x - pos_b.x, 2) + np.power(pos_a.y - pos_b.y, 2) + np.power(pos_a.z - pos_b.z,2) )
@@ -123,4 +124,14 @@ def getLayerIndexByName(model, layername):
 		if layer.name == layername:
 			return idx
 
+def get_slope_of_regression(buffer):
+	regr_x = np.asarray(range(len(buffer))).reshape((-1, 1))
+	model = LinearRegression().fit(regr_x, np.asarray(buffer))
+	return model.coef_[0]
 
+def get_goal_id(self, id_x, id_y, param):
+	goal_id = int(id_x * param.get('goal_size') + id_y)
+	if (goal_id <0 or goal_id>(param.get('goal_size')*param.get('goal_size'))):
+		print ("Intrinsic motivation error, wrong goal id: ", goal_id)
+		sys.exit(1)
+	return goal_id

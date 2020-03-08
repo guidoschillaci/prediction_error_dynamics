@@ -9,7 +9,7 @@ import cv2
 from models import Models
 from intrinsic_motivation import IntrinsicMotivation
 
-from plots import plot_exploration, plot_learning_progress #, plot_log_goal_inv, plot_log_goal_fwd,  plot_learning_comparisons
+import plots # plot_exploration, plot_learning_progress #, plot_log_goal_inv, plot_log_goal_fwd,  plot_learning_comparisons
 
 # from cv_bridge import CvBridge, CvBridgeError
 import random
@@ -78,6 +78,11 @@ class GoalBabbling():
 
 	def initialise(self, param):
 		self.parameters = param
+
+		if not param.get('goal_selection_mode') == 'som':
+			print('wrong goal selection mode, exit!')
+			sys.exit(1)
+
 		self.intrinsic_motivation = IntrinsicMotivation(param)
 		self.models = Models(param)
 
@@ -102,142 +107,96 @@ class GoalBabbling():
 
 		self.prev_pos=self.get_starting_pos()
 
+	def log_MSE(self):
+		self.log_current_fwd_mse()
+		self.log_current_inv_mse()
 
-	def log_current_inv_mse(self, param):
+	def log_current_inv_mse(self):
 		img_codes = self.models.encoder.predict(self.test_images)
 		motor_pred = self.models.inv_model.predict(img_codes)
-		#print ('motor pred ', np.asarray(motor_pred), ' test ', self.test_pos) 
-
-		#mse = 0
-		#for i in range(len(self.test_pos)):
-		#	mse= mse + (np.power(motor_pred[i][0]- self.test_pos[i].x, 2) + np.power(motor_pred[i][1]- self.test_pos[i].y, 2))
-		#mse = mse/param.get('romi_test_size')
-
-		mse = (np.linalg.norm(motor_pred-self.test_pos) ** 2) / param.get('romi_test_size')
+		mse = (np.linalg.norm(motor_pred-self.test_pos) ** 2) / self.parameters.get('romi_test_size')
 		print ('Current mse inverse code model: ', mse)
 		self.models.logger_inv.store_log(mse)
 
-	def log_current_fwd_mse(self, param):
+	def log_current_fwd_mse(self):
 		img_obs_code = self.models.encoder.predict(self.test_images)
 		img_pred_code = self.models.fwd_model.predict(self.test_pos)
-		mse = (np.linalg.norm(img_pred_code-img_obs_code) ** 2) /  param.get('romi_test_size')
+		mse = (np.linalg.norm(img_pred_code-img_obs_code) ** 2) /  self.parameters.get('romi_test_size')
 		print ('Current mse fwd model: ', mse)
 		self.models.logger_fwd.store_log(mse)
 
-	def run_babbling(self, param):
-		p = utils.Position()
+	def create_motor_cmd(self):
+		# choose random motor commands from time to time
+		cmd_x = 0
+		cmd_y = 0
+		ran = random.random()
+		if ran < self.parameters.get('random_cmd_rate'):
+			self.random_cmd_flag = True
+			print('generating random motor command')
+			cmd_x = random.uniform(utils.x_lims[0], utils.x_lims[1])
+			cmd_y = random.uniform(utils.y_lims[0], utils.y_lims[1])
+			self.prev_goal_idx = -1 # previous goal was randomly selected
+
+		else:
+			self.random_cmd_flag = False # goals was not randmoly selected
+
+			motor_pred = self.models.inv_model.predict(self.goal_code)
+			noise_x = np.random.normal(0, self.intrinsic_motivation.get_std_dev_exploration_noise())
+			noise_y = np.random.normal(0, self.intrinsic_motivation.get_std_dev_exploration_noise())
+			print('prediction ', motor_pred)
+			cmd_x = utils.clamp_x(utils.unnormalise_x(motor_pred[0][0] + noise_x, self.parameters))
+			cmd_y = utils.clamp_y(utils.unnormalise_y(motor_pred[0][1] + noise_y, self.parameters))
+		return cmd_x, cmd_y
+
+	def run_babbling(self):
 			
-		for _ in range(param.get('max_iterations')):
-
-			# record logs and data
-			self.log_current_inv_mse(param)
-			self.log_current_fwd_mse(param)
-
-			#print ('Mode ', self.goal_selection_mode, ' hist_size ', str(self.history_size), ' prob ', str(self.history_buffer_update_prob), ' iteration : ', self.iteration)
+		for _ in range(self.parameters.get('max_iterations')):
 			print ('Iteration ', self.iteration)
-			
+			# log current mean squared error for FWD and INV models
+			self.log_MSE()
 
-			# select a goal using the intrinsic motivation strategy
+			# get the goal index in the SOM using the intrinsic motivation strategy
 			self.current_goal_idx, self.current_goal_x, self.current_goal_y = self.intrinsic_motivation.select_goal()
+			# get the goal coordinates from the selected neuron coordinates in the SOM feature space
+			self.goal_code  = self.models.goal_som._weights[self.current_goal_x, self.current_goal_y].reshape(1, self.parameters.get('code_size'))
 
-			if param.get('goal_selection_mode') =='db' or param.get('goal_selection_mode') =='random' :
-				self.goal_image = self.test_images[self.current_goal_idx].reshape(1, param.get('image_size'), param.get('image_size'), param.get('image_channels'))
-				self.goal_code  = self.models.encoder.predict(self.goal_image)
-			elif param.get('goal_selection_mode') =='som':
-				self.goal_code  = self.models.goal_som._weights[self.current_goal_x, self.current_goal_y].reshape(1, param.get('code_size'))
-			else:
-				print ('wrong goal selection mode, exit!')
-				sys.exit(1)
+			# generate a motor command
+			cmd = utils.Position()
+			cmd.x, cmd.y = self.create_motor_cmd()
 
-
-			# choose random motor commands from time to time
-			ran = random.random()
-			if ran < param.get('random_cmd_rate') or param.get('goal_selection_mode') =='random': #or self.models.memory_fwd.is_memory_still_not_full()
-				self.random_cmd_flag = True
-				print ('generating random motor command')
-				p.x = random.uniform(utils.x_lims[0], utils.x_lims[1])
-				p.y = random.uniform(utils.y_lims[0], utils.y_lims[1])
-				self.prev_goal_idx=-1
-				
-			else:
-				self.random_cmd_flag = False
-
-				motor_pred = []
-				if param.get('goal_selection_mode') == 'db':
-					motor_pred = self.models.inv_model.predict(self.goal_code)
-					print ('pred ', motor_pred, ' real ', self.test_pos[self.current_goal_idx])
-				else:
-					goal_decoded = self.models.decoder.predict(self.goal_code)
-					motor_pred = self.models.inv_model.predict(self.goal_code)
-				#image_pred = self.models.decoder.predict(self.models.fwd_model.predict(np.asarray(motor_pred)))
-
-				noise_x = np.random.normal(0, self.intrinsic_motivation.get_std_dev_exploration_noise())
-				noise_y = np.random.normal(0, self.intrinsic_motivation.get_std_dev_exploration_noise())
-				print ('prediction ', motor_pred)
-				p.x = utils.clamp_x(utils.unnormalise_x(motor_pred[0][0]+noise_x, param))
-				p.y = utils.clamp_y(utils.unnormalise_y(motor_pred[0][1]+noise_y, param))
-				#p = utils.clamp(utils.unnormalise(motor_pred[0])) # make it possible to add noise
-
-			#print ('predicted utils.Position ', motor_pred[0], 'p+noise ', motor_pred[0][0]+noise_x, ' ' , motor_pred[0][1]+noise_y, ' utils.clamped ', p.x, ' ' , p.y, ' noise.x ', noise_x, ' n.y ', noise_y)
-
-			p.z = int(-90)
-			p.speed = int(1400)
-			# generate movement
-			self.create_simulated_data(self.prev_pos, p, param)
-			# store the amplitude of this movement
-			if not self.random_cmd_flag and (self.current_goal_idx == self.prev_goal_idx):
-				self.intrinsic_motivation.log_last_movement(current_pos=p, previous_pos=self.prev_pos)
-			#print ('current_p', p.x, ' ' , p.y)
-			#print ('prev_p', self.prev_pos.x, ' ', self.prev_pos.y)
-			# update the variables
-			self.prev_pos.x=p.x
-			self.prev_pos.y=p.y
-			self.prev_pos.z=p.z
-			self.prev_pos.speed=p.speed
-
-
-			# plot the explored points and the utils.Position of the goals
-			if self.iteration % param.get('plot_exploration_iter') == 0:
-				if param.get('goal_selection_mode') == 'db' or param.get('goal_selection_mode') == 'random':
-					goals_pos = self.test_pos[0:(param.get('goal_size')*param.get('goal_size'))]
-				elif param.get('goal_selection_mode') == 'som':
-					goals_pos = self.models.inv_model.predict(self.models.goal_som._weights.reshape(len(self.models.goal_som._weights)*len(self.models.goal_som._weights[0]), len(self.models.goal_som._weights[0][0]) ))
-
+			# execute motor command and generate sensorimotor data
+			self.generate_simulated_sensorimotor_data(self.prev_pos, cmd)
+			# plot the explored points and the goal positions
+			if self.iteration % self.parameters.get('plot_exploration_iter') == 0:
+				goals_pos = self.models.inv_model.predict(self.models.goal_som._weights.reshape(len(self.models.goal_som._weights)*len(self.models.goal_som._weights[0]), len(self.models.goal_som._weights[0][0]) ))
 				# plot observations and goals
-				plot_exploration(positions=self.pos,goals=goals_pos,iteration=self.iteration,param=param, title = param.get('goal_selection_mode')+'_'+str(self.iteration))
+				plots.plot_exploration(positions=self.pos,goals=goals_pos,iteration=self.iteration,param=self.parameters, title = self.parameters.get('goal_selection_mode')+'_'+str(self.iteration))
 				# plot memory positions and goals
-				plot_exploration(positions=self.models.memory_fwd.input_variables,goals=goals_pos,iteration=self.iteration,param=param, title = 'memory_inputs_'+str(self.iteration))
+				plots.plot_exploration(positions=self.models.memory_fwd.input_variables,goals=goals_pos,iteration=self.iteration,param=self.parameters, title = 'memory_inputs_'+str(self.iteration))
 
+			# log the last movement
+			if not self.random_cmd_flag and (self.current_goal_idx == self.prev_goal_idx):
+				self.intrinsic_motivation.update_movement_dynamics(current_pos=cmd, previous_pos=self.prev_pos)
 
-			if self.iteration % param.get('im_pe_buffer_size_update_frequency') == 0:
+			# update mse dynamics
+			if self.iteration % self.parameters.get('im_frequency_of_update_mse_dynamics') == 0:
 				self.intrinsic_motivation.update_mse_dynamics(self.models.logger_fwd.get_last_mse())
 
-
 			# update error dynamics of the current goal (it is supposed that at this moment the action is finished
-			if len(self.img)>0 and not (param.get('goal_selection_mode') == 'random') and not (self.random_cmd_flag and len(self.intrinsic_motivation.slopes_pe_buffer)>0) :
-
-				#cmd = utils.normalise(p) # [p.x/float(utils.x_lims[1]), p.y/float(utils.y_lims[1])]
-				cmd = [ utils.normalise_x(p.x, param), utils.normalise_y(p.y, param)]
-				prediction_code = self.models.fwd_model.predict(np.asarray(cmd).reshape((1,2)))
-
-				prediction_error = np.linalg.norm(np.asarray(self.goal_code[:])-np.asarray(prediction_code[:]))
-				if not (self.prev_goal_idx == -1):
-					self.intrinsic_motivation.update_error_dynamics(self.current_goal_x, self.current_goal_y, prediction_error, _append=(self.current_goal_idx == self.prev_goal_idx))
-				
+			if len(self.img)>0 and not (self.prev_goal_idx == -1) and not self.random_cmd_flag:
+				cmd_vector = [ utils.normalise_x(cmd.x, self.parameters), utils.normalise_y(cmd.y, self.parameters)]
+				predicted_code = self.models.fwd_model.predict(np.asarray(cmd_vector).reshape((1,2)))
+				prediction_error = np.linalg.norm(np.asarray(self.goal_code[:])-np.asarray(predicted_code[:]))
+				self.intrinsic_motivation.update_error_dynamics(self.current_goal_x, self.current_goal_y, prediction_error, _append=(self.current_goal_idx == self.prev_goal_idx))
 
 			# fit models	
-			if (len(self.img) > param.get('batch_size')) and (len(self.img) == len(self.pos)):
-
-
-				observed_codes_batch = self.models.encoder.predict(np.asarray(self.img[-(param.get('batch_size')):]).reshape(param.get('batch_size'), param.get('image_size'), param.get('image_size'), param.get('image_channels'))  )
-				observed_pos_batch = self.pos[-(param.get('batch_size')):]
-
-				if param.get('update_goal_som'):
-					self.models.update_som(np.asarray(observed_codes_batch).reshape((param.get('batch_size'), param.get('code_size'))))
+			if len(self.img) > self.parameters.get('batch_size'):# and (len(self.img) == len(self.pos)):
+				# get image codes and position readings from the generated sensorimotor data
+				observed_codes_batch = self.models.encoder.predict(np.asarray(self.img[-(self.parameters.get('batch_size')):]).reshape(self.parameters.get('batch_size'), self.parameters.get('image_size'), self.parameters.get('image_size'), self.parameters.get('image_channels'))  )
+				observed_pos_batch = self.pos[-(self.parameters.get('batch_size')):]
 
 				# fit the model with the current batch of observations and the memory!
 				# create then temporary input and output tensors containing batch and memory
-
 				obs_and_mem_pos = []
 				obs_and_mem_img_codes =[]
 				if not self.models.memory_fwd.is_memory_empty():
@@ -246,18 +205,32 @@ class GoalBabbling():
 				else:
 					obs_and_mem_pos = np.asarray(observed_pos_batch)
 					obs_and_mem_img_codes =np.asarray(observed_codes_batch)
-
-				self.models.train_forward_code_model_on_batch( obs_and_mem_pos, obs_and_mem_img_codes, param)
-				self.models.train_inverse_code_model_on_batch( obs_and_mem_img_codes, obs_and_mem_pos, param)
-
+				# update forward and inverse models
+				self.models.train_forward_code_model_on_batch( obs_and_mem_pos, obs_and_mem_img_codes)
+				self.models.train_inverse_code_model_on_batch( obs_and_mem_img_codes, obs_and_mem_pos)
+				# update autoencoder
 				#train_autoencoder_on_batch(self.autoencoder, self.encoder, self.decoder, np.asarray(self.img[-32:]).reshape(32, self.image_size, self.image_size, self.channels), batch_size=self.batch_size, cae_epochs=5)
-			if not self.random_cmd_flag:
-				self.prev_goal_idx = self.current_goal_idx	
-			self.iteration = self.iteration+1
-		print ('Saving models')
-		self.save_models(param)
+				# update goals' self organising map
+				if self.parameters.get('update_goal_som'):
+					self.models.update_som(np.asarray(observed_codes_batch).reshape( (self.parameters.get('batch_size'), self.parameters.get('code_size'))))
 
-	def create_simulated_data(self, pos, cmd, param):
+			##### post-process steps
+			# update the previous goal index variable
+			if not self.random_cmd_flag:
+				self.prev_goal_idx = self.current_goal_idx
+			# update the previous position variable for next iteration
+			self.prev_pos.x=cmd.x
+			self.prev_pos.y=cmd.y
+			self.prev_pos.z=cmd.z
+			self.prev_pos.speed=cmd.speed
+			# increase iteration count
+			self.iteration = self.iteration+1
+
+		### experiment is finished, save models and plots
+		print ('Saving models')
+		self.save_models()
+
+	def generate_simulated_sensorimotor_data(self, pos, cmd):
 		#self.lock.acquire()
 		a = [int(pos.x), int(pos.y)]
 		b = [int(cmd.x),int(cmd.y)]
@@ -268,8 +241,8 @@ class GoalBabbling():
 		#print ('image size ', str(param.get('image_size')))
 		rounded  = self.cam_sim.round2mul(tr,5) # only images every 5mm
 		for i in range(len(tr)):
-			self.pos.append([utils.normalise_x(float(rounded[i][0]), param), utils.normalise_y(float(rounded[i][1]), param) ])
-			self.cmd.append([utils.normalise_x(float(int(cmd.x)), param), utils.normalise_y(float(int(cmd.y)), param) ])
+			self.pos.append([utils.normalise_x(float(rounded[i][0]), self.parameters), utils.normalise_y(float(rounded[i][1]), self.parameters) ])
+			self.cmd.append([utils.normalise_x(float(int(cmd.x)), self.parameters), utils.normalise_y(float(int(cmd.y)), self.parameters) ])
 			self.img.append(tr_img[i])
 			'''
 			cv2_img = cv2.imread(trn[i])#,1 )
@@ -287,18 +260,30 @@ class GoalBabbling():
 			observed_pos = self.pos[-1]
 			#observed_img = cv2_img
 			observed_img = tr_img[i]
-			observed_img_code = np.asarray(self.models.encoder.predict(observed_img.reshape(1, param.get('image_size'), param.get('image_size'), param.get('image_channels')))).reshape(param.get('code_size'))
+			observed_img_code = np.asarray(self.models.encoder.predict(observed_img.reshape(1, self.parameters.get('image_size'), self.parameters.get('image_size'), self.parameters.get('image_channels')))).reshape(self.parameters.get('code_size'))
 			self.models.memory_fwd.update(observed_pos, observed_img_code)
 			self.models.memory_inv.update(observed_img_code, observed_pos)
 
+		def get_starting_pos(self):
+			p = utils.Position()
+			p.x = 0.0
+			p.y = 0.0
+			p.z = -50.0
+			p.speed = 1400.0
+			return utils.normalise(p, self.parameters)
 
-		#self.lock.release()
+		def goto_starting_pos(self):
+			p = self.get_starting_pos()
+			self.generate_simulated_sensorimotor_data(self.prev_pos, p, self.parameters)
+			self.prev_pos.x = p.x
+			self.prev_pos.y = p.y
+			self.prev_pos.z = p.z
+			self.prev_pos.speed = p.speed
 
-
-	def save_models(self, param):
+	def save_models(self):
 		#self.lock.acquire()
 		self.parameters.save()
-		self.models.save_models(param)
+		self.models.save_models(self.parameters)
 		self.models.save_logs(self.parameters)
 
 		self.intrinsic_motivation.get_linear_correlation_btw_amplitude_and_mse_dynamics()
@@ -307,7 +292,7 @@ class GoalBabbling():
 		self.intrinsic_motivation.plot_slopes_of_goals()
 		self.intrinsic_motivation.plot_buffer_size()
 		self.intrinsic_motivation.save_im()
-		self.intrinsic_motivation.plot_slopes(param)
+		self.intrinsic_motivation.plot_slopes(self.parameters)
 		self.intrinsic_motivation.plot_correlations()
 		#self.lock.release()
 		print ('Models saved')
@@ -325,20 +310,6 @@ class GoalBabbling():
 		self.save_models(self.parameters)
 		self.goto_starting_pos()
 		#sys.exit(1)
-
-	def get_starting_pos(self):
-		p = utils.Position()
-		p.x = 0.0
-		p.y = 0.0
-		p.z = -50.0
-		p.speed = 1400.0
-		return utils.normalise(p, self.parameters)
-
-	def goto_starting_pos(self):
-		p = self.get_starting_pos()
-		self.create_simulated_data(self.prev_pos, p, self.parameters)
-		self.prev_pos=p
-
 
 
 class RomiDataLoader:

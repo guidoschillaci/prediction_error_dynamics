@@ -64,17 +64,17 @@ class Parameters:
             #'im_decay_factor': 0.9,
             # there is a hierarchical dynamics monitoring: over the mean squared error of the fwd model (higher level) and over each goal (lower)
             # the slope of the MSE buffer controls the size of the goal PE buffer (in case im_fixed_pe_buffer_size is False)
-            'im_mse_buffer_size': 10, # initial size of the mean squared error buffer (should be bigger than max PE_buffer_size
+
             'im_movements_buffer_size': 20, # buffer size of the movement amplitudeds
-            # initial size of the mean squared error buffer (should be bigger than max PE_buffer_size
-            'im_initial_pe_buffer_size': 25, # initial size of the prediction error buffer
-            'im_min_pe_buffer_size': 20, # max size of the prediction error buffer
-            'im_max_pe_buffer_size': 100, # max size of the prediction error buffer
-            'im_fixed_pe_buffer_size': False, # make the size of the prediction error buffer fixed or dependent on the dinamics of the FWD MSE
-            'im_pe_buffer_size_update_frequency': 10, # every how many iteration to wait for updating the pe_buffer_size according to the slope of the higher level?
+            'im_mse_buffer_size': 10, # initial size of the mean squared error buffer (should be bigger than max PE_buffer_size
+            'im_frequency_of_update_mse_dynamics': 10, # every how many iteration to wait for updating the pe_buffer_size according to the slope of the higher level?
+            'im_size_buffer_pe_initial': 25, # initial size of the prediction error buffer
+            'im_size_buffer_pe_min': 20, # max size of the prediction error buffer
+            'im_size_buffer_pe_max': 100, # max size of the prediction error buffer
+            'im_size_buffer_pe_fixed': False, # make the size of the prediction error buffer fixed or dependent on the dinamics of the FWD MSE
             'im_random_goal_prob': 0.01, # probability of selecting a random goal instead of the best one
             'im_epsilon_error_dynamics': 0.05, # switch goal when error slope is smaller than this value
-            'im_do_not_regress_on_first_x_samples': 10,
+            'im_size_buffer_pe_minimum_nr_of_sample_for_regression': 10,
             'im_min_iterations_on_same_goal': 50,
 
             'im_min_std_exploration_noise': 0.01,

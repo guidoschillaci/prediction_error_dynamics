@@ -198,9 +198,9 @@ class Models:
         return fwd_model
 
 
-    def train_forward_code_model_on_batch(self, positions, codes, param):
+    def train_forward_code_model_on_batch(self, positions, codes):
         # tensorboard_callback = log(TensorBoard_dir='./logs/fwd_code', histogram_freq=0, write_graph=True, write_images=True)
-        self.fwd_model.fit(positions, codes, epochs=param.get('epochs'), batch_size=param.get('batch_size'), verbose=1,
+        self.fwd_model.fit(positions, codes, epochs=self.parameters.get('epochs'), batch_size=self.parameters.get('batch_size'), verbose=1,
                           shuffle=True)  # , callbacks=[tensorboard_callback])
         print ('Forward code model updated')
 
@@ -234,9 +234,9 @@ class Models:
         return inv_model
 
 
-    def train_inverse_code_model_on_batch(self, codes, motor_cmd, param):
+    def train_inverse_code_model_on_batch(self, codes, motor_cmd):
         # tensorboard_callback = TensorBoard(log_dir='./logs/inv_code', histogram_freq=0, write_graph=True, write_images=True)
-        self.inv_model.fit(codes, motor_cmd, epochs=param.get('epochs'), batch_size=param.get('batch_size'), verbose=1,
+        self.inv_model.fit(codes, motor_cmd, epochs=self.parameters.get('epochs'), batch_size=self.parameters.get('batch_size'), verbose=1,
                           shuffle=True)  # , callbacks=[tensorboard_callback])#, callbacks=[showLR()])
         print ('Inverse code model trained on batch')
 
