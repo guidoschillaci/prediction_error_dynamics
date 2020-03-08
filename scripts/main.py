@@ -187,7 +187,8 @@ class GoalBabbling():
 				cmd_vector = [ utils.normalise_x(cmd.x, self.parameters), utils.normalise_y(cmd.y, self.parameters)]
 				predicted_code = self.models.fwd_model.predict(np.asarray(cmd_vector).reshape((1,2)))
 				prediction_error = np.linalg.norm(np.asarray(self.goal_code[:])-np.asarray(predicted_code[:]))
-				self.intrinsic_motivation.update_error_dynamics(self.current_goal_x, self.current_goal_y, prediction_error, _append=(self.current_goal_idx == self.prev_goal_idx))
+				#self.intrinsic_motivation.update_error_dynamics(self.current_goal_x, self.current_goal_y, prediction_error, _append=(self.current_goal_idx == self.prev_goal_idx))
+				self.intrinsic_motivation.update_error_dynamics(self.current_goal_x, self.current_goal_y, prediction_error)
 
 			# fit models	
 			if len(self.img) > self.parameters.get('batch_size'):# and (len(self.img) == len(self.pos)):
