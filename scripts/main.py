@@ -310,7 +310,7 @@ class GoalBabbling():
 
 	def Exit_call(self, signal, frame):
 		print ('Terminating...')
-		self.save_models(self.parameters)
+		self.save_models()
 		self.goto_starting_pos()
 		#sys.exit(1)
 
