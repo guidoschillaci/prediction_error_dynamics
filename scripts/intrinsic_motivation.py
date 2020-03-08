@@ -194,7 +194,7 @@ class IntrinsicMotivation():
 
 		pe_slopes = self.dyn_pe_on_goal[-1]
 		if pe_slopes[last_goal_idx] < 0:
-			if np.abs(pe_slopes[last_goal_idx]) > self.param.get('im_epsilon_error_dynamics'):
+			if np.fabs(pe_slopes[last_goal_idx]) > float(self.param.get('im_epsilon_error_dynamics')):
 				return last_goal_idx
 			else:
 				if self.iterations_on_same_goal < self.param.get('im_min_iterations_on_same_goal'):
