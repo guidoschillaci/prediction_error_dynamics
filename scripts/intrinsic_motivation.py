@@ -188,27 +188,14 @@ class IntrinsicMotivation():
 		# what is the index of the last selected goal?
 		last_goal_idx = self.history_selected_goals[-1]
 
-		if (len(self.buffer_pe_on_goal[last_goal_idx]) < self.param.get('im_size_buffer_pe_minimum_nr_of_sample_for_regression')) or ((len(self.buffer_pe_on_goal[last_goal_idx]) < (self.param.get('im_size_buffer_pe_min'))) and not self.param.get('im_size_buffer_pe_fixed')):
-			self.iterations_on_same_goal = self.iterations_on_same_goal+1
-			return last_goal_idx
+		#if (len(self.buffer_pe_on_goal[last_goal_idx]) < self.param.get('im_size_buffer_pe_minimum_nr_of_sample_for_regression')) or ((len(self.buffer_pe_on_goal[last_goal_idx]) < (self.param.get('im_size_buffer_pe_min'))) and not self.param.get('im_size_buffer_pe_fixed')):
+		#	self.iterations_on_same_goal = self.iterations_on_same_goal+1
+		#	return last_goal_idx
 
 		pe_slopes = self.dyn_pe_on_goal[-1]
-		if pe_slopes[last_goal_idx] < 0:
-			if np.fabs(pe_slopes[last_goal_idx]) > float(self.param.get('im_epsilon_error_dynamics')):
-				return last_goal_idx
-			else:
-				if self.iterations_on_same_goal < self.param.get('im_min_iterations_on_same_goal'):
-					self.iterations_on_same_goal = self.iterations_on_same_goal + 1
-					return last_goal_idx
-				else:
-					self.iterations_on_same_goal = 0
-					indexes = np.argsort(self.dyn_pe_on_goal[-1])
-					for i in range(len(indexes)):
-						if indexes[i] == last_goal_idx or pe_slopes[i] > 0:
-							pass
-						else:
-							return indexes[i]
-		else: # increasing prediction error dynamics
+		if pe_slopes[last_goal_idx] < 0 and np.fabs(pe_slopes[last_goal_idx]) > float(self.param.get('im_epsilon_error_dynamics')):
+			return last_goal_idx
+		else:
 			if self.iterations_on_same_goal < self.param.get('im_min_iterations_on_same_goal'):
 				self.iterations_on_same_goal = self.iterations_on_same_goal + 1
 				return last_goal_idx

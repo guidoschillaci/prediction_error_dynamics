@@ -75,8 +75,8 @@ class Parameters:
             'im_size_buffer_pe_fixed': False, # make the size of the prediction error buffer fixed or dependent on the dinamics of the FWD MSE
             'im_random_goal_prob': 0.01, # probability of selecting a random goal instead of the best one
             'im_epsilon_error_dynamics': 0.05, # switch goal when error slope is smaller than this value
-            'im_size_buffer_pe_minimum_nr_of_sample_for_regression': 10,
-            'im_min_iterations_on_same_goal': 50,
+            'im_size_buffer_pe_minimum_nr_of_sample_for_regression': 4,
+            'im_min_iterations_on_same_goal': 20,
 
             'im_min_std_exploration_noise': 0.01,
             'im_max_std_exploration_noise': 0.2,
