@@ -26,7 +26,7 @@ class Parameters:
             'update_goal_som': False,
             'reduce_som_learning_rate_factor':1600,
 
-            'normalise_with_zero_mean': False, 
+            'normalise_with_zero_mean': True,
             'load_data_reshape': True,
             'batch_size':16, # for the fwd/inv models update
             'epochs': 1, # online fwd/inv models
