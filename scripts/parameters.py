@@ -65,7 +65,7 @@ class Parameters:
             # there is a hierarchical dynamics monitoring: over the mean squared error of the fwd model (higher level) and over each goal (lower)
             # the slope of the MSE buffer controls the size of the goal PE buffer (in case im_fixed_pe_buffer_size is False)
 
-            'im_movements_buffer_size': 20, # buffer size of the movement amplitudeds
+            'im_movements_buffer_size': 50, # buffer size of the movement amplitudeds
             'im_mse_buffer_size': 10, # initial size of the mean squared error buffer (should be bigger than max PE_buffer_size
             'im_frequency_of_update_mse_dynamics': 10, # every how many iteration to wait for updating the pe_buffer_size according to the slope of the higher level?
             'im_size_buffer_pe_initial': 25, # initial size of the prediction error buffer
