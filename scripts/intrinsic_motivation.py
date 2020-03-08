@@ -191,8 +191,9 @@ class IntrinsicMotivation():
 		#if (len(self.buffer_pe_on_goal[last_goal_idx]) < self.param.get('im_size_buffer_pe_minimum_nr_of_sample_for_regression')) or ((len(self.buffer_pe_on_goal[last_goal_idx]) < (self.param.get('im_size_buffer_pe_min'))) and not self.param.get('im_size_buffer_pe_fixed')):
 		#	self.iterations_on_same_goal = self.iterations_on_same_goal+1
 		#	return last_goal_idx
-
 		pe_slopes = self.dyn_pe_on_goal[-1]
+		print ('pe slopes', pe_slopes)
+		print('self.iterations_on_same_goal ', self.iterations_on_same_goal)
 		if pe_slopes[last_goal_idx] < 0 and np.fabs(pe_slopes[last_goal_idx]) > float(self.param.get('im_epsilon_error_dynamics')):
 			return last_goal_idx
 		else:
@@ -201,16 +202,16 @@ class IntrinsicMotivation():
 				return last_goal_idx
 			else:
 				self.iterations_on_same_goal = 0
-				indexes = np.argsort(self.dyn_pe_on_goal[-1])
+				indexes = np.argsort(pe_slopes)
 				for i in range(len(indexes)):
 					if indexes[i] == last_goal_idx or pe_slopes[i] > 0:
 						pass
 					else:
 						return indexes[i]
 
-		self.iterations_on_same_goal = 0
+		#self.iterations_on_same_goal = 0
 		#return random.randint(0, self.param.get('goal_size') * self.param.get('goal_size') - 1)
-		return np.argmin(self.dyn_pe_on_goal[-1])
+		#return np.argmin(pe_slopes)
 
 
 
