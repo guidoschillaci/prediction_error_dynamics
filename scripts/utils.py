@@ -7,6 +7,7 @@ import numpy as np
 import tensorflow as tf
 import time
 from sklearn.linear_model import LinearRegression
+import sys
 
 x_lims=[0.0,750.0]
 x_mean = (x_lims[1] - x_lims[0]) /2.0
@@ -129,7 +130,7 @@ def get_slope_of_regression(buffer):
 	model = LinearRegression().fit(regr_x, np.asarray(buffer))
 	return model.coef_[0]
 
-def get_goal_id(self, id_x, id_y, param):
+def get_goal_id(id_x, id_y, param):
 	goal_id = int(id_x * param.get('goal_size') + id_y)
 	if (goal_id <0 or goal_id>(param.get('goal_size')*param.get('goal_size'))):
 		print ("Intrinsic motivation error, wrong goal id: ", goal_id)
