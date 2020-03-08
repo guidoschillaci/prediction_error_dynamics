@@ -419,7 +419,7 @@ if __name__ == '__main__':
 		
 	# if running different experiments, you can re-set parameters with initialise
 	goal_babbling.initialise(parameters)
-	goal_babbling.run_babbling(parameters)
+	goal_babbling.run_babbling()
 	print ('Experiment done')
 
 	'''
