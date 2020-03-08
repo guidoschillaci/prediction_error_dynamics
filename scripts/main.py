@@ -183,7 +183,7 @@ class GoalBabbling():
 				self.intrinsic_motivation.update_mse_dynamics(self.models.logger_fwd.get_last_mse())
 
 			# update error dynamics of the current goal (it is supposed that at this moment the action is finished
-			if len(self.img)>0 and not (self.prev_goal_idx == -1) and not self.random_cmd_flag:
+			if len(self.img)>0:# and not (self.prev_goal_idx == -1) and not self.random_cmd_flag:
 				cmd_vector = [ utils.normalise_x(cmd.x, self.parameters), utils.normalise_y(cmd.y, self.parameters)]
 				predicted_code = self.models.fwd_model.predict(np.asarray(cmd_vector).reshape((1,2)))
 				prediction_error = np.linalg.norm(np.asarray(self.goal_code[:])-np.asarray(predicted_code[:]))
