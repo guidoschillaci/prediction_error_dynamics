@@ -226,6 +226,9 @@ class GoalBabbling():
 			# increase iteration count
 			self.iteration = self.iteration+1
 
+			if self.iteration % self.parameters.get('save_data_every_x_iteration') == 0:
+				self.save_models()
+
 		### experiment is finished, save models and plots
 		print ('Saving models')
 		self.save_models()
@@ -283,8 +286,8 @@ class GoalBabbling():
 	def save_models(self):
 		#self.lock.acquire()
 		self.parameters.save()
-		self.models.save_models(self.parameters)
-		self.models.save_logs(self.parameters)
+		self.models.save_models()
+		self.models.save_logs()
 
 		self.intrinsic_motivation.get_linear_correlation_btw_amplitude_and_mse_dynamics()
 		self.intrinsic_motivation.get_linear_correlation_btw_amplitude_and_pe_dynamics()
@@ -292,7 +295,7 @@ class GoalBabbling():
 		self.intrinsic_motivation.plot_slopes_of_goals()
 		self.intrinsic_motivation.plot_buffer_size()
 		self.intrinsic_motivation.save_im()
-		self.intrinsic_motivation.plot_slopes(self.parameters)
+		self.intrinsic_motivation.plot_slopes()
 		self.intrinsic_motivation.plot_correlations()
 		#self.lock.release()
 		print ('Models saved')

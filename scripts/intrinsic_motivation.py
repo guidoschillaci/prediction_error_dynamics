@@ -294,7 +294,7 @@ class IntrinsicMotivation():
 		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_mse_slopes'), self.linregr_mse_vs_slopes_mov)
 		np.save(os.path.join(self.param.get('results_directory'), 'im_std_dev_exploration_noise'), self.std_dev_exploration_noise)
 
-	def plot_slopes(self, param, save=True):
+	def plot_slopes(self, save=True):
 		fig = plt.figure(figsize=(10, 10))
 		num_goals = self.param.get('goal_size') * self.param.get('goal_size')
 		ax1 = plt.subplot(num_goals + 1, 1, 1)
@@ -315,7 +315,7 @@ class IntrinsicMotivation():
 
 		if save:
 			plt.savefig(self.param.get('results_directory') + '/plots/im_slopes_pe_buffer.jpg')
-		if param.get('show_plots'):
+		if self.param.get('show_plots'):
 			plt.show()
 		plt.close()
 

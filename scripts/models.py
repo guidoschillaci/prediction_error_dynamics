@@ -293,197 +293,23 @@ class Models:
     def update_som(self, data, iterations=2):
         self.goal_som.train_batch(data, iterations, reinit_T=False)
 
-    def save_logs(self, show=True):
+    def save_logs(self, show=False):
         self.logger_fwd.save_log()
         self.logger_fwd.plot_mse(show=show)
 
         self.logger_inv.save_log()
         self.logger_inv.plot_mse(show=show)
 
-    def save_models(self, param):
+    def save_models(self):
 
-        self.autoencoder.save(param.get('results_directory')+'autoencoder.h5', overwrite=True)
-        self.encoder.save(param.get('results_directory')+'encoder.h5', overwrite=True)
-        self.decoder.save(param.get('results_directory')+'decoder.h5', overwrite=True)
-        self.inv_model.save(param.get('results_directory')+'inv_model.h5', overwrite=True)
-        self.fwd_model.save(param.get('results_directory')+'fwd_model.h5', overwrite=True)
+        self.autoencoder.save(self.parameters.get('results_directory')+'autoencoder.h5', overwrite=True)
+        self.encoder.save(self.parameters.get('results_directory')+'encoder.h5', overwrite=True)
+        self.decoder.save(self.parameters.get('results_directory')+'decoder.h5', overwrite=True)
+        self.inv_model.save(self.parameters.get('results_directory')+'inv_model.h5', overwrite=True)
+        self.fwd_model.save(self.parameters.get('results_directory')+'fwd_model.h5', overwrite=True)
 
         # save som
         som_weights = self.goal_som.get_weights().copy()
-        som_file = h5py.File(param.get('results_directory')+'goal_som.h5', 'w')
+        som_file = h5py.File(self.parameters.get('results_directory')+'goal_som.h5', 'w')
         som_file.create_dataset('goal_som', data=som_weights)
         som_file.close()
-
-
-
-        '''
-        timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%X')
-        name = 'goal_babbling'
-        filename = './data/' + name + '_' + timestamp + '.pkl'
-
-        self.autoencoder.save('./models/autoencoder.h5', overwrite=True)
-        self.encoder.save('./models/encoder.h5', overwrite=True)
-        self.decoder.save('./models/decoder.h5', overwrite=True)
-        self.inverse_code_model.save('./models/inverse_code_model.h5', overwrite=True)
-        self.forward_code_model.save('./models/forward_code_model.h5', overwrite=True)
-
-        pickle.dump(self.log_goal_pos, open('./models/log_goal_pos.txt', 'wb'))
-
-        pickle.dump(self.log_goal_pred, open('./models/log_goal_pred.txt', 'wb'))
-        np.savetxt('./models/log_learning_progress.txt', self.log_lp)
-
-        np.savetxt('./models/log_goal_id.txt', self.log_goal_id)
-
-
-        plot_learning_progress(self.log_lp, self.log_goal_id, num_goals=self.goal_size * self.goal_size, save=True,
-                               show=False)
-        plot_log_goal_inv(self.log_goal_pos, self.log_goal_pred, num_goals=self.goal_size * self.goal_size, save=True,
-                          show=False)
-
-        self.clear_session()
-'''
-
-'''
-    def make_recurrent_nn(self, plot =False):
-        print ('Model is a recurrent LSTM network')
-        model = Sequential()
-        # model.add( LSTM( int(time_series_length/2), input_shape=(time_series_length,features), unroll=True, return_sequences=True, dropout=0.0, recurrent_dropout=0.0 ) )
-        model.add(LSTM(units=8, input_shape=(self.parameters.get_window_size(), len(self.parameters.get('inp_sensors'))), unroll=True,dropout=0.0, recurrent_dropout=0.0))
-        model.add(BatchNormalization())
-        model.add(Dense(16, activation=hard_sigmoid))
-        model.add(BatchNormalization())
-        model.add(Dense(8, activation=sigmoid))
-        model.add(BatchNormalization())
-        model.add(Dense(len(self.parameters.get('out_sensors'))))
-
-        model.compile(loss=self.parameters.get('loss'), optimizer=self.parameters.get('optimizer'))
-        model.summary()
-
-        if plot:
-            plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
-            print('Model plot saved')
-
-        return model
-
-    def make_mlp_nn(self, plot=False):
-        print ('Model is a Multi-Layer Perceptron')
-        model = Sequential()
-        model.add( Input( shape=(self.parameters.get_window_size(), len(self.parameters.get('inp_sensors') ) ) ) )
-        #model.add(
-        #    LSTM(units=8, input_shape=(self.parameters.get_window_size(), len(self.parameters.get('inp_sensors'))),
-        #         unroll=True, dropout=0.0, recurrent_dropout=0.0))
-        model.add(Flatten())
-        model.add(BatchNormalization())
-        model.add(Dense(16, activation=hard_sigmoid))
-        model.add(BatchNormalization())
-        model.add(Dense(8, activation=sigmoid))
-        model.add(BatchNormalization())
-        model.add(Dense(len(self.parameters.get('out_sensors'))))
-
-        model.compile(loss=self.parameters.get('loss'), optimizer=self.parameters.get('optimizer'))
-        model.summary()
-
-        if plot:
-            plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
-            print('Model plot saved')
-
-        return model
-
-
-    def compute_mse(self, test_dataset):
-        input = test_dataset['window_inputs']
-        output = test_dataset['window_outputs']
-
-        predictions = self.model.predict(input)
-        mse = (np.linalg.norm(predictions - output) ** 2) / len(output)
-
-        #print ('Current mse: ', mse)
-        return mse
-
-    def online_fit_on(self, train_dataset, test_dataset, gh_index):
-
-        input_batch = []
-        output_batch = []
-      #  for i in range(2):
-        for i in range(len(train_dataset['window_inputs'])):
-            input_batch.append(train_dataset['window_inputs'][i])
-            output_batch.append(train_dataset['window_outputs'][i])
-
-            # update the memory with the current observations
-            count_of_changed_memory_elements = self.memory.update(train_dataset['window_inputs'][i],
-                               train_dataset['window_outputs'][i],
-                               gh_index=gh_index)
-
-            #print ('var ')
-            #print (str(np.asarray(train_dataset['window_inputs']).shape))
-            #print (str(np.asarray(train_dataset['window_outputs']).shape))
-
-            # print 'memory size ', len( memory_input)
-            # if the lists have reached the batch size, then fit the model
-            if len(input_batch) == self.parameters.get('batch_size'):
-                # fit the model with the current batch of observations and the memory!
-                # create then temporary input and output tensors containig batch and memory
-                full_input = []
-                full_output = []
-                if self.parameters.get('memory_size') > 0 :
-                    full_input = np.vstack((np.asarray(input_batch), np.asarray(self.memory.input_variables)))
-                    full_output = np.vstack((np.asarray(output_batch), np.asarray(self.memory.output_variables)))
-                else:
-                    full_input = deepcopy(np.asarray(input_batch))
-                    full_output = deepcopy(np.asarray(output_batch))
-
-                print('Processed ', i + 1, ' samples of ', len(train_dataset['window_inputs']))
-
-                print('fitting with ', len(full_input), ' samples')
-                self.model.fit(full_input, full_output, epochs=1,  # validation_split=0.25,
-                                   # no validation data! ## check this!
-                                   # validation_data=(online_valx,online_valy), # what about the validation data? Keep the one as in the offline test?
-                                   batch_size=self.parameters.get('batch_size'))  # , callbacks=[ earlystop, tbCallBack ] )
-
-                if self.parameters.get('memory_update_strategy') == MemUpdateStrategy.HIGH_LEARNING_PROGRESS.value or self.parameters.get('memory_update_strategy') == MemUpdateStrategy.LOW_LEARNING_PROGRESS.value:
-                    print ('updating learning progress for each memory element')
-                    self.memory.update_learning_progress(self.model)
-
-                # print 'current memory output' # to not print the full windows, just print the output and check if things are slowly changing
-                # print memory_input
-                # print memory_output
-                # restore batch arrays
-                input_batch = []
-                output_batch = []
-
-            if i % (self.parameters.get('mse_calculation_step') * self.parameters.get('batch_size')) == 0:
-                mse_all =[]
-                for td in range(len(test_dataset)): # compute mse for all the test datasets of each greenhouse
-                    mse_all.append(self.compute_mse(test_dataset[td]))
-                learn_progress = self.memory.get_learning_progress() # returns the current learning progress for each sample storedin the memory
-                mem_idx_prop = self.memory.get_greenhouse_index_proportion()
-                input_var, output_var = self.memory.get_variance()
-                # compute the mse1
-                self.logger.store_log(mse=mse_all, gh_index=gh_index, mem_idx_prop= mem_idx_prop, input_var = input_var,
-                                      output_var = output_var,
-                                      count_of_changed_memory_elements = count_of_changed_memory_elements, learning_progress=learn_progress)
-                for td in range(len(test_dataset)):  # compute mse for all the test datasets of each greenhouse
-                    print ('mse(gh'+str(td)+'):' +str(mse_all[td]) + ' idx_prop '+ str(mem_idx_prop))
-
-        self.logger.switch_dataset() # store the len of the mse vector
-        del input_batch
-        del output_batch
-
-    def save(self, directory):
-        np.save(os.path.join(directory, 'mse'), self.logger.mse)
-        np.save(os.path.join(directory, 'mse_memory_label'), self.logger.mse_memory_label)
-        np.save(os.path.join(directory, 'memory_index_proportions'), self.logger.memory_index_proportions)
-        np.save(os.path.join(directory, 'switch_time'), self.logger.switch_time)
-        np.save(os.path.join(directory, 'input_variances'), self.logger.input_variances)
-        np.save(os.path.join(directory, 'output_variances'), self.logger.output_variances)
-        np.save(os.path.join(directory, 'learning_progress'), self.logger.learning_progress)
-        self.parameters.save()
-
-        # saving times
-        self.time_end = datetime.datetime.now()
-        time_delta = self.time_end - self.time_start
-        time_data = [ self.time_start, self.time_end, time_delta]
-        np.save(os.path.join(directory, 'time_data'), time_data)
-        print ('data saved')
-
-'''
