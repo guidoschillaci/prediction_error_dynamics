@@ -264,21 +264,21 @@ class GoalBabbling():
 			self.models.memory_fwd.update(observed_pos, observed_img_code)
 			self.models.memory_inv.update(observed_img_code, observed_pos)
 
-		def get_starting_pos(self):
-			p = utils.Position()
-			p.x = 0.0
-			p.y = 0.0
-			p.z = -50.0
-			p.speed = 1400.0
-			return utils.normalise(p, self.parameters)
+	def get_starting_pos(self):
+		p = utils.Position()
+		p.x = 0.0
+		p.y = 0.0
+		p.z = -50.0
+		p.speed = 1400.0
+		return utils.normalise(p, self.parameters)
 
-		def goto_starting_pos(self):
-			p = self.get_starting_pos()
-			self.generate_simulated_sensorimotor_data(self.prev_pos, p, self.parameters)
-			self.prev_pos.x = p.x
-			self.prev_pos.y = p.y
-			self.prev_pos.z = p.z
-			self.prev_pos.speed = p.speed
+	def goto_starting_pos(self):
+		p = self.get_starting_pos()
+		self.generate_simulated_sensorimotor_data(self.prev_pos, p, self.parameters)
+		self.prev_pos.x = p.x
+		self.prev_pos.y = p.y
+		self.prev_pos.z = p.z
+		self.prev_pos.speed = p.speed
 
 	def save_models(self):
 		#self.lock.acquire()
