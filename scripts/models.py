@@ -221,9 +221,9 @@ class Models:
 
         input_code = Input(shape=(param.get('code_size'),), name='inv_input')
         x = Dense(param.get('code_size'), activation='tanh')(input_code)
-        x = Dense(param.get('code_size') * 10, activation='tanh')(x)
-        x = Dense(param.get('code_size') * 10, activation='tanh')(x)
-        command = Dense(param.get('romi_input_dim'), activation='tanh', name='command')(x)
+        x = Dense(param.get('code_size') * 10, activation='sigmoid')(x)
+        x = Dense(param.get('code_size') * 10, activation='sigmoid')(x)
+        command = Dense(param.get('romi_input_dim'), activation='sigmoid', name='command')(x)
 
         inv_model = Model(input_code, command)
         #sgd = optimizers.SGD(lr=0.0014, decay=0.0, momentum=0.8, nesterov=True)
