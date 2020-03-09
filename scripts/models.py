@@ -57,10 +57,10 @@ class Models:
         self.logger_inv = model_logger.Logger(param = self.parameters, name='inv')
 
 
-    def activation_positive_tanh(self, x):
-        return K.tanh(x) + 1  # x in range(0,2)
-        #scale = (target_max - target_min) / 2.
-        #return x02 * scale + target_min
+    def activation_positive_tanh(self, x, target_min = 0, target_max = 1):
+        x02 = K.tanh(x) + 1  # x in range(0,2)
+        scale = (target_max - target_min) / 2.
+        return x02 * scale + target_min
 
 
     def load_autoencoder(self, param, train_images=None, train_offline=True):
