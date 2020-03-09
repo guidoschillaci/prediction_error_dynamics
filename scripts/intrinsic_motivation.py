@@ -88,7 +88,7 @@ class IntrinsicMotivation():
 			self.dyn_mse.append(0)
 			# update the std_dev of the exploration noise
 			if len(self.std_dev_exploration_noise) == 0:
-				self.std_dev_exploration_noise.append(self.param.get('im_max_std_exploration_noise'))
+				self.std_dev_exploration_noise.append(self.param.get('im_std_exploration_noise_initial'))
 			else:
 				self.std_dev_exploration_noise.append(self.std_dev_exploration_noise[-1])
 		else:
@@ -98,12 +98,12 @@ class IntrinsicMotivation():
 			# update stddev of the exploration noise
 			if self.dyn_mse[-1] > 0:
 				self.std_dev_exploration_noise.append(self.std_dev_exploration_noise[-1] + self.param.get('im_std_exploration_noise_step'))
-				if self.std_dev_exploration_noise[-1] > self.param.get('im_max_std_exploration_noise'):
-					self.std_dev_exploration_noise[-1] = self.param.get('im_max_std_exploration_noise')
+				if self.std_dev_exploration_noise[-1] > self.param.get('im_std_exploration_noise_max'):
+					self.std_dev_exploration_noise[-1] = self.param.get('im_std_exploration_noise_max')
 			else:
 				self.std_dev_exploration_noise.append(self.std_dev_exploration_noise[-1] - self.param.get('im_std_exploration_noise_step'))
-				if self.std_dev_exploration_noise[-1] < self.param.get('im_min_std_exploration_noise'):
-					self.std_dev_exploration_noise[-1] = self.param.get('im_min_std_exploration_noise')
+				if self.std_dev_exploration_noise[-1] < self.param.get('im_std_exploration_noise_min'):
+					self.std_dev_exploration_noise[-1] = self.param.get('im_std_exploration_noise_min')
 
 		# update the size of the buffer of the prediction error for each goal. This is done here to have a lower pace
 		# (the same frequency of the MSE update).
@@ -219,7 +219,7 @@ class IntrinsicMotivation():
 	# get the standard deviation of the exploration noise, which varies according to the PE dynamics
 	def get_std_dev_exploration_noise(self):
 		if len(self.std_dev_exploration_noise) == 0:
-			return self.param.get('im_max_std_exploration_noise')
+			return self.param.get('im_std_exploration_noise_initial')
 		return self.std_dev_exploration_noise[-1]
 
 

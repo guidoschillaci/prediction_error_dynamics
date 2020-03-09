@@ -78,8 +78,9 @@ class Parameters:
             'im_size_buffer_pe_minimum_nr_of_sample_for_regression': 4,
             'im_min_iterations_on_same_goal': 50,
 
-            'im_min_std_exploration_noise': 0.01,
-            'im_max_std_exploration_noise': 0.2,
+            'im_std_exploration_noise_initial': 0.25,
+            'im_std_exploration_noise_min': 0.05,
+            'im_std_exploration_noise_max': 0.25,
             'im_std_exploration_noise_step': 0.01,
 
             'loss': 'mean_squared_error',
