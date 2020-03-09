@@ -119,7 +119,7 @@ class IntrinsicMotivation():
 					std_dev_increase = (self.dyn_mse[-1] + self.param.get('im_std_exploration_mse_dynamics_range')) * self.std_dev_exploration_range / self.dyn_mse_range
 					std_expl = self.param.get('im_std_exploration_noise_min') + std_dev_increase
 					self.std_dev_exploration_noise.append(std_expl)
-					
+
 		# update the size of the buffer of the prediction error for each goal. This is done here to have a lower pace
 		# (the same frequency of the MSE update).
 		self.update_size_of_buffer_pe()
