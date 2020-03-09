@@ -210,8 +210,8 @@ class IntrinsicMotivation():
 					else:
 						return int( indexes[i] )
 
-		#self.iterations_on_same_goal = 0
-		#return random.randint(0, self.param.get('goal_size') * self.param.get('goal_size') - 1)
+		self.iterations_on_same_goal = 0
+		return random.randint(0, self.param.get('goal_size') * self.param.get('goal_size') - 1)
 		#return np.argmin(pe_slopes)
 
 
