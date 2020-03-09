@@ -14,7 +14,7 @@ import h5py
 from minisom import MiniSom
 import model_logger
 import memory
-
+from keras import backend as BK
 
 #import random
 #from copy import deepcopy
@@ -55,6 +55,12 @@ class Models:
         # initialise loggers
         self.logger_fwd = model_logger.Logger(param = self.parameters, name='fwd')
         self.logger_inv = model_logger.Logger(param = self.parameters, name='inv')
+
+
+    def mapping_to_target_range(x, target_min=0, target_max=1):
+        x02 = BK.tanh(x) + 1  # x in range(0,2)
+        scale = (target_max - target_min) / 2.
+        return x02 * scale + target_min
 
 
     def load_autoencoder(self, param, train_images=None, train_offline=True):
@@ -223,7 +229,7 @@ class Models:
         x = Dense(param.get('code_size'), activation='tanh')(input_code)
         x = Dense(param.get('code_size') * 10, activation='tanh')(x)
         x = Dense(param.get('code_size') * 10, activation='tanh')(x)
-        command = Dense(param.get('romi_input_dim'), activation='sigmoid', name='command')(x)
+        command = Dense(param.get('romi_input_dim'), activation='tanh', name='command')(x)
 
         inv_model = Model(input_code, command)
         #sgd = optimizers.SGD(lr=0.0014, decay=0.0, momentum=0.8, nesterov=True)
