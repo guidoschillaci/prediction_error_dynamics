@@ -50,6 +50,10 @@ class IntrinsicMotivation():
 
 		# standard deviation of the exploration noise, which varies according to the MSE dynamics
 		self.std_dev_exploration_noise = []
+		# range for the stddev of the exploration  nois
+		self.std_dev_exploration_range = float( self.param.get('im_std_exploration_noise_max') - self.param.get('im_std_exploration_noise_min') )
+		# presumed range for the mse dynamics (clamped at plus or minus im_std_exploration_mse_dynamics_range)
+		self.dyn_mse_range= float( self.param.get('im_std_exploration_mse_dynamics_range') * 2.0)
 
 		# correlatiosn betwee PE or MSE AND movements
 		self.linregr_pe_vs_raw_mov = []
@@ -95,15 +99,26 @@ class IntrinsicMotivation():
 			# get the slopes of the dynamics of the mean squared error over the test dataset
 			self.dyn_mse.append(utils.get_slope_of_regression(self.buffer_mse))
 
-			# update stddev of the exploration noise
-			if self.dyn_mse[-1] > 0:
-				self.std_dev_exploration_noise.append(self.std_dev_exploration_noise[-1] + self.param.get('im_std_exploration_noise_step'))
-				if self.std_dev_exploration_noise[-1] > self.param.get('im_std_exploration_noise_max'):
-					self.std_dev_exploration_noise[-1] = self.param.get('im_std_exploration_noise_max')
+			# increase/decrease by step
+			if self.param.get('im_std_exploration_use_step'):
+				# update stddev of the exploration noise
+				if self.dyn_mse[-1] > 0:
+					self.std_dev_exploration_noise.append(self.std_dev_exploration_noise[-1] + self.param.get('im_std_exploration_noise_step'))
+					if self.std_dev_exploration_noise[-1] > self.param.get('im_std_exploration_noise_max'):
+						self.std_dev_exploration_noise[-1] = self.param.get('im_std_exploration_noise_max')
+				else:
+					self.std_dev_exploration_noise.append(self.std_dev_exploration_noise[-1] - self.param.get('im_std_exploration_noise_step'))
+					if self.std_dev_exploration_noise[-1] < self.param.get('im_std_exploration_noise_min'):
+						self.std_dev_exploration_noise[-1] = self.param.get('im_std_exploration_noise_min')
 			else:
-				self.std_dev_exploration_noise.append(self.std_dev_exploration_noise[-1] - self.param.get('im_std_exploration_noise_step'))
-				if self.std_dev_exploration_noise[-1] < self.param.get('im_std_exploration_noise_min'):
+				if self.dyn_mse[-1]< -self.param.get('im_std_exploration_mse_dynamics_range'):
 					self.std_dev_exploration_noise[-1] = self.param.get('im_std_exploration_noise_min')
+				elif self.dyn_mse[-1]> self.param.get('im_std_exploration_mse_dynamics_range'):
+					self.std_dev_exploration_noise[-1] = self.param.get('im_std_exploration_noise_max')
+				else:
+					std_dev_increase = self.dyn_mse[-1] * self.std_dev_exploration_range / self.dyn_mse_range
+					self.std_dev_exploration_noise[-1] = self.param.get('im_std_exploration_noise_min') + std_dev_increase
+
 
 		# update the size of the buffer of the prediction error for each goal. This is done here to have a lower pace
 		# (the same frequency of the MSE update).
