@@ -183,6 +183,7 @@ class IntrinsicMotivation():
 
 		#ran = random.random()
 		if random.random() < self.param.get('im_random_goal_prob') or len(self.history_selected_goals) == 0:
+			self.iterations_on_same_goal = 0
 			return self.get_random_goal()
 
 		# what is the index of the last selected goal?
