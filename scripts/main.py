@@ -28,7 +28,8 @@ import threading
 import random
 from cam_sim import Cam_sim
 from parameters import Parameters
-from copy import deepcopy
+#from copy import deepcopy
+import copy
 #from doepy import build, read_write # pip install doepy - it may require also diversipy
 
 #import tensorflow.compat.v1 as tf
@@ -194,7 +195,7 @@ class GoalBabbling():
 			if len(self.img) > self.parameters.get('batch_size'):# and (len(self.img) == len(self.pos)):
 				# get image codes and position readings from the generated sensorimotor data
 				observed_codes_batch = self.models.encoder.predict(np.asarray(self.img[-(self.parameters.get('batch_size')):]).reshape(self.parameters.get('batch_size'), self.parameters.get('image_size'), self.parameters.get('image_size'), self.parameters.get('image_channels'))  )
-				observed_pos_batch = self.pos[-(self.parameters.get('batch_size')):]
+				observed_pos_batch = copy.deepcopy( self.pos[-(self.parameters.get('batch_size')):])
 
 				# fit the model with the current batch of observations and the memory!
 				# create then temporary input and output tensors containing batch and memory
@@ -218,7 +219,7 @@ class GoalBabbling():
 			##### post-process steps
 			# update the previous goal index variable
 			if not self.random_cmd_flag:
-				self.prev_goal_idx = self.current_goal_idx
+				self.prev_goal_idx = copy.deepcopy(self.current_goal_idx)
 			# update the previous position variable for next iteration
 			self.prev_pos.x=cmd.x
 			self.prev_pos.y=cmd.y

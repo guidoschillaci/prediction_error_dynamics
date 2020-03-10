@@ -11,6 +11,7 @@ from scipy.interpolate import UnivariateSpline
 import matplotlib.pyplot as plt
 import os
 import utils
+import copy
 
 
 class IntrinsicMotivation():
@@ -128,7 +129,7 @@ class IntrinsicMotivation():
 		if len(self.history_buffer_pe_max_size)==0 or self.param.get('im_size_buffer_pe_fixed'):
 			self.history_buffer_pe_max_size.append(self.param.get('im_size_buffer_pe_initial'))
 		else:
-			new_buffer_size = self.history_buffer_pe_max_size[-1]
+			new_buffer_size = copy.deepcopy(self.history_buffer_pe_max_size[-1])
 			if self.dyn_mse[-1] > 0: # if mse is increasing, increase size of the pe buffer
 				if new_buffer_size < self.param.get('im_size_buffer_pe_max'):
 					new_buffer_size = new_buffer_size + 1 # or decrease?
@@ -202,12 +203,12 @@ class IntrinsicMotivation():
 			return self.get_random_goal()
 
 		# what is the index of the last selected goal?
-		last_goal_idx = int(self.history_selected_goals[-1])
+		last_goal_idx = copy.deepcopy(self.history_selected_goals[-1])
 
 		#if (len(self.buffer_pe_on_goal[last_goal_idx]) < self.param.get('im_size_buffer_pe_minimum_nr_of_sample_for_regression')) or ((len(self.buffer_pe_on_goal[last_goal_idx]) < (self.param.get('im_size_buffer_pe_min'))) and not self.param.get('im_size_buffer_pe_fixed')):
 		#	self.iterations_on_same_goal = self.iterations_on_same_goal+1
 		#	return last_goal_idx
-		pe_slopes = self.dyn_pe_on_goal[-1]
+		pe_slopes = copy.deepcopy(self.dyn_pe_on_goal[-1])
 		print ('pe slopes', pe_slopes)
 		print('self.iterations_on_same_goal ', self.iterations_on_same_goal)
 		if pe_slopes[last_goal_idx] < 0 and np.fabs(pe_slopes[last_goal_idx]) > float(self.param.get('im_epsilon_error_dynamics')):
@@ -223,7 +224,7 @@ class IntrinsicMotivation():
 					if indexes[i] == last_goal_idx or pe_slopes[i] > 0:
 						pass
 					else:
-						return int( indexes[i] )
+						return copy.deepcopy( indexes[i] )
 
 		self.iterations_on_same_goal = 0
 		return random.randint(0, self.param.get('goal_size') * self.param.get('goal_size') - 1)
