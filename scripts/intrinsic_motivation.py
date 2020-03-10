@@ -112,7 +112,7 @@ class IntrinsicMotivation():
 					if self.std_dev_exploration_noise[-1] < self.param.get('im_std_exploration_noise_min'):
 						self.std_dev_exploration_noise[-1] = self.param.get('im_std_exploration_noise_min')
 			else:
-				if self.dyn_mse[-1]< -self.param.get('im_std_exploration_mse_dynamics_min'):
+				if self.dyn_mse[-1]< self.param.get('im_std_exploration_mse_dynamics_min'):
 					self.std_dev_exploration_noise.append(self.param.get('im_std_exploration_noise_min'))
 				elif self.dyn_mse[-1]> self.param.get('im_std_exploration_mse_dynamics_max'):
 					self.std_dev_exploration_noise.append(self.param.get('im_std_exploration_noise_max'))
