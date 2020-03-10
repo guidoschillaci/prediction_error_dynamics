@@ -230,9 +230,9 @@ class Models:
         x = Dense(param.get('code_size') * 10, activation='tanh')(x)
         #x = Dropout(0.2)(x)
         x = Dense(param.get('code_size') * 10, activation='tanh')(x)
-        #x = Dropout(0.2)(x)
-        command = Dense(param.get('romi_input_dim'), activation='tanh', name='command')(x)
-        #command = Dense(param.get('romi_input_dim'), activation=self.activation_positive_tanh, name='command')(x)
+        x = Dropout(0.2)(x)
+        #command = Dense(param.get('romi_input_dim'), activation='tanh', name='command')(x)
+        command = Dense(param.get('romi_input_dim'), activation=self.activation_positive_tanh, name='command')(x)
 
         inv_model = Model(input_code, command)
         #sgd = optimizers.SGD(lr=0.0014, decay=0.0, momentum=0.8, nesterov=True)
