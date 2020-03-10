@@ -79,7 +79,7 @@ class Parameters:
             'im_min_iterations_on_same_goal': 50,
 
             'im_std_exploration_use_step': False, # increase/decrease stddev by step, or use predefined mappings
-            'im_std_exploration_noise_initial': 0.25,
+            'im_std_exploration_noise_initial': 0.35,
             'im_std_exploration_noise_min': 0.05,
             'im_std_exploration_noise_max': 0.35,
             'im_std_exploration_noise_step': 0.01,
@@ -88,7 +88,7 @@ class Parameters:
             'loss': 'mean_squared_error',
             'optimizer': 'adam',
             'memory_size': 1000,
-            'memory_update_probability': 0.01,
+            'memory_update_probability': 0.005,
             'memory_update_strategy': MemUpdateStrategy.RANDOM.value,  # possible choices:  random, learning_progress
             #'batch_size': 32,
             'batchs_to_update_online': 3,
