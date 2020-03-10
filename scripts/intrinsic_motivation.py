@@ -54,7 +54,7 @@ class IntrinsicMotivation():
 		# range for the stddev of the exploration  nois
 		self.std_dev_exploration_range = float( self.param.get('im_std_exploration_noise_max') - self.param.get('im_std_exploration_noise_min') )
 		# presumed range for the mse dynamics (clamped at plus or minus im_std_exploration_mse_dynamics_range)
-		self.dyn_mse_range= float( self.param.get('im_std_exploration_mse_dynamics_range') * 2.0)
+		self.dyn_mse_range= float( self.param.get('im_std_exploration_mse_dynamics_max') - self.param.get('im_std_exploration_mse_dynamics_min'))
 
 		# correlatiosn betwee PE or MSE AND movements
 		self.linregr_pe_vs_raw_mov = []
@@ -112,12 +112,12 @@ class IntrinsicMotivation():
 					if self.std_dev_exploration_noise[-1] < self.param.get('im_std_exploration_noise_min'):
 						self.std_dev_exploration_noise[-1] = self.param.get('im_std_exploration_noise_min')
 			else:
-				if self.dyn_mse[-1]< -self.param.get('im_std_exploration_mse_dynamics_range'):
+				if self.dyn_mse[-1]< -self.param.get('im_std_exploration_mse_dynamics_min'):
 					self.std_dev_exploration_noise.append(self.param.get('im_std_exploration_noise_min'))
-				elif self.dyn_mse[-1]> self.param.get('im_std_exploration_mse_dynamics_range'):
+				elif self.dyn_mse[-1]> self.param.get('im_std_exploration_mse_dynamics_max'):
 					self.std_dev_exploration_noise.append(self.param.get('im_std_exploration_noise_max'))
 				else:
-					std_dev_increase = (self.dyn_mse[-1] + self.param.get('im_std_exploration_mse_dynamics_range')) * self.std_dev_exploration_range / self.dyn_mse_range
+					std_dev_increase = (self.dyn_mse[-1] - self.param.get('im_std_exploration_mse_dynamics_min')) * self.std_dev_exploration_range / self.dyn_mse_range
 					std_expl = self.param.get('im_std_exploration_noise_min') + std_dev_increase
 					self.std_dev_exploration_noise.append(std_expl)
 
