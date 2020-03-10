@@ -81,7 +81,7 @@ class Parameters:
             'im_std_exploration_use_step': False, # increase/decrease stddev by step, or use predefined mappings
             'im_std_exploration_noise_initial': 0.25,
             'im_std_exploration_noise_min': 0.05,
-            'im_std_exploration_noise_max': 0.25,
+            'im_std_exploration_noise_max': 0.35,
             'im_std_exploration_noise_step': 0.01,
             'im_std_exploration_mse_dynamics_range': 0.05,
 
