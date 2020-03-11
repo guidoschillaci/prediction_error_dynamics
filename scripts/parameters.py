@@ -84,7 +84,7 @@ class Parameters:
             'im_std_exploration_noise_max': 0.25,
             'im_std_exploration_noise_step': 0.01,
             'im_std_exploration_mse_dynamics_min': -0.25,
-            'im_std_exploration_mse_dynamics_max': 0.2,
+            'im_std_exploration_mse_dynamics_max': 0.1,
 
             'loss': 'mean_squared_error',
             'optimizer': 'adam',

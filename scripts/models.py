@@ -230,7 +230,7 @@ class Models:
         x = Dense(param.get('code_size') * 10, activation='tanh')(x)
         #x = Dropout(0.2)(x)
         x = Dense(param.get('code_size') * 10, activation='tanh')(x)
-        x = Dropout(0.2)(x)
+        #x = Dropout(0.2)(x)
         #command = Dense(param.get('romi_input_dim'), activation='tanh', name='command')(x)
         command = Dense(param.get('romi_input_dim'), name='command')(x)
 
