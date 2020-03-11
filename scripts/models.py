@@ -194,7 +194,7 @@ class Models:
         x = Dense(param.get('code_size'), activation='tanh')(cmd_fwd_inp)
         x = Dense(param.get('code_size') * 10, activation='tanh')(x)
         x = Dense(param.get('code_size') * 10, activation='tanh')(x)
-        code = Dense(param.get('code_size'), activation='tanh',  name='output')(x)
+        code = Dense(param.get('code_size'), name='output')(x)
         fwd_model = Model(cmd_fwd_inp, code)
         #sgd = optimizers.SGD(lr=0.0014, decay=0.0, momentum=0.8, nesterov=True)
         fwd_model.compile(optimizer='adadelta', loss='mean_squared_error')
@@ -232,7 +232,7 @@ class Models:
         x = Dense(param.get('code_size') * 10, activation='tanh')(x)
         x = Dropout(0.2)(x)
         #command = Dense(param.get('romi_input_dim'), activation='tanh', name='command')(x)
-        command = Dense(param.get('romi_input_dim'), activation='tanh', name='command')(x)
+        command = Dense(param.get('romi_input_dim'), name='command')(x)
 
         inv_model = Model(input_code, command)
         #sgd = optimizers.SGD(lr=0.0014, decay=0.0, momentum=0.8, nesterov=True)
