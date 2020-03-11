@@ -48,7 +48,7 @@ class Parameters:
             'romi_input_dim': 2, # xy motors
             'romi_dataset_pkl': 'romi_data/compressed_dataset.pkl',
             #'romi_test_data_step': 500,
-            'romi_test_size': 100,
+            'romi_test_size': 500,
             'romi_seed_test_data': 10, # seed for the random number generator for picking up test data from training dataset
 
             'fwd_filename': 'forward_code_model.h5',
