@@ -8,6 +8,8 @@ import tensorflow as tf
 import time
 from sklearn.linear_model import LinearRegression
 import sys
+import copy
+
 
 x_lims=[0.0,750.0]
 x_mean = (x_lims[1] - x_lims[0]) /2.0
@@ -43,7 +45,7 @@ def normalise(p, param):
 	p_n.y = normalise_y(p.y, param)
 	p_n.z = normalise_z(p.z, param)
 	p_n.speed = p.speed
-	return p_n
+	return copy.deepcopy(p_n)
 
 def unnormalise_x(x, param):
 	if param.get('normalise_with_zero_mean'):
@@ -80,7 +82,7 @@ def clamp(p):
 	p_n.y = clamp_y(p.y)
 	p_n.z = clamp_z(p.z)
 	p_n.speed = p.speed
-	return speed
+	return copy.deepcopy(p_n)
 
 def clamp_x(x):
 	if x <= x_lims[0]:
