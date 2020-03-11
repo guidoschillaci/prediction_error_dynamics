@@ -191,10 +191,10 @@ class Models:
 
         # create fwd model layers
         cmd_fwd_inp = Input(shape=(param.get('romi_input_dim'),), name='fwd_input')
-        x = Dense(param.get('code_size'), activation='tanh')(cmd_fwd_inp)
-        x = Dense(param.get('code_size') * 10, activation='tanh')(x)
-        x = Dense(param.get('code_size') * 10, activation='tanh')(x)
-        code = Dense(param.get('code_size'), activation='tanh',  name='output')(x)
+        x = Dense(param.get('code_size'), activation='relu')(cmd_fwd_inp)
+        x = Dense(param.get('code_size') * 10, activation='relu')(x)
+        x = Dense(param.get('code_size') * 10, activation='relu')(x)
+        code = Dense(param.get('code_size'), activation='relu',  name='output')(x)
         fwd_model = Model(cmd_fwd_inp, code)
         #sgd = optimizers.SGD(lr=0.0014, decay=0.0, momentum=0.8, nesterov=True)
         fwd_model.compile(optimizer='adadelta', loss='mean_squared_error')
@@ -226,10 +226,10 @@ class Models:
         print ('building inverse code model...')
 
         input_code = Input(shape=(param.get('code_size'),), name='inv_input')
-        x = Dense(param.get('code_size'))(input_code)#, activation='tanh')(input_code)
-        x = Dense(param.get('code_size') * 10)(x)#, activation=self.activation_positive_tanh)(x)
+        x = Dense(param.get('code_size'), activation='relu')(input_code)
+        x = Dense(param.get('code_size') * 10, activation='relu')(x)
         #x = Dropout(0.2)(x)
-        x = Dense(param.get('code_size') * 10)(x)#, activation=self.activation_positive_tanh)(x)
+        x = Dense(param.get('code_size') * 10, activation='relu')(x)
         x = Dropout(0.2)(x)
         #command = Dense(param.get('romi_input_dim'), activation='tanh', name='command')(x)
         command = Dense(param.get('romi_input_dim'), name='command')(x)
