@@ -21,19 +21,19 @@ speed_lim = 3400.0
 
 def normalise_x(x, param):
 	if param.get('normalise_with_zero_mean'):
-		return  (x - x_mean) / x_lims[1]
+		return  (x - x_mean) / x_mean # x_lims[1]
 	else:
 		return x / x_lims[1]
 
 def normalise_y(y, param):
 	if param.get('normalise_with_zero_mean'):
-		return  (y - y_mean) / y_lims[1]
+		return  (y - y_mean) / y_mean #y_lims[1]
 	else:
 		return y / y_lims[1]
 
 def normalise_z(z, param):
 	if param.get('normalise_with_zero_mean'):
-		return  (z - z_mean) / z_lims[1]
+		return  (z - z_mean) / z_mean #z_lims[1]
 	else:
 		return z / z_lims[1]
 
@@ -47,19 +47,22 @@ def normalise(p, param):
 
 def unnormalise_x(x, param):
 	if param.get('normalise_with_zero_mean'):
-		return  (x * x_lims[1]) + x_mean
+		#return  (x * x_lims[1]) + x_mean
+		return (x * x_mean) + x_mean
 	else:
 		return x * x_lims[1]
 
 def unnormalise_y(y, param):
 	if param.get('normalise_with_zero_mean'):
-		return  (y * y_lims[1]) + y_mean
+		#return  (y * y_lims[1]) + y_mean
+		return (y * y_mean) + y_mean
 	else:
 		return y * y_lims[1]
 
 def unnormalise_z(z, param):
 	if param.get('normalise_with_zero_mean'):
-		return  (z * z_lims[1]) + z_mean
+		#return  (z * z_lims[1]) + z_mean
+		return (z * z_mean) + z_mean
 	else:
 		return z * z_lims[1]
 
