@@ -117,6 +117,8 @@ class IntrinsicMotivation():
 				elif self.dyn_mse[-1]> self.param.get('im_std_exploration_mse_dynamics_max'):
 					self.std_dev_exploration_noise.append(self.param.get('im_std_exploration_noise_max'))
 				else:
+					#d :d_range = m: m_range
+					#d = m*d_r/m_r
 					std_dev_increase = (self.dyn_mse[-1] - self.param.get('im_std_exploration_mse_dynamics_min')) * self.std_dev_exploration_range / self.dyn_mse_range
 					std_expl = self.param.get('im_std_exploration_noise_min') + std_dev_increase
 					self.std_dev_exploration_noise.append(std_expl)
