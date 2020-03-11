@@ -227,9 +227,9 @@ class Models:
 
         input_code = Input(shape=(param.get('code_size'),), name='inv_input')
         x = Dense(param.get('code_size'), activation='tanh')(input_code)
-        x = Dense(param.get('code_size') * 10, activation='tanh')(x)
+        x = Dense(param.get('code_size') * 10, activation=self.activation_positive_tanh)(x)
         #x = Dropout(0.2)(x)
-        x = Dense(param.get('code_size') * 10, activation='tanh')(x)
+        x = Dense(param.get('code_size') * 10, activation=self.activation_positive_tanh)(x)
         x = Dropout(0.2)(x)
         #command = Dense(param.get('romi_input_dim'), activation='tanh', name='command')(x)
         command = Dense(param.get('romi_input_dim'), activation=self.activation_positive_tanh, name='command')(x)
