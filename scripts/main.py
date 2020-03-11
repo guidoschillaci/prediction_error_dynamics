@@ -176,7 +176,7 @@ class GoalBabbling():
 				plots.plot_exploration(positions=self.models.memory_fwd.input_variables,goals=goals_pos,iteration=self.iteration,param=self.parameters, title = 'memory_inputs_'+str(self.iteration))
 
 			# log the last movement
-			if not self.random_cmd_flag:# and (self.current_goal_idx == self.prev_goal_idx):
+			if not self.random_cmd_flag and (self.current_goal_idx == self.prev_goal_idx):
 				self.intrinsic_motivation.update_movement_dynamics(current_pos=cmd, previous_pos=self.prev_pos)
 
 				# update mse dynamics
