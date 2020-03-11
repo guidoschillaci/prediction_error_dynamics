@@ -48,7 +48,7 @@ class Parameters:
             'romi_input_dim': 2, # xy motors
             'romi_dataset_pkl': 'romi_data/compressed_dataset.pkl',
             #'romi_test_data_step': 500,
-            'romi_test_size': 500,
+            'romi_test_size': 200,
             'romi_seed_test_data': 10, # seed for the random number generator for picking up test data from training dataset
 
             'fwd_filename': 'forward_code_model.h5',
@@ -80,8 +80,8 @@ class Parameters:
 
             'im_std_exploration_use_step': False, # increase/decrease stddev by step, or use predefined mappings
             'im_std_exploration_noise_initial': 0.25,
-            'im_std_exploration_noise_min': 0.05,
-            'im_std_exploration_noise_max': 0.25,
+            'im_std_exploration_noise_min': 0.01,
+            'im_std_exploration_noise_max': 0.15,
             'im_std_exploration_noise_step': 0.01,
             'im_std_exploration_mse_dynamics_min': -0.25,
             'im_std_exploration_mse_dynamics_max': 0.1,
