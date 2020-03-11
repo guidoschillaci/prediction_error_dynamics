@@ -39,8 +39,8 @@ def plot_exploration(positions, goals, iteration, param, title, save = True):
 
 		plt.xlabel('Pos x')
 		plt.ylabel('Pos y')
-		plt.xlim(-0.2,1.2)
-		plt.ylim(-0.2,1.2)
+		plt.xlim(-1.2,1.2)
+		plt.ylim(-1.2,1.2)
 	elif param.get('romi_input_dim')==4:
 		plt.subplot(1,2,1)
 		plt.scatter(positions[:,0],positions[:,1], s=1, color='g')
