@@ -330,7 +330,7 @@ class IntrinsicMotivation():
 		plt.close()
 
 	def plot_correlations(self, save=True):
-		fig = plt.figure(figsize=(10, 20))
+		fig = plt.figure(figsize=(7, 20))
 
 		ax1 = plt.subplot(4, 1, 1)
 		plt.scatter(np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.movements), s=1)
