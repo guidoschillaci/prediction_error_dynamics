@@ -90,7 +90,7 @@ class Models:
             for i in range(2, enc_layer_idx + 1):
                 encoder_layer = autoencoder.layers[i](encoder_layer)
             encoder = Model(encoder_inp, encoder_layer)
-            if (param.get('verbosity_level') > 0):
+            if (param.get('verbosity_level') > 2):
                 print (encoder.summary())
             # Create a separate decoder model
             decoder_inp = Input(shape=(param.get('code_size'),))

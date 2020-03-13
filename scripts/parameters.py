@@ -38,9 +38,10 @@ class Parameters:
             'exp_iteration': 0, # in case of multiple runs of the same experiemtn, this identifies the current iteration
             'show_plots': False,
 
-            'max_iterations':100,
+            'max_iterations':1000,
             'save_data_every_x_iteration': 400,
 
+            'use_pretrained_cae': True,
             'cae_filename': 'autoencoder.h5',
             'encoder_filename': 'encoder.h5',
             'decoder_filename':'decoder.h5',
