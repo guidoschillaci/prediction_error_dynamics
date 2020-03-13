@@ -293,16 +293,18 @@ class IntrinsicMotivation():
 
 
 	def save_im(self):
-		np.save(os.path.join(self.param.get('directory_results'), 'im_slopes_of_mse_dynamics'), self.dyn_mse)
-		np.save(os.path.join(self.param.get('directory_results'), 'im_interpolated_slopes_of_mse_dynamics'), self.interpolated_slopes_mse_buffer)
-		np.save(os.path.join(self.param.get('directory_results'), 'im_slopes_of_pe_dynamics'), self.dyn_pe_on_goal)
-		np.save(os.path.join(self.param.get('directory_results'), 'im_slopes_of_goals'), self.slopes_of_goals)
-		np.save(os.path.join(self.param.get('directory_results'), 'im_pe_max_buffer_size_history'), self.history_buffer_pe_max_size)
-		np.save(os.path.join(self.param.get('directory_results'), 'im_goal_id_history'), self.history_selected_goals)
-		np.save(os.path.join(self.param.get('directory_results'), 'im_pearson_corr_pe_raw'), self.linregr_pe_vs_raw_mov)
-		np.save(os.path.join(self.param.get('directory_results'), 'im_pearson_corr_pe_slopes'), self.linregr_pe_vs_slopes_mov)
-		np.save(os.path.join(self.param.get('directory_results'), 'im_pearson_corr_mse_raw'), self.linregr_mse_vs_raw_mov)
-		np.save(os.path.join(self.param.get('directory_results'), 'im_pearson_corr_mse_slopes'), self.linregr_mse_vs_slopes_mov)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_movements'), self.movements)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_movements_slopes'), self.dyn_mov)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_mse_slopes'), self.dyn_mse)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_mse_slopes_interpolated'), self.interpolated_slopes_mse_buffer)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_slopes_of_pe_on_all_goals'), self.dyn_pe_on_goal)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_slopes_of_pe_on_selected_goals'), self.slopes_of_goals)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_history_buffer_pe_max_size'), self.history_buffer_pe_max_size)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_history_selected_goals'), self.history_selected_goals)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_linregr_pe_vs_raw_mov'), self.linregr_pe_vs_raw_mov)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_linregr_pe_vs_slopes_mov'), self.linregr_pe_vs_slopes_mov)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_linregr_mse_vs_raw_mov'), self.linregr_mse_vs_raw_mov)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_linregr_mse_vs_slopes_mov'), self.linregr_mse_vs_slopes_mov)
 		np.save(os.path.join(self.param.get('directory_results'), 'im_std_dev_exploration_noise'), self.std_dev_exploration_noise)
 
 	def plot_slopes(self, save=True):
@@ -335,9 +337,9 @@ class IntrinsicMotivation():
 
 		ax1 = plt.subplot(4, 1, 1)
 		plt.scatter(np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.movements), s=1)
-		plt.title('MSE dynamics VS movement distances')
+		plt.title('MSE slopes VS movements')
 		string = 'Pearson\'s r=' + str(self.linregr_mse_vs_raw_mov.rvalue) + '\np<' + str(self.linregr_mse_vs_raw_mov.pvalue)
-		plt.text(0.15, 0.95, string, transform=ax1.transAxes)
+		plt.text(0.15, 0.85, string, transform=ax1.transAxes)
 		x_vals = np.array(ax1.get_xlim())
 		y_vals = self.linregr_mse_vs_raw_mov.intercept + self.linregr_mse_vs_raw_mov.slope * x_vals
 		plt.plot(x_vals, y_vals, '--', color='r')
@@ -345,9 +347,9 @@ class IntrinsicMotivation():
 
 		ax1 = plt.subplot(4, 1, 2)
 		plt.scatter(np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.dyn_mov), s=1)
-		plt.title('MSE dynamics VS movement distances dynamics')
+		plt.title('MSE slopes VS movement slopes')
 		string = 'Pearson\'s r=' + str(self.linregr_mse_vs_slopes_mov.rvalue) + '\np<' + str(self.linregr_mse_vs_slopes_mov.pvalue)
-		plt.text(0.15, 0.95, string, transform = ax1.transAxes)
+		plt.text(0.15, 0.15, string, transform = ax1.transAxes)
 		x_vals = np.array(ax1.get_xlim())
 		y_vals = self.linregr_mse_vs_slopes_mov.intercept + self.linregr_mse_vs_slopes_mov.slope * x_vals
 		plt.plot(x_vals, y_vals, '--', color='r')
@@ -355,18 +357,18 @@ class IntrinsicMotivation():
 
 		ax1 = plt.subplot(4, 1, 3)
 		plt.scatter(np.asarray(self.slopes_of_goals), np.asarray(self.movements), s=1)
-		plt.title('Current Goal PE dynamics VS movement distances')
+		plt.title('PE dynamics of selected goal VS movements')
 		string = 'Pearson\'s r=' + str(self.linregr_pe_vs_raw_mov.rvalue) + '\np<' + str(self.linregr_pe_vs_raw_mov.pvalue)
-		plt.text(0.15, 0.95, string, transform = ax1.transAxes)
+		plt.text(0.15, 0.85, string, transform = ax1.transAxes)
 		x_vals = np.array(ax1.get_xlim())
 		y_vals = self.linregr_pe_vs_raw_mov.intercept + self.linregr_pe_vs_raw_mov.slope * x_vals
 		plt.plot(x_vals, y_vals, '--', color='r')
 
 		ax1 = plt.subplot(4, 1, 4)
 		plt.scatter(np.asarray(self.slopes_of_goals), np.asarray(self.dyn_mov), s=1)
-		plt.title('Current Goal PE dynamics VS movement distances dynamics')
+		plt.title('PE dynamics of selected goal VS movement slopes')
 		string = 'Pearson\'s r=' + str(self.linregr_pe_vs_slopes_mov.rvalue) + '\np<' + str(self.linregr_pe_vs_slopes_mov.pvalue)
-		plt.text(0.65, 0.95, string, transform = ax1.transAxes)
+		plt.text(0.65, 0.15, string, transform = ax1.transAxes)
 		x_vals = np.array(ax1.get_xlim())
 		y_vals = self.linregr_pe_vs_slopes_mov.intercept + self.linregr_pe_vs_slopes_mov.slope * x_vals
 		plt.plot(x_vals, y_vals, '--', color='r')
@@ -410,34 +412,36 @@ class IntrinsicMotivation():
 	def plot_slopes_of_goals(self, save=True):
 		fig = plt.figure(figsize=(10, 20))
 		num_goals= self.param.get('goal_size')*self.param.get('goal_size')
+
+		#print ('movement amplitude ', self.movements_amplitude)
 		ax1 = plt.subplot(6, 1, 1)
-		plt.plot(self.slopes_of_goals)
-		plt.ylabel('Slope PE selected goal')
+		plt.plot(self.movements)
+		plt.ylabel('Movements')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
-		#print ('movement amplitude ', self.movements_amplitude)
 		ax1 = plt.subplot(6, 1, 2)
-		plt.plot(self.movements)
-		plt.ylabel('Movement ampl')
+		plt.plot(self.std_dev_exploration_noise)
+		plt.ylabel('Std.Dev. Expl. Noise')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
 		ax1 = plt.subplot(6, 1, 3)
-		plt.plot(self.dyn_mov)
-		plt.ylabel('Slopes of mov')
+		plt.plot(self.interpolated_slopes_mse_buffer)
+		plt.ylabel('MSE slopes')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
+
 		ax1 = plt.subplot(6, 1, 4)
-		plt.plot(self.std_dev_exploration_noise)
-		plt.ylabel('stddev expl noise')
+		plt.plot(self.dyn_mov)
+		plt.ylabel('Movement slopes')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
 		ax1 = plt.subplot(6, 1, 5)
-		plt.plot(self.interpolated_slopes_mse_buffer)
-		plt.ylabel('Int.Slopes MSE buff')
+		plt.plot(self.slopes_of_goals)
+		plt.ylabel('Slope PE selected goal')
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
