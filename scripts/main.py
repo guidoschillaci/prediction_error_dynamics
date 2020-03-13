@@ -423,6 +423,7 @@ if __name__ == '__main__':
 	if not os.path.exists(multiple_experiments_folder):
 		os.makedirs(multiple_experiments_folder)
 
+	main_path = os.getcwd()
 	os.chdir(multiple_experiments_folder)
 
 	for iter in range(exp_iteration_size):
@@ -452,10 +453,13 @@ if __name__ == '__main__':
 			parameters = Parameters()
 			#parameters.set('goal_selection_mode', 'som')
 			parameters.set('exp_iteration', iter)
-	
-			goal_babbling = GoalBabbling(parameters)
+			romi_dataset_folder = main_path + '/romi_data/'
+			parameters.set('romi_dataset_folder', romi_dataset_folder)
 			parameters.set('results_directory', './results/')
-	
+			parameters.set('directory',directory)
+
+			goal_babbling = GoalBabbling(parameters)
+
 			if not os.path.exists(parameters.get('results_directory')):
 				print ('creating folders')
 				os.makedirs(parameters.get('results_directory'))

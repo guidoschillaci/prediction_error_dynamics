@@ -15,7 +15,7 @@ from utils import Position
 class Cam_sim():
 	def __init__(self,imagesPath, param):
 		self.param = param
-		self.imagesPath = imagesPath
+		self.imagesPath = self.param.get('romi_dataset_folder')
 		if self.imagesPath[-1] != '/':
 			self.imagesPath += '/'
 		self.load_images_in_mem()

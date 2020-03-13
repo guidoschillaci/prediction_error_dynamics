@@ -18,6 +18,7 @@ class Parameters:
             #
             'directory': '',
             'results_directory': './results/',
+            'romi_dataset_folder': '',
             'image_size': 64,
             'image_resize':False, # resize images to specified image_size? only if you are not sure that input images are of the desired size
             'image_channels': 1,
