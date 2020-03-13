@@ -16,9 +16,12 @@ class Parameters:
     def __init__(self):
         self.dictionary = {
             #
-            'directory': '',
-            'results_directory': './results/',
-            'romi_dataset_folder': '',
+            'directory_main': '',
+            'directory_results': '',
+            'directory_models': '',
+            'directory_plots': '',
+            'directory_romi_dataset': '',
+
             'image_size': 64,
             'image_resize':False, # resize images to specified image_size? only if you are not sure that input images are of the desired size
             'image_channels': 1,

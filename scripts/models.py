@@ -64,12 +64,12 @@ class Models:
 
 
     def load_autoencoder(self, param, train_images=None, train_offline=True):
-        #cae_file = param.get('directory') + param.get('cae_filename')
-        #e_file = param.get('directory') + param.get('encoder_filename')
-        #d_file = param.get('directory') + param.get('decoder_filename')
-        cae_file = './pretrained_models/' + param.get('cae_filename')
-        e_file = './pretrained_models/' + param.get('encoder_filename')
-        d_file = './pretrained_models/' + param.get('decoder_filename')
+        cae_file = param.get('directory_models') + param.get('cae_filename')
+        e_file = param.get('directory_models') + param.get('encoder_filename')
+        d_file = param.get('directory_models') + param.get('decoder_filename')
+        #cae_file = './pretrained_models/' + param.get('cae_filename')
+        #e_file = './pretrained_models/' + param.get('encoder_filename')
+        #d_file = './pretrained_models/' + param.get('decoder_filename')
 
         autoencoder = []
         encoder = []
@@ -167,13 +167,13 @@ class Models:
         autoencoder.fit(train_data, train_data, epochs=param.get('cae_epochs'), batch_size=param.get('cae_batch_size'), shuffle=True,verbose=1)
                         #callbacks=[tensorboard_callback], verbose=1)
 
-        autoencoder.save('./pretrained_models/autoencoder.h5')
-        encoder.save('./pretrained_models/encoder.h5')
-        decoder.save('./pretrained_models/decoder.h5')
+        autoencoder.save(param.get('directory_models')+ 'autoencoder.h5')
+        encoder.save(param.get('directory_models') + 'encoder.h5')
+        decoder.save(param.get('directory_models') + 'decoder.h5')
         print ('autoencoder trained and saved ')
 
     def load_forward_code_model(self, param):
-        filename = param.get('directory') + param.get('fwd_filename')
+        filename = param.get('directory_models') + param.get('fwd_filename')
 
         forward_model = []
         if os.path.isfile(filename):
@@ -211,7 +211,7 @@ class Models:
         print ('Forward code model updated')
 
     def load_inverse_code_model(self, param):
-        filename = param.get('directory') + param.get('inv_filename')
+        filename = param.get('directory_models') + param.get('inv_filename')
         # build inverse model
         if os.path.isfile(filename):
             print ('Loading existing pre-trained inverse code model: ', filename)
@@ -251,8 +251,8 @@ class Models:
 
 
     def load_som(self, param, encoder=None, train_images=None):
-        #filename = param.get('directory') + param.get('som_filename')
-        filename = './pretrained_models/' + param.get('som_filename')
+        filename = param.get('directory_models') + param.get('som_filename')
+        #filename = './pretrained_models/' + param.get('som_filename')
         print ('Looking for som file: ', filename)
         goal_som = None
         if os.path.isfile(filename):
@@ -311,14 +311,14 @@ class Models:
 
     def save_models(self):
 
-        self.autoencoder.save(self.parameters.get('results_directory')+'autoencoder.h5', overwrite=True)
-        self.encoder.save(self.parameters.get('results_directory')+'encoder.h5', overwrite=True)
-        self.decoder.save(self.parameters.get('results_directory')+'decoder.h5', overwrite=True)
-        self.inv_model.save(self.parameters.get('results_directory')+'inv_model.h5', overwrite=True)
-        self.fwd_model.save(self.parameters.get('results_directory')+'fwd_model.h5', overwrite=True)
+        self.autoencoder.save(self.parameters.get('directory_models')+'autoencoder.h5', overwrite=True)
+        self.encoder.save(self.parameters.get('directory_models')+'encoder.h5', overwrite=True)
+        self.decoder.save(self.parameters.get('directory_models')+'decoder.h5', overwrite=True)
+        self.inv_model.save(self.parameters.get('directory_models')+'inv_model.h5', overwrite=True)
+        self.fwd_model.save(self.parameters.get('directory_models')+'fwd_model.h5', overwrite=True)
 
         # save som
         som_weights = self.goal_som.get_weights().copy()
-        som_file = h5py.File(self.parameters.get('results_directory')+'goal_som.h5', 'w')
+        som_file = h5py.File(self.parameters.get('directory_models')+'goal_som.h5', 'w')
         som_file.create_dataset('goal_som', data=som_weights)
         som_file.close()

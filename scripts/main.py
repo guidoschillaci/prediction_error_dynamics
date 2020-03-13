@@ -67,7 +67,7 @@ class GoalBabbling():
 
 		self.parameters = param
 		# this simulates cameras and positions
-		self.cam_sim = Cam_sim("./romi_data/", self.parameters)
+		self.cam_sim = Cam_sim(self.parameters)
 
 		self.lock = threading.Lock()
 		signal.signal(signal.SIGINT, self.Exit_call)
@@ -430,40 +430,44 @@ if __name__ == '__main__':
 
 		print('Experiment n. ', str(iter))
 
-		directory = './' + str(iter) + '/'
+		directory = main_path + '/' + multiple_experiments_folder + '/' + str(iter) + '/'
 		if not os.path.exists(directory):
 			os.makedirs(directory)
-
-			if not os.path.exists(directory + 'models'):
-				os.makedirs(directory + 'models')
-
-			shutil.copy('../pretrained_models/autoencoder.h5', directory + 'models/autoencoder.h5')
-			shutil.copy('../pretrained_models/encoder.h5', directory + 'models/encoder.h5')
-			shutil.copy('../pretrained_models/decoder.h5', directory + 'models/decoder.h5')
-			shutil.copy('../pretrained_models/goal_som.h5', directory + 'models/goal_som.h5')
-			#shutil.copy('../pretrained_models/kmeans.sav', directory + 'models/kmeans.sav')
-
-			os.chdir(directory)
-			if not os.path.exists('./plots'):
-				os.makedirs('./plots')
-			#if not os.path.exists('./data'):
-			#	os.makedirs('./data')
-			print('current directory: ', os.getcwd())
 
 			parameters = Parameters()
 			#parameters.set('goal_selection_mode', 'som')
 			parameters.set('exp_iteration', iter)
 			romi_dataset_folder = main_path + '/romi_data/'
 			parameters.set('romi_dataset_folder', romi_dataset_folder)
-			parameters.set('results_directory', './results/')
-			parameters.set('directory',directory)
+
+			parameters.set('directory_main',directory)
+			parameters.set('directory_models', directory+'models/')
+			parameters.set('directory_results', directory+'results/')
+			parameters.set('directory_plots', directory + 'plots/')
 
 			goal_babbling = GoalBabbling(parameters)
 
-			if not os.path.exists(parameters.get('results_directory')):
+			if not os.path.exists(parameters.get('directory_results')):
 				print ('creating folders')
-				os.makedirs(parameters.get('results_directory'))
-				os.makedirs(parameters.get('results_directory')+'plots')
+				os.makedirs(parameters.get('directory_results'))
+				os.makedirs(parameters.get('directory_plots'))
+
+			if not os.path.exists(parameters.get('directory_models')):
+				os.makedirs(parameters.get('directory_models'))
+
+			shutil.copy(main_path+'/pretrained_models/autoencoder.h5', parameters.get('directory_models') + 'autoencoder.h5')
+			shutil.copy(main_path+'/pretrained_models/encoder.h5', parameters.get('directory_models') + 'encoder.h5')
+			shutil.copy(main_path+'/pretrained_models/decoder.h5', parameters.get('directory_models') + 'decoder.h5')
+			shutil.copy(main_path+'/pretrained_models/goal_som.h5', parameters.get('directory_models') + 'goal_som.h5')
+			#shutil.copy('../pretrained_models/kmeans.sav', directory + 'models/kmeans.sav')
+
+			os.chdir(directory)
+			#if not os.path.exists('./plots'):
+			#	os.makedirs('./plots')
+			#if not os.path.exists('./data'):
+			#	os.makedirs('./data')
+			print('current directory: ', os.getcwd())
+
 
 			print ('Starting experiment')
 		

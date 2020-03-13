@@ -60,7 +60,7 @@ def plot_exploration(positions, goals, iteration, param, title, save = True):
 		plt.ylabel('Dim 3')
 
 	if save:
-		filename =param.get('results_directory')+ 'plots/plot_'+title+'_'+str(iteration)+'.jpg'
+		filename =param.get('directory_plots')+ 'plot_'+title+'_'+str(iteration)+'.jpg'
 		plt.savefig(filename)
 	if param.get('show_plots'):
 		plt.show()

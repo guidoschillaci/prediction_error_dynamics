@@ -293,17 +293,17 @@ class IntrinsicMotivation():
 
 
 	def save_im(self):
-		np.save(os.path.join(self.param.get('results_directory'), 'im_slopes_of_mse_dynamics'), self.dyn_mse)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_interpolated_slopes_of_mse_dynamics'), self.interpolated_slopes_mse_buffer)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_slopes_of_pe_dynamics'), self.dyn_pe_on_goal)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_slopes_of_goals'), self.slopes_of_goals)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_pe_max_buffer_size_history'), self.history_buffer_pe_max_size)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_goal_id_history'), self.history_selected_goals)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_pe_raw'), self.linregr_pe_vs_raw_mov)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_pe_slopes'), self.linregr_pe_vs_slopes_mov)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_mse_raw'), self.linregr_mse_vs_raw_mov)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_pearson_corr_mse_slopes'), self.linregr_mse_vs_slopes_mov)
-		np.save(os.path.join(self.param.get('results_directory'), 'im_std_dev_exploration_noise'), self.std_dev_exploration_noise)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_slopes_of_mse_dynamics'), self.dyn_mse)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_interpolated_slopes_of_mse_dynamics'), self.interpolated_slopes_mse_buffer)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_slopes_of_pe_dynamics'), self.dyn_pe_on_goal)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_slopes_of_goals'), self.slopes_of_goals)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_pe_max_buffer_size_history'), self.history_buffer_pe_max_size)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_goal_id_history'), self.history_selected_goals)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_pearson_corr_pe_raw'), self.linregr_pe_vs_raw_mov)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_pearson_corr_pe_slopes'), self.linregr_pe_vs_slopes_mov)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_pearson_corr_mse_raw'), self.linregr_mse_vs_raw_mov)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_pearson_corr_mse_slopes'), self.linregr_mse_vs_slopes_mov)
+		np.save(os.path.join(self.param.get('directory_results'), 'im_std_dev_exploration_noise'), self.std_dev_exploration_noise)
 
 	def plot_slopes(self, save=True):
 		fig = plt.figure(figsize=(10, 10))
@@ -325,7 +325,7 @@ class IntrinsicMotivation():
 			plt.ylabel('g{}'.format(i))
 
 		if save:
-			plt.savefig(self.param.get('results_directory') + '/plots/im_slopes_pe_buffer.jpg')
+			plt.savefig(self.param.get('directory_plots') + 'im_slopes_pe_buffer.jpg')
 		if self.param.get('show_plots'):
 			plt.show()
 		plt.close()
@@ -372,7 +372,7 @@ class IntrinsicMotivation():
 		plt.plot(x_vals, y_vals, '--', color='r')
 
 		if save:
-			plt.savefig(self.param.get('results_directory')+'/plots/im_correlations.jpg')
+			plt.savefig(self.param.get('directory_plots')+'im_correlations.jpg')
 		if self.param.get('show_plots'):
 			plt.show()
 		plt.close()
@@ -401,7 +401,7 @@ class IntrinsicMotivation():
 			ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
 		if save:
-			plt.savefig(self.param.get('results_directory')+'/plots/im_buffer_size.jpg')
+			plt.savefig(self.param.get('directory_plots')+'im_buffer_size.jpg')
 		if self.param.get('show_plots'):
 			plt.show()
 		plt.close()
@@ -448,7 +448,7 @@ class IntrinsicMotivation():
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
 
 		if save:
-			plt.savefig(self.param.get('results_directory')+'/plots/im_slopes_of_goals.jpg')
+			plt.savefig(self.param.get('directory_plots') + 'im_slopes_of_goals.jpg')
 		if self.param.get('show_plots'):
 			plt.show()
 		plt.close()

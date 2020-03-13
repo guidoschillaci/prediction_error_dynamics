@@ -39,7 +39,7 @@ class Logger:
 
     def save_log(self):
         exp_name = 'mse_' + self.name
-        np.save(os.path.join(self.parameters.get('results_directory'), exp_name), self.mse)
+        np.save(os.path.join(self.parameters.get('directory_results'), exp_name), self.mse)
 
     def plot_mse(self, save = True, show = False):
         fig2 = plt.figure(figsize=(10, 10))
@@ -50,7 +50,7 @@ class Logger:
         plt.xlabel('Time')
 
         if save:
-            filename = self.parameters.get('results_directory')+'/plots/' + plt_name + '.jpg'
+            filename = self.parameters.get('directory_plots') + plt_name + '.jpg'
         plt.savefig(filename)
         if show:
             plt.show()
