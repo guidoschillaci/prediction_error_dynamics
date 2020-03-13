@@ -438,7 +438,7 @@ if __name__ == '__main__':
 			#parameters.set('goal_selection_mode', 'som')
 			parameters.set('exp_iteration', iter)
 			romi_dataset_folder = main_path + '/romi_data/'
-			parameters.set('romi_dataset_folder', romi_dataset_folder)
+			parameters.set('directory_romi_dataset', romi_dataset_folder)
 
 			parameters.set('directory_main',directory)
 			parameters.set('directory_models', directory+'models/')
