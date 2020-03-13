@@ -418,7 +418,7 @@ class RomiDataLoader:
 
 if __name__ == '__main__':
 
-	exp_iteration_size = 5
+	exp_iteration_size = 3
 	multiple_experiments_folder = 'experiments'
 	if not os.path.exists(multiple_experiments_folder):
 		os.makedirs(multiple_experiments_folder)

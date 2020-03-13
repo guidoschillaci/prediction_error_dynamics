@@ -38,7 +38,7 @@ class Parameters:
             'exp_iteration': 0,
             'show_plots': False,
 
-            'max_iterations':5,
+            'max_iterations':200,
             'save_data_every_x_iteration': 400,
 
             'cae_filename': 'autoencoder.h5',

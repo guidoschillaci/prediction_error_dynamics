@@ -99,7 +99,7 @@ class Models:
                 decoder_layer = autoencoder.layers[i](decoder_layer)
 
             decoder = Model(decoder_inp, decoder_layer)
-            if (param.get('verbosity_level') > 0):
+            if (param.get('verbosity_level') > 2):
                 print (decoder.summary())
             print ('Autoencoder loaded')
         else: # otherwise train a new one
@@ -156,7 +156,8 @@ class Models:
             decoder_layer = autoencoder.layers[i](decoder_layer)
         decoder = Model(decoder_inp, decoder_layer)
         decoder.compile(optimizer='adam', loss='mean_squared_error')
-        decoder.summary()
+        if (param.get('verbosity_level') > 2):
+            decoder.summary()
 
         return autoencoder, encoder, decoder
 
@@ -199,8 +200,9 @@ class Models:
         #sgd = optimizers.SGD(lr=0.0014, decay=0.0, momentum=0.8, nesterov=True)
         fwd_model.compile(optimizer='adadelta', loss='mean_squared_error')
         #fwd_model.compile(optimizer=sgd, loss='mean_squared_error')
-        print ('forward model')
-        fwd_model.summary()
+        if (param.get('verbosity_level') > 2):
+            print ('forward model')
+            fwd_model.summary()
         return fwd_model
 
 
@@ -238,8 +240,9 @@ class Models:
         #sgd = optimizers.SGD(lr=0.0014, decay=0.0, momentum=0.8, nesterov=True)
         #inv_model.compile(optimizer=sgd, loss='mean_squared_error')
         inv_model.compile(optimizer='adadelta', loss='mean_squared_error')
-        print ('inverse code model')
-        inv_model.summary()
+        if (param.get('verbosity_level') > 2):
+            print ('inverse code model')
+            inv_model.summary()
         return inv_model
 
 
