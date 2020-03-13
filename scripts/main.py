@@ -72,7 +72,7 @@ class GoalBabbling():
 		self.lock = threading.Lock()
 		signal.signal(signal.SIGINT, self.Exit_call)
 
-		print('Loading test dataset ', self.parameters.get('romi_dataset_pkl'))
+		print('Loading test dataset ', self.parameters.get('directory_romi_dataset') + self.parameters.get('romi_dataset_pkl'))
 		rdl = RomiDataLoader(self.parameters)
 		self.train_images, self.test_images, self.train_cmds, self.test_cmds, self.train_pos, self.test_pos = rdl.load_data()
 
@@ -338,7 +338,7 @@ class RomiDataLoader:
 	# https://zenodo.org/record/3552827#.Xk5f6hNKjjC
 	def parse_data(self):
 		reshape = self.param.get('load_data_reshape')
-		file_name= self.param.get('romi_dataset_pkl')
+		file_name= self.param.get('directory_romi_dataset') + self.param.get('romi_dataset_pkl')
 		pixels = self.param.get('image_size')
 		channels = self.param.get('image_channels')
 		images = []
