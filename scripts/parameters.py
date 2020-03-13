@@ -70,8 +70,8 @@ class Parameters:
             'im_mse_buffer_size': 10, # initial size of the mean squared error buffer (should be bigger than max PE_buffer_size
             'im_frequency_of_update_mse_dynamics': 20, # every how many iteration to wait for updating the pe_buffer_size according to the slope of the higher level?
             'im_size_buffer_pe_initial': 25, # initial size of the prediction error buffer
-            'im_size_buffer_pe_min': 20, # max size of the prediction error buffer
-            'im_size_buffer_pe_max': 100, # max size of the prediction error buffer
+            'im_size_buffer_pe_min': 10, # max size of the prediction error buffer
+            'im_size_buffer_pe_max': 50, # max size of the prediction error buffer
             'im_size_buffer_pe_fixed': False, # make the size of the prediction error buffer fixed or dependent on the dinamics of the FWD MSE
             'im_random_goal_prob': 0.01, # probability of selecting a random goal instead of the best one
             'im_epsilon_error_dynamics': 0.001, # switch goal when error slope is smaller than this value
