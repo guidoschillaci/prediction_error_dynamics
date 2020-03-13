@@ -39,7 +39,7 @@ class Parameters:
             'show_plots': False,
 
             'max_iterations':5000,
-            'save_data_every_x_iteration': 400,
+            'save_data_every_x_iteration': 1000,
 
             'use_pretrained_cae': True,
             'cae_filename': 'autoencoder.h5',
@@ -53,7 +53,7 @@ class Parameters:
             'romi_input_dim': 2, # xy motors
             'romi_dataset_pkl': 'compressed_dataset.pkl',
             #'romi_test_data_step': 500,
-            'romi_test_size': 200,
+            'romi_test_size': 100,
             'romi_seed_test_data': 10, # seed for the random number generator for picking up test data from training dataset
 
             'fwd_filename': 'forward_code_model.h5',
