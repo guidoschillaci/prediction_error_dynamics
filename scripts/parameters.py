@@ -117,7 +117,7 @@ class Parameters:
             print('Trying to modify parameters key: '+ key_name+ ' which does not exist')
 
     def save(self):
-        pickle.dump(self.dictionary, open(os.path.join(self.get('directory'), 'parameters.pkl'), 'wb'),  protocol=2) # protcolo2 for compatibility with python2
+        pickle.dump(self.dictionary, open(os.path.join(self.get('directory_main'), 'parameters.pkl'), 'wb'),  protocol=2) # protcolo2 for compatibility with python2
         # save also as plain text file
-        with open(os.path.join(self.get('directory'), 'parameters.txt'), 'w') as f:
+        with open(os.path.join(self.get('directory_main'), 'parameters.txt'), 'w') as f:
             print(self.dictionary, file=f)
