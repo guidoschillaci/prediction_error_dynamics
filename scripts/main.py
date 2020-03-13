@@ -15,7 +15,7 @@ import plots # plot_exploration, plot_learning_progress #, plot_log_goal_inv, pl
 import random
 import os
 import time
-#import shutil
+import shutil
 import pickle
 import gzip
 import datetime
@@ -418,26 +418,59 @@ class RomiDataLoader:
 
 if __name__ == '__main__':
 
-	
+	exp_iteration_size = 5
+	multiple_experiments_folder = 'experiments'
+	if not os.path.exists(multiple_experiments_folder):
+		os.makedirs(multiple_experiments_folder)
 
-	parameters = Parameters()
-	parameters.set('goal_selection_mode', 'som')
-	parameters.set('exp_iteration', 0)
+	os.chdir(multiple_experiments_folder)
+
+	for iter in range(exp_iteration_size):
+
+		print('Experiment n. ', str(iter))
+
+		directory = './' + str(iter) + '/'
+		if not os.path.exists(directory):
+			os.makedirs(directory)
+
+			if not os.path.exists(directory + 'models'):
+				os.makedirs(directory + 'models')
+
+			shutil.copy('../pretrained_models/autoencoder.h5', directory + 'models/autoencoder.h5')
+			shutil.copy('../pretrained_models/encoder.h5', directory + 'models/encoder.h5')
+			shutil.copy('../pretrained_models/decoder.h5', directory + 'models/decoder.h5')
+			shutil.copy('../pretrained_models/goal_som.h5', directory + 'models/goal_som.h5')
+			#shutil.copy('../pretrained_models/kmeans.sav', directory + 'models/kmeans.sav')
+
+			os.chdir(directory)
+			if not os.path.exists('./plots'):
+				os.makedirs('./plots')
+			#if not os.path.exists('./data'):
+			#	os.makedirs('./data')
+			print('current directory: ', os.getcwd())
+
+			parameters = Parameters()
+			#parameters.set('goal_selection_mode', 'som')
+			parameters.set('exp_iteration', iter)
 	
-	goal_babbling = GoalBabbling(parameters)
-	parameters.set('results_directory', './results/')
+			goal_babbling = GoalBabbling(parameters)
+			parameters.set('results_directory', './results/')
 	
-	if not os.path.exists(parameters.get('results_directory')):
-		print ('creating folders')	
-		os.makedirs(parameters.get('results_directory'))
-		os.makedirs(parameters.get('results_directory')+'plots')
+			if not os.path.exists(parameters.get('results_directory')):
+				print ('creating folders')
+				os.makedirs(parameters.get('results_directory'))
+				os.makedirs(parameters.get('results_directory')+'plots')
+
+			print ('Starting experiment')
 		
-	print ('Starting experiment')
-		
-	# if running different experiments, you can re-set parameters with initialise
-	goal_babbling.initialise(parameters)
-	goal_babbling.run_babbling()
-	print ('Experiment done')
+			# if running different experiments, you can re-set parameters with initialise
+			goal_babbling.initialise(parameters)
+			goal_babbling.run_babbling()
+			goal_babbling.clear_session()
+			print ('Experiment ',str(iter), ' done')
+			os.chdir('../')
+
+	print ('finished all the experiments!')
 
 	'''
 	os.chdir('experiments')
