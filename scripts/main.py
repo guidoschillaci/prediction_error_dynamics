@@ -130,12 +130,16 @@ class GoalBabbling():
 		# choose random motor commands from time to time
 		cmd_x = 0
 		cmd_y = 0
+		cmd_x_wo_noise = 0 # without noise
+		cmd_y_wo_noise = 0 # without noise
 		ran = random.random()
 		if ran < self.parameters.get('random_cmd_rate'):
 			self.random_cmd_flag = True
 			print('generating random motor command')
 			cmd_x = random.uniform(utils.x_lims[0], utils.x_lims[1])
 			cmd_y = random.uniform(utils.y_lims[0], utils.y_lims[1])
+			cmd_x_wo_noise = copy.deepcopy(cmd_x)
+			cmd_y_wo_noise = copy.deepcopy(cmd_y)
 			self.prev_goal_idx = -1 # previous goal was randomly selected
 
 		else:
@@ -147,7 +151,9 @@ class GoalBabbling():
 			print('prediction ', motor_pred)
 			cmd_x = utils.clamp_x(utils.unnormalise_x(motor_pred[0][0] + noise_x, self.parameters))
 			cmd_y = utils.clamp_y(utils.unnormalise_y(motor_pred[0][1] + noise_y, self.parameters))
-		return cmd_x, cmd_y
+			cmd_x_wo_noise = utils.clamp_x(utils.unnormalise_x(motor_pred[0][0], self.parameters) )
+			cmd_y_wo_noise = utils.clamp_y(utils.unnormalise_y(motor_pred[0][1], self.parameters))
+		return cmd_x, cmd_y, cmd_x_wo_noise, cmd_y_wo_noise
 
 	def run_babbling(self):
 			
@@ -163,7 +169,8 @@ class GoalBabbling():
 
 			# generate a motor command
 			cmd = utils.Position()
-			cmd.x, cmd.y = self.create_motor_cmd()
+			cmd_wo_noise = utils.Position() # without noise
+			cmd.x, cmd.y, cmd_wo_noise.x, cmd_wo_noise.y = self.create_motor_cmd()
 
 			# execute motor command and generate sensorimotor data
 			self.generate_simulated_sensorimotor_data(self.prev_pos, cmd)
@@ -185,12 +192,13 @@ class GoalBabbling():
 
 				# update error dynamics of the current goal (it is supposed that at this moment the action is finished
 				#if len(self.img)>0:# and not (self.prev_goal_idx == -1) and not self.random_cmd_flag:
-				cmd_vector = [ utils.normalise_x(cmd.x, self.parameters), utils.normalise_y(cmd.y, self.parameters)]
+				#cmd_vector = [ utils.normalise_x(cmd.x, self.parameters), utils.normalise_y(cmd.y, self.parameters)]
+				cmd_vector = [utils.normalise_x(cmd_wo_noise.x, self.parameters), utils.normalise_y(cmd_wo_noise.y, self.parameters)]
 				predicted_code = self.models.fwd_model.predict(np.asarray(cmd_vector).reshape((1,2)))
-				#prediction_error = np.linalg.norm(np.asarray(self.goal_code[:]) - np.asarray(predicted_code[:]))
+				prediction_error = np.linalg.norm(np.asarray(self.goal_code[:]) - np.asarray(predicted_code[:]))
 
-				observed_image_code = self.models.encoder.predict(np.asarray(self.img[-1]).reshape(1,self.parameters.get('image_size'),self.parameters.get('image_size'),self.parameters.get('image_channels')))
-				prediction_error = np.linalg.norm(np.asarray(observed_image_code[:]) - np.asarray(predicted_code[:]))
+				#observed_image_code = self.models.encoder.predict(np.asarray(self.img[-1]).reshape(1,self.parameters.get('image_size'),self.parameters.get('image_size'),self.parameters.get('image_channels')))
+				#prediction_error = np.linalg.norm(np.asarray(observed_image_code[:]) - np.asarray(predicted_code[:]))
 
 				#self.intrinsic_motivation.update_error_dynamics(self.current_goal_x, self.current_goal_y, prediction_error, _append=(self.current_goal_idx == self.prev_goal_idx))
 				self.intrinsic_motivation.update_error_dynamics(self.current_goal_x, self.current_goal_y, prediction_error)
