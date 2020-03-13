@@ -35,7 +35,7 @@ class Parameters:
             'batch_size':16, # for the fwd/inv models update
             'epochs': 1, # online fwd/inv models
             'goal_selection_mode':'som',
-            'exp_iteration': 0,
+            'exp_iteration': 0, # in case of multiple runs of the same experiemtn, this identifies the current iteration
             'show_plots': False,
 
             'max_iterations':500,

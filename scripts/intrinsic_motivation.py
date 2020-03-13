@@ -178,7 +178,7 @@ class IntrinsicMotivation():
 
 		if _append:
 			# keep track of the goal that have been selected
-			#self.history_selected_goals.append(goal_id)
+			self.history_selected_goals.append(goal_id)
 			# keep track of the buffer size for each goal
 			self.history_buffer_pe_size.append(pe_buffer_size_h)
 			# store the slopes of the prediction error dynamics for each goal
@@ -190,7 +190,7 @@ class IntrinsicMotivation():
 		goal_idx = self.get_best_goal_index()
 
 		# keep track of the goal that have been selected
-		self.history_selected_goals.append(goal_idx)
+		#self.history_selected_goals.append(goal_idx)
 
 		goal_x =int( goal_idx / self.param.get('goal_size')  )
 		goal_y = goal_idx % self.param.get('goal_size')
