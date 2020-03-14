@@ -408,7 +408,7 @@ def plot_multiple_runs(main_path, multiple_experiments_folder, exp_iteration_siz
 	plt.fill_between(np.arange(len(mean_mse_fwd)), mean_mse_fwd-stddev_mse_fwd, mean_mse_fwd+stddev_mse_fwd, alpha=0.5, edgecolor='#CC4F1B', facecolor='#FF9848')
 
 	if save:
-		filename =parameters.get('directory_plots')+'multirun_mse_fwd.jpg'
+		filename =main_path + '/' + multiple_experiments_folder + '/'+'multirun_mse_fwd.jpg'
 		plt.savefig(filename)
 		plt.close()
 
@@ -421,7 +421,7 @@ def plot_multiple_runs(main_path, multiple_experiments_folder, exp_iteration_siz
 	plt.fill_between(np.arange(len(mean_mse_inv)), mean_mse_inv-stddev_mse_inv, mean_mse_inv+stddev_mse_inv, alpha=0.5, edgecolor='#CC4F1B', facecolor='#FF9848')
 
 	if save:
-		filename =parameters.get('directory_plots')+'multirun_mse_inv.jpg'
+		filename =main_path + '/' + multiple_experiments_folder + '/'+'multirun_mse_inv.jpg'
 		plt.savefig(filename)
 		plt.close()
 
@@ -439,7 +439,7 @@ def plot_multiple_runs(main_path, multiple_experiments_folder, exp_iteration_siz
 	fig1.plot(x_vals, y_vals, '--', color='r')
 
 	if save:
-		filename =parameters.get('directory_plots')+'multirun_correlation.jpg'
+		filename =main_path + '/' + multiple_experiments_folder + '/'+'multirun_correlation.jpg'
 		plt.savefig(filename)
 		plt.close()
 
