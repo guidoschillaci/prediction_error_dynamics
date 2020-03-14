@@ -418,6 +418,8 @@ class RomiDataLoader:
 
 if __name__ == '__main__':
 
+	do_experiments = False
+	do_plots = True
 	exp_iteration_size = 5
 	multiple_experiments_folder = 'experiments'
 	if not os.path.exists(multiple_experiments_folder):
@@ -426,59 +428,67 @@ if __name__ == '__main__':
 	main_path = os.getcwd()
 	os.chdir(multiple_experiments_folder)
 
-	for iter in range(exp_iteration_size):
+	if do_experiments:
+		for iter in range(exp_iteration_size):
 
-		print('Starting experiment n.', str(iter))
+			print('Starting experiment n.', str(iter))
 
-		directory = main_path + '/' + multiple_experiments_folder + '/' + str(iter) + '/'
-		if not os.path.exists(directory):
-			os.makedirs(directory)
+			directory = main_path + '/' + multiple_experiments_folder + '/' + str(iter) + '/'
+			if not os.path.exists(directory):
+				os.makedirs(directory)
 
-			parameters = Parameters()
-			#parameters.set('goal_selection_mode', 'som')
-			parameters.set('exp_iteration', iter)
-			romi_dataset_folder = main_path + '/romi_data/'
-			parameters.set('directory_romi_dataset', romi_dataset_folder)
+				parameters = Parameters()
+				#parameters.set('goal_selection_mode', 'som')
+				parameters.set('exp_iteration', iter)
+				romi_dataset_folder = main_path + '/romi_data/'
+				parameters.set('directory_romi_dataset', romi_dataset_folder)
 
-			parameters.set('directory_main',directory)
-			parameters.set('directory_models', directory+'models/')
-			parameters.set('directory_results', directory+'results/')
-			parameters.set('directory_plots', directory + 'plots/')
+				parameters.set('directory_main',directory)
+				parameters.set('directory_models', directory+'models/')
+				parameters.set('directory_results', directory+'results/')
+				parameters.set('directory_plots', directory + 'plots/')
 
-			goal_babbling = GoalBabbling(parameters)
+				goal_babbling = GoalBabbling(parameters)
 
-			if not os.path.exists(parameters.get('directory_results')):
-				print ('creating folders')
-				os.makedirs(parameters.get('directory_results'))
-				os.makedirs(parameters.get('directory_plots'))
+				if not os.path.exists(parameters.get('directory_results')):
+					print ('creating folders')
+					os.makedirs(parameters.get('directory_results'))
+					os.makedirs(parameters.get('directory_plots'))
 
-			if not os.path.exists(parameters.get('directory_models')):
-				os.makedirs(parameters.get('directory_models'))
+				if not os.path.exists(parameters.get('directory_models')):
+					os.makedirs(parameters.get('directory_models'))
 
-			shutil.copy(main_path+'/pretrained_models/autoencoder.h5', parameters.get('directory_models') + 'autoencoder.h5')
-			shutil.copy(main_path+'/pretrained_models/encoder.h5', parameters.get('directory_models') + 'encoder.h5')
-			shutil.copy(main_path+'/pretrained_models/decoder.h5', parameters.get('directory_models') + 'decoder.h5')
-			shutil.copy(main_path+'/pretrained_models/goal_som.h5', parameters.get('directory_models') + 'goal_som.h5')
-			#shutil.copy('../pretrained_models/kmeans.sav', directory + 'models/kmeans.sav')
+				shutil.copy(main_path+'/pretrained_models/autoencoder.h5', parameters.get('directory_models') + 'autoencoder.h5')
+				shutil.copy(main_path+'/pretrained_models/encoder.h5', parameters.get('directory_models') + 'encoder.h5')
+				shutil.copy(main_path+'/pretrained_models/decoder.h5', parameters.get('directory_models') + 'decoder.h5')
+				shutil.copy(main_path+'/pretrained_models/goal_som.h5', parameters.get('directory_models') + 'goal_som.h5')
+				#shutil.copy('../pretrained_models/kmeans.sav', directory + 'models/kmeans.sav')
 
-			os.chdir(directory)
-			#if not os.path.exists('./plots'):
-			#	os.makedirs('./plots')
-			#if not os.path.exists('./data'):
-			#	os.makedirs('./data')
-			print('current directory: ', os.getcwd())
+				os.chdir(directory)
+				#if not os.path.exists('./plots'):
+				#	os.makedirs('./plots')
+				#if not os.path.exists('./data'):
+				#	os.makedirs('./data')
+				print('current directory: ', os.getcwd())
 
 
-			print ('Starting experiment')
-		
-			# if running different experiments, you can re-set parameters with initialise
-			goal_babbling.initialise(parameters)
-			goal_babbling.run_babbling()
-			goal_babbling.clear_session()
-			print ('Experiment ',str(iter), ' done')
-			os.chdir('../')
+				print ('Starting experiment')
 
-	print ('finished all the experiments!')
+				# if running different experiments, you can re-set parameters with initialise
+				goal_babbling.initialise(parameters)
+				goal_babbling.run_babbling()
+				goal_babbling.clear_session()
+				print ('Experiment ',str(iter), ' done')
+				os.chdir('../')
+
+		print ('finished all the experiments!')
+
+	if do_plots:
+		print('plotting')
+
+		plots.plot_multiple_runs(main_path, multiple_experiments_folder, exp_iteration_size)
+		print ('plots done!')
+
 
 	'''
 	os.chdir('experiments')

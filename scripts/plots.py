@@ -6,7 +6,7 @@ import numpy as np
 from scipy.spatial import ConvexHull
 import cv2
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
-
+from parameters import Parameters
 
 # taken from https://github.com/despoisj/LatentSpaceVisualization/blob/master/visuals.py
 # Scatter with images instead of points
@@ -364,6 +364,86 @@ def plot_log_goal_fwd( log_goal, log_curr, num_goals = 9, save = True,show= True
 	if show:
 		plt.show()
 	plt.close()
+
+def plot_multiple_runs(main_path, multiple_experiments_folder, exp_iteration_size, save=True):
+
+	data_mse_inv = []
+	data_mse_fwd = []
+	data_slope = []
+	data_intercept = []
+
+	for iter in range(exp_iteration_size):
+
+		directory = main_path + '/' + multiple_experiments_folder + '/' + str(iter) + '/'
+
+		parameters = Parameters()
+		# parameters.set('goal_selection_mode', 'som')
+		parameters.set('exp_iteration', iter)
+		parameters.set('directory_main', directory)
+		parameters.set('directory_results', directory + 'results/')
+		parameters.set('directory_plots', directory + 'plots/')
+
+		data_mse_fwd.append( np.load(parameters.get('directory_results') + 'mse_fwd.npy') )
+		data_mse_inv.append( np.load(parameters.get('directory_results') + 'mse_inv.npy') )
+
+		regr = np.load(parameters.get('directory_results') + 'im_linregr_mse_vs_raw_mov')
+		data_slope.append( regr.slope )
+		data_intercept.append(regr.intercept)
+
+	mean_mse_fwd = np.mean(data_mse_fwd, axis=0)
+	mean_mse_inv = np.mean(data_mse_inv, axis=0)
+	mean_slope = np.mean(data_slope, axis=0)
+	mean_intercept = np.mean(data_intercept, axis=0)
+
+	stddev_mse_fwd = np.std(data_mse_fwd, axis=0)
+	stddev_mse_inv = np.std(data_mse_inv, axis=0)
+	stddev_slope = np.std(data_slope, axis=0)
+	stddev_intercept = np.std(data_intercept, axis=0)
+
+	fig1 = plt.figure(figsize=(10, 10))
+	plt.title('MSE forward model')
+	plt.ylabel('MSE')
+	plt.xlabel('Time')
+	plot1, = plt.plot(mean_mse_fwd, color='#CC4F1B', label='db')
+	plt.fill_between(np.arange(len(mean_mse_fwd)), mean_mse_fwd-stddev_mse_fwd, mean_mse_fwd+stddev_mse_fwd, alpha=0.5, edgecolor='#CC4F1B', facecolor='#FF9848')
+
+	if save:
+		filename =parameters.get('directory_plots')+'multirun_mse_fwd.jpg'
+		plt.savefig(filename)
+		plt.close()
+
+
+	fig1 = plt.figure(figsize=(10, 10))
+	plt.title('MSE inverse model')
+	plt.ylabel('MSE')
+	plt.xlabel('Time')
+	plot1, = plt.plot(mean_mse_inv, color='#CC4F1B', label='db')
+	plt.fill_between(np.arange(len(mean_mse_inv)), mean_mse_inv-stddev_mse_inv, mean_mse_inv+stddev_mse_inv, alpha=0.5, edgecolor='#CC4F1B', facecolor='#FF9848')
+
+	if save:
+		filename =parameters.get('directory_plots')+'multirun_mse_inv.jpg'
+		plt.savefig(filename)
+		plt.close()
+
+	fig1 = plt.figure(figsize=(10, 10))
+	plt.title('MSE slopes VS movements')
+	plt.ylabel('Movement amplitude')
+	plt.xlabel('Slope of MSE')
+	for iter in range(exp_iteration_size):
+		x_vals = np.array(fig1.get_xlim())
+		y_vals = data_intercept[iter] + data_slope[iter] * x_vals
+		fig1.plot(x_vals, y_vals, '-', color='b', alpha=0.5)
+
+	x_vals = np.array(fig1.get_xlim())
+	y_vals = mean_intercept + mean_slope * x_vals
+	fig1.plot(x_vals, y_vals, '--', color='r')
+
+	if save:
+		filename =parameters.get('directory_plots')+'multirun_correlation.jpg'
+		plt.savefig(filename)
+		plt.close()
+
+
 
 '''
 def plot_learning_comparisons(model_type = 'fwd', exp_size = 2, save = True, show = True):
