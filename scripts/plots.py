@@ -431,11 +431,11 @@ def plot_multiple_runs(main_path, multiple_experiments_folder, exp_iteration_siz
 	plt.ylabel('Movement amplitude')
 	plt.xlabel('Slope of MSE')
 	for iter in range(exp_iteration_size):
-		x_vals = np.array(fig1.get_xlim())
+		x_vals = np.array(plt.get_xlim())
 		y_vals = data_intercept[iter] + data_slope[iter] * x_vals
 		fig1.plot(x_vals, y_vals, '-', color='b', alpha=0.5)
 
-	x_vals = np.array(fig1.get_xlim())
+	x_vals = np.array(plt.get_xlim())
 	y_vals = mean_intercept + mean_slope * x_vals
 	fig1.plot(x_vals, y_vals, '--', color='r')
 
