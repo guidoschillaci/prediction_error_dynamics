@@ -418,7 +418,7 @@ class RomiDataLoader:
 
 if __name__ == '__main__':
 
-	do_experiments = False
+	do_experiments = True
 	do_plots = True
 	exp_iteration_size = 5
 	multiple_experiments_folder = 'experiments'

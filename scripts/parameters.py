@@ -38,7 +38,7 @@ class Parameters:
             'exp_iteration': 0, # in case of multiple runs of the same experiemtn, this identifies the current iteration
             'show_plots': False,
 
-            'max_iterations':5000,
+            'max_iterations':3000,
             'save_data_every_x_iteration': 1000,
 
             'use_pretrained_cae': True,
@@ -53,7 +53,7 @@ class Parameters:
             'romi_input_dim': 2, # xy motors
             'romi_dataset_pkl': 'compressed_dataset.pkl',
             #'romi_test_data_step': 500,
-            'romi_test_size': 100,
+            'romi_test_size': 200,
             'romi_seed_test_data': 10, # seed for the random number generator for picking up test data from training dataset
 
             'fwd_filename': 'forward_code_model.h5',
