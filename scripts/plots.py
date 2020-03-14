@@ -387,6 +387,7 @@ def plot_multiple_runs(main_path, multiple_experiments_folder, exp_iteration_siz
 		data_mse_inv.append( np.load(parameters.get('directory_results') + 'mse_inv.npy') )
 
 		regr = np.load(parameters.get('directory_results') + 'im_linregr_mse_vs_raw_mov.npy')
+		print (regr)
 		data_slope.append( regr.slope )
 		data_intercept.append(regr.intercept)
 
