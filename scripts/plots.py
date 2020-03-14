@@ -388,8 +388,8 @@ def plot_multiple_runs(main_path, multiple_experiments_folder, exp_iteration_siz
 
 		regr = np.load(parameters.get('directory_results') + 'im_linregr_mse_vs_raw_mov.npy')
 		print (regr)
-		data_slope.append( regr.slope )
-		data_intercept.append(regr.intercept)
+		data_slope.append( regr[2] )
+		data_intercept.append(regr[4])
 
 	mean_mse_fwd = np.mean(data_mse_fwd, axis=0)
 	mean_mse_inv = np.mean(data_mse_inv, axis=0)
