@@ -433,11 +433,11 @@ def plot_multiple_runs(main_path, multiple_experiments_folder, exp_iteration_siz
 	for iter in range(exp_iteration_size):
 		x_vals = np.array(plt.xlim())
 		y_vals = data_intercept[iter] + data_slope[iter] * x_vals
-		fig1.plot(x_vals, y_vals, '-', color='b', alpha=0.5)
+		plt.plot(x_vals, y_vals, '-', color='b', alpha=0.5)
 
 	x_vals = np.array(plt.xlim())
 	y_vals = mean_intercept + mean_slope * x_vals
-	fig1.plot(x_vals, y_vals, '--', color='r')
+	plt.plot(x_vals, y_vals, '--', color='r')
 
 	if save:
 		filename =main_path + '/' + multiple_experiments_folder + '/'+'multirun_correlation.jpg'
