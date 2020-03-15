@@ -338,7 +338,7 @@ class IntrinsicMotivation():
 		ax1 = plt.subplot(4, 1, 1)
 		plt.scatter(np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.movements), s=1)
 		plt.title('MSE slopes VS movements')
-		string = 'Pearson\'s r=' + str(self.linregr_mse_vs_raw_mov.rvalue) + '\np<' + str(self.linregr_mse_vs_raw_mov.pvalue) + '\nslope:' + str(self.linregr_mse_vs_raw_mov.slope)+ '\nintercept:'  + str(self.linregr_mse_vs_raw_mov.intercept)
+		string = 'Pearson\'s r=' + str(self.linregr_mse_vs_raw_mov.rvalue) + '\np<' + str(self.linregr_mse_vs_raw_mov.pvalue) #+ '\nslope:' + str(self.linregr_mse_vs_raw_mov.slope)+ '\nintercept:'  + str(self.linregr_mse_vs_raw_mov.intercept)
 		plt.text(0.15, 0.85, string, transform=ax1.transAxes)
 		x_vals = np.array(ax1.get_xlim())
 		y_vals = self.linregr_mse_vs_raw_mov.intercept + self.linregr_mse_vs_raw_mov.slope * x_vals
@@ -348,7 +348,7 @@ class IntrinsicMotivation():
 		ax1 = plt.subplot(4, 1, 2)
 		plt.scatter(np.asarray(self.interpolated_slopes_mse_buffer), np.asarray(self.dyn_mov), s=1)
 		plt.title('MSE slopes VS movement slopes')
-		string = 'Pearson\'s r=' + str(self.linregr_mse_vs_slopes_mov.rvalue) + '\np<' + str(self.linregr_mse_vs_slopes_mov.pvalue)+ '\nslope:' + str(self.linregr_mse_vs_slopes_mov.slope)+ '\nintercept:' + str(self.linregr_mse_vs_slopes_mov.intercept)
+		string = 'Pearson\'s r=' + str(self.linregr_mse_vs_slopes_mov.rvalue) + '\np<' + str(self.linregr_mse_vs_slopes_mov.pvalue)#+ '\nslope:' + str(self.linregr_mse_vs_slopes_mov.slope)+ '\nintercept:' + str(self.linregr_mse_vs_slopes_mov.intercept)
 		plt.text(0.15, 0.15, string, transform = ax1.transAxes)
 		x_vals = np.array(ax1.get_xlim())
 		y_vals = self.linregr_mse_vs_slopes_mov.intercept + self.linregr_mse_vs_slopes_mov.slope * x_vals
@@ -358,7 +358,7 @@ class IntrinsicMotivation():
 		ax1 = plt.subplot(4, 1, 3)
 		plt.scatter(np.asarray(self.slopes_of_goals), np.asarray(self.movements), s=1)
 		plt.title('PE dynamics of selected goal VS movements')
-		string = 'Pearson\'s r=' + str(self.linregr_pe_vs_raw_mov.rvalue) + '\np<' + str(self.linregr_pe_vs_raw_mov.pvalue) + '\nslope:' + str(self.linregr_pe_vs_raw_mov.slope)+ '\nintercept:'  + str(self.linregr_pe_vs_raw_mov.intercept)
+		string = 'Pearson\'s r=' + str(self.linregr_pe_vs_raw_mov.rvalue) + '\np<' + str(self.linregr_pe_vs_raw_mov.pvalue) #+ '\nslope:' + str(self.linregr_pe_vs_raw_mov.slope)+ '\nintercept:'  + str(self.linregr_pe_vs_raw_mov.intercept)
 		plt.text(0.15, 0.85, string, transform = ax1.transAxes)
 		x_vals = np.array(ax1.get_xlim())
 		y_vals = self.linregr_pe_vs_raw_mov.intercept + self.linregr_pe_vs_raw_mov.slope * x_vals
@@ -367,7 +367,7 @@ class IntrinsicMotivation():
 		ax1 = plt.subplot(4, 1, 4)
 		plt.scatter(np.asarray(self.slopes_of_goals), np.asarray(self.dyn_mov), s=1)
 		plt.title('PE dynamics of selected goal VS movement slopes')
-		string = 'Pearson\'s r=' + str(self.linregr_pe_vs_slopes_mov.rvalue) + '\np<' + str(self.linregr_pe_vs_slopes_mov.pvalue) + '\nslope:' + str(self.linregr_pe_vs_slopes_mov.slope)+ '\nintercept:'  + str(self.linregr_pe_vs_slopes_mov.intercept)
+		string = 'Pearson\'s r=' + str(self.linregr_pe_vs_slopes_mov.rvalue) + '\np<' + str(self.linregr_pe_vs_slopes_mov.pvalue) #+ '\nslope:' + str(self.linregr_pe_vs_slopes_mov.slope)+ '\nintercept:'  + str(self.linregr_pe_vs_slopes_mov.intercept)
 		plt.text(0.65, 0.15, string, transform = ax1.transAxes)
 		x_vals = np.array(ax1.get_xlim())
 		y_vals = self.linregr_pe_vs_slopes_mov.intercept + self.linregr_pe_vs_slopes_mov.slope * x_vals
