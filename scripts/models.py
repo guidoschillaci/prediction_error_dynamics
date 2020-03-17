@@ -14,7 +14,7 @@ import h5py
 from minisom import MiniSom
 import model_logger
 import memory
-from keras import backend as K
+from tensorflow.python.keras import backend as K
 
 #import random
 #from copy import deepcopy
