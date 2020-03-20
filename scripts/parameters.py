@@ -84,9 +84,9 @@ class Parameters:
             'im_min_iterations_on_same_goal': 50,
 
             'im_std_exploration_use_step': False, # increase/decrease stddev by step, or use predefined mappings
-            'im_std_exploration_noise_initial': 0.25,
+            'im_std_exploration_noise_initial': 0.10,
             'im_std_exploration_noise_min': 0.01,
-            'im_std_exploration_noise_max': 0.25,
+            'im_std_exploration_noise_max': 0.10,
             'im_std_exploration_noise_step': 0.01,
             'im_std_exploration_mse_dynamics_min': -0.25,
             'im_std_exploration_mse_dynamics_max': 0.1,
