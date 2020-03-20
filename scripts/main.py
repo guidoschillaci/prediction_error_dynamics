@@ -30,6 +30,10 @@ from cam_sim import Cam_sim
 from parameters import Parameters
 #from copy import deepcopy
 import copy
+
+import pandas as pd
+from doepy import build # design of experiments
+
 #from doepy import build, read_write # pip install doepy - it may require also diversipy
 
 #import tensorflow.compat.v1 as tf
@@ -76,6 +80,8 @@ class GoalBabbling():
 		rdl = RomiDataLoader(self.parameters)
 		self.train_images, self.test_images, self.train_cmds, self.test_cmds, self.train_pos, self.test_pos = rdl.load_data()
 
+		self.doe_num_of_experiments= 0
+
 
 	def initialise(self, param):
 		self.parameters = param
@@ -87,7 +93,7 @@ class GoalBabbling():
 		self.intrinsic_motivation = IntrinsicMotivation(param)
 		self.models = Models(param)
 
-		self.exp_iteration = param.get('exp_iteration')
+		self.experiment_id = param.get('experiment_id')
 		self.iteration = 0
 
 		self.pos = []
@@ -144,7 +150,6 @@ class GoalBabbling():
 
 		else:
 			self.random_cmd_flag = False # goals was not randmoly selected
-
 			motor_pred = self.models.inv_model.predict(self.goal_code)
 			noise_x = np.random.normal(0, self.intrinsic_motivation.get_std_dev_exploration_noise())
 			noise_y = np.random.normal(0, self.intrinsic_motivation.get_std_dev_exploration_noise())
@@ -157,8 +162,8 @@ class GoalBabbling():
 
 	def run_babbling(self):
 			
-		for _ in range(self.parameters.get('max_iterations')):
-			print ('Experiment ' , self.parameters.get('exp_iteration'), ', iteration ', self.iteration)
+		for _ in range(self.parameters.get('single_run_duration')):
+			print ('DOE_id: ', self.parameters.get('doe_experiment_id'), '/', (self.doe_num_of_experiments -1), '. Run:' , self.parameters.get('run_id'), ', iter.', self.iteration, '/', self.parameters.get('single_run_duration'))
 			# log current mean squared error for FWD and INV models
 			self.log_MSE()
 
@@ -225,7 +230,7 @@ class GoalBabbling():
 				# update autoencoder
 				#train_autoencoder_on_batch(self.autoencoder, self.encoder, self.decoder, np.asarray(self.img[-32:]).reshape(32, self.image_size, self.image_size, self.channels), batch_size=self.batch_size, cae_epochs=5)
 				# update goals' self organising map
-				if self.parameters.get('update_goal_som'):
+				if not self.parameters.get('fixed_goal_som'):
 					self.models.update_som(np.asarray(observed_codes_batch).reshape( (self.parameters.get('batch_size'), self.parameters.get('code_size'))))
 
 			##### post-process steps
@@ -420,7 +425,7 @@ if __name__ == '__main__':
 
 	do_experiments = True
 	do_plots = True
-	exp_iteration_size = 5
+	number_of_runs = 5
 	multiple_experiments_folder = 'experiments'
 	if not os.path.exists(multiple_experiments_folder):
 		os.makedirs(multiple_experiments_folder)
@@ -428,115 +433,78 @@ if __name__ == '__main__':
 	main_path = os.getcwd()
 	os.chdir(multiple_experiments_folder)
 
+	doe = build.build_full_fact({'fixed_goal_som': [True, False], 'fixed_expl_noise': [True, False], 'random_cmd_rate': [0.0, 0.05]})
+	print(doe)
+	doe.to_csv(main_path + '/' + multiple_experiments_folder + '/doe.csv'  , index=True, header=True)
+
+
 	if do_experiments:
-		for iter in range(exp_iteration_size):
+		# for each row in the design of the experiment table
+		for exp in range(doe.shape[0]):
+			# repeat it for number_of_runs times
+			for run in range(number_of_runs):
 
-			print('Starting experiment n.', str(iter))
+				print('Starting experiment n.', str(iter))
 
-			directory = main_path + '/' + multiple_experiments_folder + '/' + str(iter) + '/'
-			if not os.path.exists(directory):
-				os.makedirs(directory)
+				directory = main_path + '/' + multiple_experiments_folder + '/exp' + str(exp) + '/run_'+ str(run) + '/'
+				if not os.path.exists(directory):
+					os.makedirs(directory)
 
-				parameters = Parameters()
-				#parameters.set('goal_selection_mode', 'som')
-				parameters.set('exp_iteration', iter)
-				romi_dataset_folder = main_path + '/romi_data/'
-				parameters.set('directory_romi_dataset', romi_dataset_folder)
+					parameters = Parameters()
+					#parameters.set('goal_selection_mode', 'som')
+					parameters.set('doe_experiment_id', exp)
+					parameters.set('run_id', run)
+					romi_dataset_folder = main_path + '/romi_data/'
+					parameters.set('directory_romi_dataset', romi_dataset_folder)
 
-				parameters.set('directory_main',directory)
-				parameters.set('directory_models', directory+'models/')
-				parameters.set('directory_results', directory+'results/')
-				parameters.set('directory_plots', directory + 'plots/')
+					parameters.set('directory_main',directory)
+					parameters.set('directory_models', directory+'models/')
+					parameters.set('directory_results', directory+'results/')
+					parameters.set('directory_plots', directory + 'plots/')
 
-				goal_babbling = GoalBabbling(parameters)
+					# design of experiments
+					parameters.set('fixed_goal_som', doe.loc[exp, 'fixed_goal_som'])
+					parameters.set('fixed_expl_noise', doe.loc[exp, 'fixed_expl_noise'])
+					parameters.set('random_cmd_rate', doe.loc[exp, 'random_cmd_rate'])
 
-				if not os.path.exists(parameters.get('directory_results')):
-					print ('creating folders')
-					os.makedirs(parameters.get('directory_results'))
-					os.makedirs(parameters.get('directory_plots'))
+					goal_babbling = GoalBabbling(parameters)
+					goal_babbling.doe_num_of_experiments = doe.shape[0]
+					if not os.path.exists(parameters.get('directory_results')):
+						print ('creating folders')
+						os.makedirs(parameters.get('directory_results'))
+						os.makedirs(parameters.get('directory_plots'))
 
-				if not os.path.exists(parameters.get('directory_models')):
-					os.makedirs(parameters.get('directory_models'))
+					if not os.path.exists(parameters.get('directory_models')):
+						os.makedirs(parameters.get('directory_models'))
 
-				shutil.copy(main_path+'/pretrained_models/autoencoder.h5', parameters.get('directory_models') + 'autoencoder.h5')
-				shutil.copy(main_path+'/pretrained_models/encoder.h5', parameters.get('directory_models') + 'encoder.h5')
-				shutil.copy(main_path+'/pretrained_models/decoder.h5', parameters.get('directory_models') + 'decoder.h5')
-				shutil.copy(main_path+'/pretrained_models/goal_som.h5', parameters.get('directory_models') + 'goal_som.h5')
-				#shutil.copy('../pretrained_models/kmeans.sav', directory + 'models/kmeans.sav')
+					shutil.copy(main_path+'/pretrained_models/autoencoder.h5', parameters.get('directory_models') + 'autoencoder.h5')
+					shutil.copy(main_path+'/pretrained_models/encoder.h5', parameters.get('directory_models') + 'encoder.h5')
+					shutil.copy(main_path+'/pretrained_models/decoder.h5', parameters.get('directory_models') + 'decoder.h5')
+					shutil.copy(main_path+'/pretrained_models/goal_som.h5', parameters.get('directory_models') + 'goal_som.h5')
+					#shutil.copy('../pretrained_models/kmeans.sav', directory + 'models/kmeans.sav')
 
-				os.chdir(directory)
-				#if not os.path.exists('./plots'):
-				#	os.makedirs('./plots')
-				#if not os.path.exists('./data'):
-				#	os.makedirs('./data')
-				print('current directory: ', os.getcwd())
+					os.chdir(directory)
+					#if not os.path.exists('./plots'):
+					#	os.makedirs('./plots')
+					#if not os.path.exists('./data'):
+					#	os.makedirs('./data')
+					print('current directory: ', os.getcwd())
 
 
-				print ('Starting experiment')
+					print ('Starting experiment')
 
-				# if running different experiments, you can re-set parameters with initialise
-				goal_babbling.initialise(parameters)
-				goal_babbling.run_babbling()
-				goal_babbling.clear_session()
-				print ('Experiment ',str(iter), ' done')
-				os.chdir('../')
+					# if running different experiments, you can re-set parameters with initialise
+					goal_babbling.initialise(parameters)
+					goal_babbling.run_babbling()
+					goal_babbling.clear_session()
+					print ('Experiment ',str(exp), ' iter ' , str(iter), ' done')
+					#os.chdir('../')
 
 		print ('finished all the experiments!')
 
 	if do_plots:
 		print('plotting')
 
-		plots.plot_multiple_runs(main_path, multiple_experiments_folder, exp_iteration_size)
+		plots.plot_multiple_runs(main_path, multiple_experiments_folder, number_of_runs)
 		print ('plots done!')
 
-
-	'''
-	os.chdir('experiments')
-	exp_iteration_size = 5
-	exp_type = ['db', 'som', 'random']#, 'kmeans']
-	history_size = [0, 10, 20]
-	prob = [0.1, 0.01]
-
-	for e in range(len(exp_type)):
-		print ('exp ', exp_type[e])
-
-		for h in range( len (history_size)):
-			print('history size ', history_size[h])
-
-			for p in range(len(prob)):
-				print('prob update ', prob[p])
-
-				for i in range(exp_iteration_size):
-					print( 'exp ', exp_type[e], ' history size ', str(history_size[h]), ' prob ', str(prob[p]), ' iteration ', str(i) )
-					directory = './'+exp_type[e]+'_'+str(history_size[h])+'_'+str(prob[p])+'_'+str(i)+'/'
-					if not os.path.exists(directory):
-						os.makedirs(directory)
-
-						if not os.path.exists(directory+'models'):
-							os.makedirs(directory+'models')
-
-						shutil.copy('../pretrained_models/autoencoder.h5', directory+'models/autoencoder.h5')
-						shutil.copy('../pretrained_models/encoder.h5', directory+'models/encoder.h5')
-						shutil.copy('../pretrained_models/decoder.h5', directory+'models/decoder.h5')
-						shutil.copy('../pretrained_models/goal_som.h5', directory+'models/goal_som.h5')
-						shutil.copy('../pretrained_models/kmeans.sav', directory+'models/kmeans.sav')
-
-						os.chdir(directory)
-						if not os.path.exists('./models/plots'):
-							os.makedirs('./models/plots')
-						if not os.path.exists('./data'):
-							os.makedirs('./data')
-						print ('current directory: ', os.getcwd())
-
-						goal_babbling.initialise( goal_selection_mode= exp_type[e], exp_iteration = i, hist_size= history_size[h], prob_update=prob[p])
-						goal_babbling.run_babbling()
-						os.chdir('../')
-						#GoalBabbling().
-						print ('finished experiment ', exp_type[e], ' history size ', str(history_size[h]),' prob ', str(prob[p]), ' iter ', str(i))
-
-						goal_babbling.clear_session()
-					print ('experiment ', directory, ' already carried out')
-	os.chdir('../')
-	plot_learning_comparisons(model_type = 'fwd', exp_size = exp_iteration_size, save = True, show = True)
-	plot_learning_comparisons(model_type = 'inv', exp_size = exp_iteration_size, save = True, show = True)
-	'''

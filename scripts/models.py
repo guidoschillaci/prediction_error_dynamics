@@ -255,7 +255,7 @@ class Models:
 
 
     def load_som(self, param, encoder=None, train_images=None):
-        if param.get('update_goal_som'):
+        if not param.get('fixed_goal_som'):
             goal_som = MiniSom(param.get('goal_size'), param.get('goal_size'), param.get('code_size'), sigma=0.5, learning_rate=0.5)
             print ('Initialising goal SOM...')
             # goal_som.random_weights_init(train_images_codes)

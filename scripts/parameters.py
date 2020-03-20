@@ -22,26 +22,41 @@ class Parameters:
             'directory_plots': '',
             'directory_romi_dataset': '',
 
+            # design of experiments
+            'fixed_goal_som': True,
+            'fixed_expl_noise': True,
+            'random_cmd_rate': 0.05,
+            'single_run_duration': 60,
+            'doe_experiment_id': 0, # in case of multiple experiments with different configuration
+            'run_id': 0, # in case of multiple runs of the same experiemtn, this identifies the current iteration
+            'use_pretrained_cae': True,
+            'show_plots': False,
+            'save_data_every_x_iteration': 1000,
+            'verbosity_level': 1,
+            'plot_exploration_iter': 50, # plot scatter plot every x iteartions
+
+            # CAE and SOM paraeters
             'image_size': 64,
             'image_resize':False, # resize images to specified image_size? only if you are not sure that input images are of the desired size
             'image_channels': 1,
             'code_size': 32, # dimensions of the latent space of convoltioanl autoencoder
             'goal_size': 3, # SOMs size. There will be goal_size*goal_size  goal. TODO: improve this
-            'update_goal_som': True,
             'reduce_som_learning_rate_factor':2500,
 
+            # other normalisaition and ANN parametrs
             'normalise_with_zero_mean': False,
             'load_data_reshape': True,
             'batch_size':16, # for the fwd/inv models update
             'epochs': 1, # online fwd/inv models
             'goal_selection_mode':'som',
-            'exp_iteration': 0, # in case of multiple runs of the same experiemtn, this identifies the current iteration
-            'show_plots': False,
+            'loss': 'mean_squared_error',
+            'optimizer': 'adam',
+            'memory_size': 1000,
+            'memory_update_probability': 0.001,
+            'memory_update_strategy': MemUpdateStrategy.RANDOM.value,  # possible choices:  random, learning_progress
 
-            'max_iterations':3000,
-            'save_data_every_x_iteration': 1000,
+            'batchs_to_update_online': 3,
 
-            'use_pretrained_cae': True,
             'cae_filename': 'autoencoder.h5',
             'encoder_filename': 'encoder.h5',
             'decoder_filename':'decoder.h5',
@@ -60,17 +75,10 @@ class Parameters:
             'inv_filename': 'inverse_code_model.h5',
             'som_filename': 'goal_som.h5',
 
-            'plot_exploration_iter': 50,
-
+            # utility flags
             'random_cmd_flag': False,
-            'random_cmd_rate': 0.05,
 
-
-            #'im_competence_measure': 'euclidean',
-            #'im_decay_factor': 0.9,
-            # there is a hierarchical dynamics monitoring: over the mean squared error of the fwd model (higher level) and over each goal (lower)
-            # the slope of the MSE buffer controls the size of the goal PE buffer (in case im_fixed_pe_buffer_size is False)
-
+            # intrinsic motivation related constants
             'im_movements_buffer_size': 50, # buffer size of the movement amplitudeds
             'im_mse_buffer_size': 10, # initial size of the mean squared error buffer (should be bigger than max PE_buffer_size
             'im_frequency_of_update_mse_dynamics': 40, # every how many iteration to wait for updating the pe_buffer_size according to the slope of the higher level?
@@ -84,24 +92,14 @@ class Parameters:
             'im_min_iterations_on_same_goal': 50,
 
             'im_std_exploration_use_step': False, # increase/decrease stddev by step, or use predefined mappings
-            'im_std_exploration_noise_initial': 0.10,
+            'im_std_exploration_noise_if_fixed': 0.05,
+            'im_std_exploration_noise_initial': 0.15,
             'im_std_exploration_noise_min': 0.01,
-            'im_std_exploration_noise_max': 0.10,
+            'im_std_exploration_noise_max': 0.15,
             'im_std_exploration_noise_step': 0.01,
             'im_std_exploration_mse_dynamics_min': -0.25,
-            'im_std_exploration_mse_dynamics_max': 0.1,
+            'im_std_exploration_mse_dynamics_max': 0.1
 
-            'loss': 'mean_squared_error',
-            'optimizer': 'adam',
-            'memory_size': 1000,
-            'memory_update_probability': 0.001,
-            'memory_update_strategy': MemUpdateStrategy.RANDOM.value,  # possible choices:  random, learning_progress
-            #'batch_size': 32,
-            'batchs_to_update_online': 3,
-            #'mse_test_dataset_fraction' : 20,  #   how many samples to use in the MSE calculations? dataset_size / this.
-            #'mse_calculation_step': 4, # calculate MSE every X model fits
-            #'experiment_repetition': -1,
-            'verbosity_level': 1
         }
 
     def get(self, key_name):
