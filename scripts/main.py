@@ -425,7 +425,7 @@ if __name__ == '__main__':
 
 	do_experiments = True
 	do_plots = True
-	number_of_runs = 5
+	number_of_runs = 1
 	multiple_experiments_folder = 'experiments'
 	if not os.path.exists(multiple_experiments_folder):
 		os.makedirs(multiple_experiments_folder)
