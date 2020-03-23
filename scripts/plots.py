@@ -390,7 +390,7 @@ def plot_multiple_runs(main_path, num_experiments, multiple_experiments_folder, 
 
 			parameters = Parameters()
 			# parameters.set('goal_selection_mode', 'som')
-			parameters.set('exp_iteration', iter)
+			parameters.set('run_id', iter)
 			parameters.set('directory_main', directory)
 			parameters.set('directory_results', directory + 'results/')
 			parameters.set('directory_plots', directory + 'plots/')

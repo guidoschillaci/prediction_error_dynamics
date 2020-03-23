@@ -507,6 +507,6 @@ if __name__ == '__main__':
 	if do_plots:
 		print('plotting')
 
-		plots.plot_multiple_runs(main_path, multiple_experiments_folder, number_of_runs)
+		#plots.plot_multiple_runs(main_path, multiple_experiments_folder, number_of_runs)
 		print ('plots done!')
 
