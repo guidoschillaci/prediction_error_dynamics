@@ -32,7 +32,6 @@ class Parameters:
             'use_pretrained_cae': True,
             'show_plots': False,
             'save_data_every_x_iteration': 200,
-            'save_only_plots': True,
             'verbosity_level': 1,
             'plot_exploration_iter': 200, # plot scatter plot every x iteartions
 
