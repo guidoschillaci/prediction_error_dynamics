@@ -183,9 +183,9 @@ class GoalBabbling():
 			if self.iteration % self.parameters.get('plot_exploration_iter') == 0:
 				goals_pos = self.models.inv_model.predict(self.models.goal_som._weights.reshape(len(self.models.goal_som._weights)*len(self.models.goal_som._weights[0]), len(self.models.goal_som._weights[0][0]) ))
 				# plot observations and goals
-				plots.plot_exploration(positions=self.pos,goals=goals_pos,iteration=self.iteration,param=self.parameters, title = self.parameters.get('goal_selection_mode')+'_'+str(self.iteration))
+				plots.plot_exploration(positions=self.pos,goals=goals_pos,iteration=self.iteration,param=self.parameters, memory = False, title = self.parameters.get('goal_selection_mode')+'_'+str(self.iteration))
 				# plot memory positions and goals
-				plots.plot_exploration(positions=self.models.memory_fwd.input_variables,goals=goals_pos,iteration=self.iteration,param=self.parameters, title = 'memory_inputs_'+str(self.iteration))
+				plots.plot_exploration(positions=self.models.memory_fwd.input_variables,goals=goals_pos,iteration=self.iteration,param=self.parameters, memory = True, title = 'memory_inputs_'+str(self.iteration))
 
 			# log the last movement
 			if not self.random_cmd_flag:
@@ -433,7 +433,9 @@ if __name__ == '__main__':
 	main_path = os.getcwd()
 	os.chdir(multiple_experiments_folder)
 
-	doe = build.build_full_fact({'fixed_goal_som': [True, False], 'fixed_expl_noise': [True, False], 'random_cmd_rate': [0.0, 0.05]})
+	#doe = build.build_full_fact({'fixed_goal_som': [True, False], 'fixed_expl_noise': [True, False], 'random_cmd_rate': [0.0, 0.05]})
+	doe = build.build_full_fact(
+		{'fixed_goal_som': [False], 'fixed_expl_noise': [False], 'random_cmd_rate': [0.05]})
 	print(doe)
 	doe.to_csv(main_path + '/' + multiple_experiments_folder + '/doe.csv'  , index=True, header=True)
 

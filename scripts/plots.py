@@ -26,7 +26,7 @@ def imscatter(x, y, ax, imageData, zoom, imageSize):
 	ax.update_datalim(np.column_stack([x, y]))
 	ax.autoscale()
 
-def plot_exploration(positions, goals, iteration, param, title, save = True):
+def plot_exploration(positions, goals, iteration, param, title,memory = False, save = True):
 	print ('position shape ', np.asarray(positions).shape)
 	if len(positions) ==0:
 		return
@@ -35,10 +35,10 @@ def plot_exploration(positions, goals, iteration, param, title, save = True):
 	if param.get('romi_input_dim') ==2:
 		x= np.transpose(positions)[0]
 		y= np.transpose(positions)[1]
-		if len(x)>200:
-			plt.scatter(x[-100:], y[-100:], s=1, alpha=1, color='g')
+		if len(x)>200 and not memory:
+			plt.scatter(x[-100:], y[-100:], s=0.5, alpha=1, color='g')
 			plt.scatter(x[-200:-100], y[-200:-100], s=1, alpha=0.5, color='g')
-			plt.scatter(x[:-200], y[:-200], s=1, alpha=0.5, color='g')
+			plt.scatter(x[:-200], y[:-200], s=0.5, alpha=0.25, color='g')
 		else:
 			plt.scatter(x, y, s=1, color='g')
 		if len(goals)>0:
