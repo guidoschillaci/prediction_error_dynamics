@@ -305,7 +305,8 @@ class GoalBabbling():
 	def save_models(self):
 		#self.lock.acquire()
 		self.parameters.save()
-		self.models.save_models()
+		if not self.parameters.get('save_only_plots'):
+			self.models.save_models()
 		self.models.save_logs()
 
 		self.intrinsic_motivation.get_linear_correlation_btw_amplitude_and_mse_dynamics()

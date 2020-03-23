@@ -32,6 +32,7 @@ class Parameters:
             'use_pretrained_cae': True,
             'show_plots': False,
             'save_data_every_x_iteration': 200,
+            'save_only_plots': True,
             'verbosity_level': 1,
             'plot_exploration_iter': 200, # plot scatter plot every x iteartions
 
@@ -52,7 +53,7 @@ class Parameters:
             'loss': 'mean_squared_error',
             'optimizer': 'adam',
             'memory_size': 1000,
-            'memory_update_probability': 0.005,
+            'memory_update_probability': 0.003,
             'memory_update_strategy': MemUpdateStrategy.RANDOM.value,  # possible choices:  random, learning_progress
 
             'batchs_to_update_online': 3,
