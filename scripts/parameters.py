@@ -31,7 +31,7 @@ class Parameters:
             'run_id': 0, # in case of multiple runs of the same experiemtn, this identifies the current iteration
             'use_pretrained_cae': True,
             'show_plots': False,
-            'save_data_every_x_iteration': 1000,
+            'save_data_every_x_iteration': 200,
             'verbosity_level': 1,
             'plot_exploration_iter': 200, # plot scatter plot every x iteartions
 
