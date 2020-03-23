@@ -33,7 +33,7 @@ class Parameters:
             'show_plots': False,
             'save_data_every_x_iteration': 1000,
             'verbosity_level': 1,
-            'plot_exploration_iter': 50, # plot scatter plot every x iteartions
+            'plot_exploration_iter': 200, # plot scatter plot every x iteartions
 
             # CAE and SOM paraeters
             'image_size': 64,

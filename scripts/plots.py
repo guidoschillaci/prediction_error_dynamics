@@ -30,17 +30,25 @@ def plot_exploration(positions, goals, iteration, param, title, save = True):
 	print ('position shape ', np.asarray(positions).shape)
 	if len(positions) ==0:
 		return
-	fig2 = plt.figure(figsize=(10, 10))
+	fig2 = plt.figure(figsize=(6, 6))
 	#print (log_goal)
 	if param.get('romi_input_dim') ==2:
-		plt.scatter(np.transpose(positions)[0],np.transpose(positions)[1], s=1, color='g')
+		x= np.transpose(positions)[0]
+		y= np.transpose(positions)[1]
+		if len(x)>200:
+			plt.scatter(x[-100:], y[-100:], s=1, alpha=1, color='g')
+			plt.scatter(x[-200:-100], y[-200:-100], s=1, alpha=0.5, color='g')
+			plt.scatter(x[:-200], y[:-200], s=1, alpha=0.5, color='g')
+		else:
+			plt.scatter(x, y, s=1, color='g')
 		if len(goals)>0:
 			plt.plot( np.asarray(goals[:,0]).astype('float32'), np.asarray(goals[:,1]).astype('float32'), 'ro')
 
-		plt.xlabel('Pos x')
-		plt.ylabel('Pos y')
-		plt.xlim(-1.2,1.2)
-		plt.ylim(-1.2,1.2)
+		plt.xlabel('Motor x')
+		plt.ylabel('Motor y')
+
+		plt.xlim(-0.2,1.2)
+		plt.ylim(-0.2,1.2)
 	elif param.get('romi_input_dim')==4:
 		plt.subplot(1,2,1)
 		plt.scatter(positions[:,0],positions[:,1], s=1, color='g')
