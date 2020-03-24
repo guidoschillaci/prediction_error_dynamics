@@ -38,6 +38,7 @@ class Parameters:
 
             # CAE and SOM paraeters
             'train_cae_offline': False,
+            'train_som_offline': True,
             'image_size': 64,
             'image_resize':False, # resize images to specified image_size? only if you are not sure that input images are of the desired size
             'image_channels': 1,

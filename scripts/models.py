@@ -295,8 +295,6 @@ class Models:
             print ('Goal SOM loaded! Number of goals: ', str(param.get('goal_size') * param.get('goal_size')))
         else:
             print ('Could not find Goal SOM files.')
-            print ('encoder ', self.encoder)
-            print('train ', train_images)
             if self.encoder is None or train_images is None:
                 print ('I need an encoder and some sample images to train a new SOM!')
                 sys.exit(1)

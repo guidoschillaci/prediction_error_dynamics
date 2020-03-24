@@ -92,7 +92,7 @@ class GoalBabbling():
 
 		self.intrinsic_motivation = IntrinsicMotivation(param)
 
-		if (self.parameters.get('train_cae_offline')):
+		if (self.parameters.get('train_cae_offline')) or (self.parameters.get('train_som_offline')):
 			self.models = Models(param, train_images= self.train_images)
 		else:
 			self.models = Models(param)
