@@ -238,20 +238,20 @@ class Models:
         print ('building inverse code model...')
 
         input_code = Input(shape=(param.get('code_size'),), name='inv_input')
-        #x = Dense(param.get('code_size'), activation='tanh')(input_code)
-        #x = Dense(param.get('code_size') * 10, activation='tanh')(x)
+        x = Dense(param.get('code_size'), activation='relu')(input_code)
+        x = Dense(param.get('code_size') * 10, activation='relu')(x)
         #x = Dropout(0.2)(x)
-        #x = Dense(param.get('code_size') * 10, activation='tanh')(x)
+        x = Dense(param.get('code_size') * 10, activation='relu')(x)
 
-        x = Dense(param.get('code_size'))(input_code)
-        x = Dense(param.get('code_size') * 10)(x)
+        #x = Dense(param.get('code_size'))(input_code)
+        #x = Dense(param.get('code_size') * 10)(x)
         #x = Dropout(0.1)(x)
-        x = Dense(param.get('code_size') * 10)(x)
+        #x = Dense(param.get('code_size') * 10)(x)
 
         #x = Dropout(0.2)(x)
         #command = Dense(param.get('romi_input_dim'), activation=self.activation_positive_tanh, name='command')(x)
         #command = Dense(param.get('romi_input_dim'), activation='sigmoid', name='command')(x)
-        command = Dense(param.get('romi_input_dim'), activation='relu', name='command')(x)
+        command = Dense(param.get('romi_input_dim'), activation='sigmoid', name='command')(x)
         #command = Dense(param.get('romi_input_dim'), name='command')(x)
 
         inv_model = Model(input_code, command)
