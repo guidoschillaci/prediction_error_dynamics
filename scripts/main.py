@@ -452,7 +452,7 @@ if __name__ == '__main__':
 
 	#doe = build.build_full_fact({'fixed_goal_som': [True, False], 'fixed_expl_noise': [True, False], 'random_cmd_rate': [0.0, 0.05]})
 	doe = build.build_full_fact(
-		{'fixed_goal_som': [True], 'fixed_expl_noise': [True], 'random_cmd_rate': [0.05]})
+		{'fixed_goal_som': True, 'fixed_expl_noise': True, 'random_cmd_rate': [0.05]})
 
 	print(doe)
 	doe.to_csv(main_path + '/' + multiple_experiments_folder + '/doe.csv'  , index=True, header=True)
