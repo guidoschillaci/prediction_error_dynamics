@@ -164,9 +164,9 @@ class Models:
     def train_autoencoder_offline(self, train_data, param):
         self.autoencoder.fit(train_data, train_data, epochs=param.get('cae_epochs'), batch_size=param.get('cae_batch_size'), shuffle=True,verbose=1)
 
-        if not os.path.exists(parameters.get('directory_pretrained_models')):
+        if not os.path.exists(param.get('directory_pretrained_models')):
             print('creating folders for pretrained autoencoder models')
-            os.makedirs(parameters.get('directory_pretrained_models'))
+            os.makedirs(param.get('directory_pretrained_models'))
 
         self.autoencoder.save(param.get('directory_pretrained_models')+ 'autoencoder.h5')
         self.encoder.save(param.get('directory_pretrained_models') + 'encoder.h5')
