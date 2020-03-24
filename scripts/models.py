@@ -42,7 +42,7 @@ class Models:
         self.autoencoder, self.encoder, self.decoder = self.load_autoencoder(self.parameters, train_images = train_images)
         self.fwd_model = self.load_forward_code_model(self.parameters)
         self.inv_model = self.load_inverse_code_model(self.parameters)
-        self.goal_som = self.load_som(self.parameters, train_images = train_images)
+        self.goal_som = self.load_som(self.parameters, encoder = self.encoder, train_images = train_images)
         self.reduce_som_learning_rate(self.parameters.get('reduce_som_learning_rate_factor')) # by a factor of 1/10, if not otherwise specified
         # initialise memory (one per model - autoencoder is kept fixed for the moment)
         # how many elements to keep in memory?
@@ -270,13 +270,12 @@ class Models:
         print ('Inverse code model trained on batch')
 
 
-    def load_som(self, param, train_images=None):
+    def load_som(self, param, encoder = None, train_images=None):
         if not param.get('fixed_goal_som'):
             goal_som = MiniSom(param.get('goal_size'), param.get('goal_size'), param.get('code_size'), sigma=0.5, learning_rate=0.5)
             print ('Initialising goal SOM...')
             # goal_som.random_weights_init(train_images_codes)
             return goal_som
-
 
         filename = param.get('directory_models') + param.get('som_filename')
         #filename = './pretrained_models/' + param.get('som_filename')
@@ -295,7 +294,7 @@ class Models:
             print ('Goal SOM loaded! Number of goals: ', str(param.get('goal_size') * param.get('goal_size')))
         else:
             print ('Could not find Goal SOM files.')
-            if self.encoder is None or train_images is None:
+            if encoder is None or train_images is None:
                 print ('I need an encoder and some sample images to train a new SOM!')
                 sys.exit(1)
             print ('Creating a new one')
@@ -303,7 +302,7 @@ class Models:
 
             # encoding test images
             print ('Encoding train images...')
-            train_images_codes = self.encoder.predict(train_images)
+            train_images_codes = encoder.predict(train_images)
             code_size = len(train_images_codes[0])
 
             goal_som = MiniSom(param.get('goal_size'), param.get('goal_size'), param.get('code_size'), sigma=0.5, learning_rate=0.5)
