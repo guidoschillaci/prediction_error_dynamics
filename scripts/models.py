@@ -204,7 +204,7 @@ class Models:
         #x = Dense(param.get('code_size'),)(cmd_fwd_inp)
         #x = Dense(param.get('code_size') * 10)(x)
 
-        code = Dense(param.get('code_size'), name='output')(x)
+        code = Dense(param.get('code_size'), activation='sigmoid', name='output')(x)
         fwd_model = Model(cmd_fwd_inp, code)
         #sgd = optimizers.SGD(lr=0.0014, decay=0.0, momentum=0.8, nesterov=True)
         fwd_model.compile(optimizer='adadelta', loss='mean_squared_error')
@@ -244,7 +244,7 @@ class Models:
 
         x = Dense(param.get('code_size'))(input_code)
         x = Dense(param.get('code_size') * 10)(x)
-        #x = Dropout(0.2)(x)
+        #x = Dropout(0.1)(x)
         x = Dense(param.get('code_size') * 10)(x)
 
         #x = Dropout(0.2)(x)

@@ -83,7 +83,7 @@ class MiniSom(object):
         self._learning_rate = learning_rate
         self._sigma = sigma
         # random initialization
-        self._weights = self._random_generator.rand(x, y, input_len)*2-1
+        self._weights = self._random_generator.rand(x, y, input_len)#*2-1
  #       for i in range(x):
   #          for j in range(y):
                 # normalization

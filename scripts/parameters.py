@@ -37,7 +37,7 @@ class Parameters:
             'plot_exploration_iter': 200, # plot scatter plot every x iteartions
 
             # CAE and SOM paraeters
-            'train_cae_offline': True,
+            'train_cae_offline': False,
             'image_size': 64,
             'image_resize':False, # resize images to specified image_size? only if you are not sure that input images are of the desired size
             'image_channels': 1,

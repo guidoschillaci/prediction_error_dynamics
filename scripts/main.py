@@ -94,11 +94,15 @@ class GoalBabbling():
 
 		if (self.parameters.get('train_cae_offline')):
 			self.models = Models(param, train_images= self.train_images)
-			encoded = self.models.encoder.predict([self.test_images[0:5]])
-			plots.plots_cae_decoded(self.models.decoder, encoded, self.test_images[0:5],
-									image_size=self.image_size, directory=self.parameters('directory_plots'))
 		else:
 			self.models = Models(param)
+
+		plot_encoded = self.models.encoder.predict(np.asarray([self.test_images[0:5]]).reshape(5,
+																			self.parameters.get('image_size'),
+																			self.parameters.get('image_size'),
+																			self.parameters.get('image_channels')) )
+		plots.plots_cae_decoded(self.models.decoder, plot_encoded, self.test_images[0:5],
+								image_size=self.parameters.get('image_size'), directory=self.parameters.get('directory_pretrained_models'))
 
 		self.experiment_id = param.get('experiment_id')
 		self.iteration = 0
