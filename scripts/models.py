@@ -39,10 +39,11 @@ class Models:
         self.parameters = param
 
         # initialise autoencoder, fwd and inv models
-        self.autoencoder, self.encoder, self.decoder = self.load_autoencoder(self.parameters, train_images = train_images)
+        #self.autoencoder, self.encoder, self.decoder = self.load_autoencoder(self.parameters, train_images = train_images)
+        self.load_autoencoder(self.parameters, train_images=train_images)
         self.fwd_model = self.load_forward_code_model(self.parameters)
         self.inv_model = self.load_inverse_code_model(self.parameters)
-        self.goal_som = self.load_som(self.parameters, encoder = self.encoder, train_images = train_images)
+        self.goal_som = self.load_som(self.parameters, train_images = train_images)
         self.reduce_som_learning_rate(self.parameters.get('reduce_som_learning_rate_factor')) # by a factor of 1/10, if not otherwise specified
         # initialise memory (one per model - autoencoder is kept fixed for the moment)
         # how many elements to keep in memory?
@@ -71,9 +72,9 @@ class Models:
         #e_file = './pretrained_models/' + param.get('encoder_filename')
         #d_file = './pretrained_models/' + param.get('decoder_filename')
 
-        autoencoder = []
-        encoder = []
-        decoder = []
+        self.autoencoder = []
+        self.encoder = []
+        self.decoder = []
         # if cae file already exists (i.e. cae has been already trained):
         if os.path.isfile(cae_file) and os.path.isfile(e_file) and os.path.isfile(
                 d_file):
@@ -81,26 +82,26 @@ class Models:
             print ('Loading existing pre-trained autoencoder: ', cae_file)
             # clear tensorflow graph
             #utils.clear_tensorflow_graph()
-            autoencoder = load_model(cae_file) # keras.load_model function
+            self.autoencoder = load_model(cae_file) # keras.load_model function
 
             # Create a separate encoder model
             encoder_inp = Input(shape=(param.get('image_size'), param.get('image_size'), param.get('image_channels')))
-            encoder_layer = autoencoder.layers[1](encoder_inp)
-            enc_layer_idx = utils.getLayerIndexByName(autoencoder, 'encoded')
+            encoder_layer = self.autoencoder.layers[1](encoder_inp)
+            enc_layer_idx = utils.getLayerIndexByName(self.autoencoder, 'encoded')
             for i in range(2, enc_layer_idx + 1):
-                encoder_layer = autoencoder.layers[i](encoder_layer)
-            encoder = Model(encoder_inp, encoder_layer)
+                encoder_layer = self.autoencoder.layers[i](encoder_layer)
+            self.encoder = Model(encoder_inp, encoder_layer)
             if (param.get('verbosity_level') > 2):
-                print (encoder.summary())
+                print (self.encoder.summary())
             # Create a separate decoder model
             decoder_inp = Input(shape=(param.get('code_size'),))
-            decoder_layer = autoencoder.layers[enc_layer_idx + 1](decoder_inp)
-            for i in range(enc_layer_idx + 2, len(autoencoder.layers)):
-                decoder_layer = autoencoder.layers[i](decoder_layer)
+            decoder_layer = self.autoencoder.layers[enc_layer_idx + 1](decoder_inp)
+            for i in range(enc_layer_idx + 2, len(self.autoencoder.layers)):
+                decoder_layer = self.autoencoder.layers[i](decoder_layer)
 
-            decoder = Model(decoder_inp, decoder_layer)
+            self.decoder = Model(decoder_inp, decoder_layer)
             if (param.get('verbosity_level') > 2):
-                print (decoder.summary())
+                print (self.decoder.summary())
             print ('Autoencoder loaded')
         else: # otherwise train a new one
             print ('Could not find autoencoder files. Building and training a new one.')
@@ -110,7 +111,7 @@ class Models:
                     print ('I need some images to train the autoencoder')
                     sys.exit(1)
                 self.train_autoencoder_offline(train_images, param)
-        return autoencoder, encoder, decoder
+        #return autoencoder, encoder, decoder
 
     # build and compile the convolutional autoencoder
     def build_autoencoder(self, param):
@@ -270,7 +271,7 @@ class Models:
         print ('Inverse code model trained on batch')
 
 
-    def load_som(self, param, encoder = None, train_images=None):
+    def load_som(self, param, train_images=None):
         if not param.get('fixed_goal_som'):
             goal_som = MiniSom(param.get('goal_size'), param.get('goal_size'), param.get('code_size'), sigma=0.5, learning_rate=0.5)
             print ('Initialising goal SOM...')
@@ -294,7 +295,7 @@ class Models:
             print ('Goal SOM loaded! Number of goals: ', str(param.get('goal_size') * param.get('goal_size')))
         else:
             print ('Could not find Goal SOM files.')
-            if encoder is None or train_images is None:
+            if self.encoder is None or train_images is None:
                 print ('I need an encoder and some sample images to train a new SOM!')
                 sys.exit(1)
             print ('Creating a new one')
@@ -302,7 +303,7 @@ class Models:
 
             # encoding test images
             print ('Encoding train images...')
-            train_images_codes = encoder.predict(train_images)
+            train_images_codes = self.encoder.predict(train_images)
             code_size = len(train_images_codes[0])
 
             goal_som = MiniSom(param.get('goal_size'), param.get('goal_size'), param.get('code_size'), sigma=0.5, learning_rate=0.5)
