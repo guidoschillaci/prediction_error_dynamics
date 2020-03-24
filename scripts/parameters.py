@@ -19,6 +19,7 @@ class Parameters:
             'directory_main': '',
             'directory_results': '',
             'directory_models': '',
+            'directory_pretrained_models': '',
             'directory_plots': '',
             'directory_romi_dataset': '',
 
@@ -36,12 +37,13 @@ class Parameters:
             'plot_exploration_iter': 200, # plot scatter plot every x iteartions
 
             # CAE and SOM paraeters
+            'train_cae_offline': True,
             'image_size': 64,
             'image_resize':False, # resize images to specified image_size? only if you are not sure that input images are of the desired size
             'image_channels': 1,
             'code_size': 32, # dimensions of the latent space of convoltioanl autoencoder
             'goal_size': 3, # SOMs size. There will be goal_size*goal_size  goal. TODO: improve this
-            'reduce_som_learning_rate_factor':2500,
+            'reduce_som_learning_rate_factor':2000,
 
             # other normalisaition and ANN parametrs
             'normalise_with_zero_mean': False,
@@ -61,7 +63,7 @@ class Parameters:
             'encoder_filename': 'encoder.h5',
             'decoder_filename':'decoder.h5',
             'cae_batch_size':32,
-            'cae_epochs':2,
+            'cae_epochs':40,
             'cae_max_pool_size': 2,
             'cae_conv_size': 3,
 

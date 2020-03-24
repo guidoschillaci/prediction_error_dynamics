@@ -32,14 +32,14 @@ from tensorflow.python.keras import backend as K
 
 class Models:
 
-    def __init__(self, param):
+    def __init__(self, param, train_images = None):
 
         self.time_start = datetime.datetime.now()
 
         self.parameters = param
 
         # initialise autoencoder, fwd and inv models
-        self.autoencoder, self.encoder, self.decoder = self.load_autoencoder(self.parameters)
+        self.autoencoder, self.encoder, self.decoder = self.load_autoencoder(self.parameters, train_images = train_images)
         self.fwd_model = self.load_forward_code_model(self.parameters)
         self.inv_model = self.load_inverse_code_model(self.parameters)
         self.goal_som = self.load_som(self.parameters)
@@ -63,7 +63,7 @@ class Models:
         return x02 * scale + target_min
 
 
-    def load_autoencoder(self, param, train_images=None, train_offline=True):
+    def load_autoencoder(self, param, train_images=None):
         cae_file = param.get('directory_models') + param.get('cae_filename')
         e_file = param.get('directory_models') + param.get('encoder_filename')
         d_file = param.get('directory_models') + param.get('decoder_filename')
@@ -104,12 +104,12 @@ class Models:
             print ('Autoencoder loaded')
         else: # otherwise train a new one
             print ('Could not find autoencoder files. Building and training a new one.')
-            autoencoder, encoder, decoder = self.build_autoencoder(param)
-            if train_offline:
+            self.autoencoder, self.encoder, self.decoder = self.build_autoencoder(param)
+            if param.get('train_cae_offline'):
                 if train_images is None:
                     print ('I need some images to train the autoencoder')
                     sys.exit(1)
-                self.train_autoencoder_offline(autoencoder, encoder, decoder, train_images, param)
+                self.train_autoencoder_offline(train_images, param)
         return autoencoder, encoder, decoder
 
     # build and compile the convolutional autoencoder
@@ -123,7 +123,7 @@ class Models:
         x = Conv2D(128, (param.get('cae_conv_size'), param.get('cae_conv_size')), activation='relu', padding='same')(x)
         x = MaxPooling2D((param.get('cae_max_pool_size'), param.get('cae_max_pool_size')), padding='same')(x)
         x = Flatten()(x)
-        encoded = Dense(param.get('code_size'), name='encoded')(x)
+        encoded = Dense(param.get('code_size'), activation='sigmoid', name='encoded')(x)
 
         print  ('encoded shape ', encoded.shape)
         ims = 8
@@ -161,17 +161,20 @@ class Models:
 
         return autoencoder, encoder, decoder
 
-    def train_autoencoder(self, autoencoder, encoder, decoder, train_data, param):
-        #tensorboard_callback = TensorBoard(log_dir='./logs/cae', histogram_freq=0, write_graph=True,
-        #                                   write_images=True)
+    def train_autoencoder_offline(self, train_data, param):
+        self.autoencoder.fit(train_data, train_data, epochs=param.get('cae_epochs'), batch_size=param.get('cae_batch_size'), shuffle=True,verbose=1)
 
-        autoencoder.fit(train_data, train_data, epochs=param.get('cae_epochs'), batch_size=param.get('cae_batch_size'), shuffle=True,verbose=1)
-                        #callbacks=[tensorboard_callback], verbose=1)
+        if not os.path.exists(parameters.get('directory_pretrained_models')):
+            print('creating folders for pretrained autoencoder models')
+            os.makedirs(parameters.get('directory_pretrained_models'))
 
-        autoencoder.save(param.get('directory_models')+ 'autoencoder.h5')
-        encoder.save(param.get('directory_models') + 'encoder.h5')
-        decoder.save(param.get('directory_models') + 'decoder.h5')
+        self.autoencoder.save(param.get('directory_pretrained_models')+ 'autoencoder.h5')
+        self.encoder.save(param.get('directory_pretrained_models') + 'encoder.h5')
+        self.decoder.save(param.get('directory_pretrained_models') + 'decoder.h5')
         print ('autoencoder trained and saved ')
+
+
+
 
     def load_forward_code_model(self, param):
         filename = param.get('directory_models') + param.get('fwd_filename')
@@ -194,9 +197,13 @@ class Models:
         cmd_fwd_inp = Input(shape=(param.get('romi_input_dim'),), name='fwd_input')
         #x = Dense(param.get('code_size'), activation=self.activation_positive_tanh)(cmd_fwd_inp)
         x = Dense(param.get('code_size'), activation='relu')(cmd_fwd_inp)
-        #x = Dense(param.get('code_size') * 10, activation=self.activation_positive_tanh)(x)
-        #x = Dense(param.get('code_size') * 10, activation=self.activation_positive_tanh)(x)
+        # x = Dense(param.get('code_size') * 10, activation=self.activation_positive_tanh)(x)
+        # x = Dense(param.get('code_size') * 10, activation=self.activation_positive_tanh)(x)
         x = Dense(param.get('code_size') * 10, activation='relu')(x)
+
+        #x = Dense(param.get('code_size'),)(cmd_fwd_inp)
+        #x = Dense(param.get('code_size') * 10)(x)
+
         code = Dense(param.get('code_size'), name='output')(x)
         fwd_model = Model(cmd_fwd_inp, code)
         #sgd = optimizers.SGD(lr=0.0014, decay=0.0, momentum=0.8, nesterov=True)
@@ -230,14 +237,20 @@ class Models:
         print ('building inverse code model...')
 
         input_code = Input(shape=(param.get('code_size'),), name='inv_input')
-        x = Dense(param.get('code_size'), activation='relu')(input_code)
-        x = Dense(param.get('code_size') * 10, activation='relu')(x)
+        #x = Dense(param.get('code_size'), activation='tanh')(input_code)
+        #x = Dense(param.get('code_size') * 10, activation='tanh')(x)
         #x = Dropout(0.2)(x)
-        x = Dense(param.get('code_size') * 10, activation='relu')(x)
+        #x = Dense(param.get('code_size') * 10, activation='tanh')(x)
+
+        x = Dense(param.get('code_size'))(input_code)
+        x = Dense(param.get('code_size') * 10)(x)
+        #x = Dropout(0.2)(x)
+        x = Dense(param.get('code_size') * 10)(x)
+
         #x = Dropout(0.2)(x)
         #command = Dense(param.get('romi_input_dim'), activation=self.activation_positive_tanh, name='command')(x)
         #command = Dense(param.get('romi_input_dim'), activation='sigmoid', name='command')(x)
-        command = Dense(param.get('romi_input_dim'), activation='relu', name='command')(x)
+        command = Dense(param.get('romi_input_dim'), name='command')(x)
         #command = Dense(param.get('romi_input_dim'), name='command')(x)
 
         inv_model = Model(input_code, command)

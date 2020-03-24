@@ -91,7 +91,14 @@ class GoalBabbling():
 			sys.exit(1)
 
 		self.intrinsic_motivation = IntrinsicMotivation(param)
-		self.models = Models(param)
+
+		if (self.parameters.get('train_cae_offline')):
+			self.models = Models(param, train_images= self.train_images)
+			encoded = self.models.encoder.predict([self.test_images[0:5]])
+			plots.plots_cae_decoded(self.models.decoder, encoded, self.test_images[0:5],
+									image_size=self.image_size, directory=self.parameters('directory_plots'))
+		else:
+			self.models = Models(param)
 
 		self.experiment_id = param.get('experiment_id')
 		self.iteration = 0
@@ -128,6 +135,7 @@ class GoalBabbling():
 	def log_current_fwd_mse(self):
 		img_obs_code = self.models.encoder.predict(self.test_images)
 		img_pred_code = self.models.fwd_model.predict(self.test_pos)
+		print ('pred-code' , img_pred_code[0])
 		mse = (np.linalg.norm(img_pred_code-img_obs_code) ** 2) /  self.parameters.get('romi_test_size')
 		print ('Current mse fwd model: ', mse)
 		self.models.logger_fwd.store_log(mse)
@@ -172,6 +180,8 @@ class GoalBabbling():
 			# get the goal coordinates from the selected neuron coordinates in the SOM feature space
 			self.goal_code  = self.models.goal_som._weights[self.current_goal_x, self.current_goal_y].reshape(1, self.parameters.get('code_size'))
 
+			print ('goal code ', self.goal_code)
+
 			# generate a motor command
 			cmd = utils.Position()
 			cmd_wo_noise = utils.Position() # without noise
@@ -214,6 +224,8 @@ class GoalBabbling():
 				observed_codes_batch = self.models.encoder.predict(np.asarray(self.img[-(self.parameters.get('batch_size')):]).reshape(self.parameters.get('batch_size'), self.parameters.get('image_size'), self.parameters.get('image_size'), self.parameters.get('image_channels'))  )
 				observed_pos_batch = copy.deepcopy( self.pos[-(self.parameters.get('batch_size')):])
 
+				print ('code', observed_codes_batch[0])
+				print ('mem code', self.models.memory_fwd.output_variables)
 				# fit the model with the current batch of observations and the memory!
 				# create then temporary input and output tensors containing batch and memory
 				obs_and_mem_pos = []
@@ -461,6 +473,7 @@ if __name__ == '__main__':
 
 					parameters.set('directory_main',directory)
 					parameters.set('directory_models', directory+'models/')
+					parameters.set('directory_pretrained_models', main_path + '/pretrained_models/')
 					parameters.set('directory_results', directory+'results/')
 					parameters.set('directory_plots', directory + 'plots/')
 
@@ -479,10 +492,14 @@ if __name__ == '__main__':
 					if not os.path.exists(parameters.get('directory_models')):
 						os.makedirs(parameters.get('directory_models'))
 
-					shutil.copy(main_path+'/pretrained_models/autoencoder.h5', parameters.get('directory_models') + 'autoencoder.h5')
-					shutil.copy(main_path+'/pretrained_models/encoder.h5', parameters.get('directory_models') + 'encoder.h5')
-					shutil.copy(main_path+'/pretrained_models/decoder.h5', parameters.get('directory_models') + 'decoder.h5')
-					shutil.copy(main_path+'/pretrained_models/goal_som.h5', parameters.get('directory_models') + 'goal_som.h5')
+					if os.path.isfile(main_path+'/pretrained_models/autoencoder.h5'):
+						shutil.copy(main_path+'/pretrained_models/autoencoder.h5', parameters.get('directory_models') + 'autoencoder.h5')
+					if os.path.isfile(main_path + '/pretrained_models/encoder.h5'):
+						shutil.copy(main_path+'/pretrained_models/encoder.h5', parameters.get('directory_models') + 'encoder.h5')
+					if os.path.isfile(main_path+'/pretrained_models/decoder.h5'):
+						shutil.copy(main_path+'/pretrained_models/decoder.h5', parameters.get('directory_models') + 'decoder.h5')
+					if os.path.isfile(main_path + '/pretrained_models/goal_som.h5'):
+						shutil.copy(main_path+'/pretrained_models/goal_som.h5', parameters.get('directory_models') + 'goal_som.h5')
 					#shutil.copy('../pretrained_models/kmeans.sav', directory + 'models/kmeans.sav')
 
 					os.chdir(directory)
