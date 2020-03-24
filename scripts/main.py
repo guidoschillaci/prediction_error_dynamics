@@ -452,7 +452,7 @@ if __name__ == '__main__':
 
 	#doe = build.build_full_fact({'fixed_goal_som': [True, False], 'fixed_expl_noise': [True, False], 'random_cmd_rate': [0.0, 0.05]})
 	doe = build.build_full_fact(
-		{'fixed_goal_som': [True, False, False], 'fixed_expl_noise': [False], 'random_cmd_rate': [0.05]})
+		{'fixed_goal_som': [1], 'fixed_expl_noise': [0], 'random_cmd_rate': [0.05]})
 
 	print(doe)
 	doe.to_csv(main_path + '/' + multiple_experiments_folder + '/doe.csv'  , index=True, header=True)
@@ -484,8 +484,17 @@ if __name__ == '__main__':
 					parameters.set('directory_plots', directory + 'plots/')
 
 					# design of experiments
-					parameters.set('fixed_goal_som', doe.loc[exp, 'fixed_goal_som'])
-					parameters.set('fixed_expl_noise', doe.loc[exp, 'fixed_expl_noise'])
+					fixed_goal = doe.loc[exp, 'fixed_goal_som']
+					if fixed_goal ==1 :
+						parameters.set('fixed_goal_som', True)
+					else:
+						parameters.set('fixed_goal_som', False)
+
+					fixed_noise = doe.loc[exp, 'fixed_expl_noise']
+					if fixed_noise ==1:
+						parameters.set('fixed_expl_noise', True)
+					else:
+						parameters.set('fixed_expl_noise', False)
 					parameters.set('random_cmd_rate', doe.loc[exp, 'random_cmd_rate'])
 
 					goal_babbling = GoalBabbling(parameters)
