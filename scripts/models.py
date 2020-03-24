@@ -251,7 +251,7 @@ class Models:
         #x = Dropout(0.2)(x)
         #command = Dense(param.get('romi_input_dim'), activation=self.activation_positive_tanh, name='command')(x)
         #command = Dense(param.get('romi_input_dim'), activation='sigmoid', name='command')(x)
-        command = Dense(param.get('romi_input_dim'), name='command')(x)
+        command = Dense(param.get('romi_input_dim'), activation='sigmoid', name='command')(x)
         #command = Dense(param.get('romi_input_dim'), name='command')(x)
 
         inv_model = Model(input_code, command)
