@@ -52,7 +52,7 @@ class Parameters:
             'loss': 'mean_squared_error',
             'optimizer': 'adam',
             'memory_size': 1000,
-            'memory_update_probability': 0.003,
+            'memory_update_probability': 0.002,
             'memory_update_strategy': MemUpdateStrategy.RANDOM.value,  # possible choices:  random, learning_progress
 
             'batchs_to_update_online': 3,
