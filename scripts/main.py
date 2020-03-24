@@ -229,7 +229,8 @@ class GoalBabbling():
 				observed_pos_batch = copy.deepcopy( self.pos[-(self.parameters.get('batch_size')):])
 
 				print ('code[0]', observed_codes_batch[0])
-				print ('mem code[0]', self.models.memory_fwd.output_variables[0])
+				if len(self.models.memory_fwd.output_variables)>0:
+					print ('mem code[0]', self.models.memory_fwd.output_variables[0])
 				# fit the model with the current batch of observations and the memory!
 				# create then temporary input and output tensors containing batch and memory
 				obs_and_mem_pos = []
