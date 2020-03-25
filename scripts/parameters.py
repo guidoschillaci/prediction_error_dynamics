@@ -26,8 +26,8 @@ class Parameters:
             # design of experiments
             'fixed_goal_som': True,
             'fixed_expl_noise': True,
-            'random_cmd_rate': 0.05,
-            'single_run_duration': 4000,
+            'random_cmd_rate': 0.02,
+            'single_run_duration': 5000,
             'doe_experiment_id': 0, # in case of multiple experiments with different configuration
             'run_id': 0, # in case of multiple runs of the same experiemtn, this identifies the current iteration
             'use_pretrained_cae': True,
@@ -101,7 +101,7 @@ class Parameters:
             'im_std_exploration_noise_max': 0.15,
             'im_std_exploration_noise_step': 0.01,
             'im_std_exploration_mse_dynamics_min': -0.001,
-            'im_std_exploration_mse_dynamics_max': 0.0005
+            'im_std_exploration_mse_dynamics_max': 0.0001
 
         }
 
