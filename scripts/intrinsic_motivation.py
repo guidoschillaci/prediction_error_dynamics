@@ -427,38 +427,38 @@ class IntrinsicMotivation():
 		plt.plot(self.movements)
 		plt.ylabel('Movements')
 		plt.xlabel('time')
-		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
+		ax1.yaxis.grid(which="major", linestyle='-', linewidth=1)
 
 		ax1 = plt.subplot(6, 1, 2)
 		plt.plot(self.std_dev_exploration_noise)
 		plt.ylabel('Std.Dev. Expl. Noise')
 		plt.xlabel('time')
-		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
+		ax1.yaxis.grid(which="major", linestyle='-', linewidth=1)
 
 		ax1 = plt.subplot(6, 1, 3)
 		plt.plot(self.interpolated_slopes_mse_buffer)
 		plt.ylabel('MSE slopes')
 		plt.xlabel('time')
-		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
+		ax1.yaxis.grid(which="major", linestyle='-', linewidth=1)
 
 
 		ax1 = plt.subplot(6, 1, 4)
 		plt.plot(self.dyn_mov)
 		plt.ylabel('Movement slopes')
 		plt.xlabel('time')
-		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
+		ax1.yaxis.grid(which="major", linestyle='-', linewidth=1)
 
 		ax1 = plt.subplot(6, 1, 5)
 		plt.plot(self.slopes_of_goals)
 		plt.ylabel('Slope PE selected goal')
 		plt.xlabel('time')
-		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
+		ax1.yaxis.grid(which="major", linestyle='-', linewidth=1)
 
 		ax1 = plt.subplot(6, 1, 6)
 		plt.plot(self.history_buffer_pe_max_size)
 		plt.ylabel('Max PE buffer size')
 		plt.xlabel('time')
-		ax1.yaxis.grid(which="major", linestyle='-', linewidth=2)
+		ax1.yaxis.grid(which="major", linestyle='-', linewidth=1)
 
 		if save:
 			plt.savefig(self.param.get('directory_plots') + 'im_slopes_of_goals.jpg')
