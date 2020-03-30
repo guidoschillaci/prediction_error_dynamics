@@ -373,55 +373,67 @@ def plot_log_goal_fwd( log_goal, log_curr, num_goals = 9, save = True,show= True
 		plt.show()
 	plt.close()
 
-def plot_multiple_runs(main_path, num_experiments, multiple_experiments_folder, exp_iteration_size, save=True):
+def plot_multiple_runs(main_path, multiple_experiments_folder,  num_experiments, num_runs, save=True):
 
-	data_mse_inv = []
-	data_mse_fwd = []
-	data_slope = []
-	data_intercept = []
+	#data_mse_inv = []
+	#data_mse_fwd = []
+	#data_slope = []
+	#data_intercept = []
+	mean_mse_fwd= []
+	mean_mse_inv= []
+	mean_slope= []
+	mean_intercept= []
+	stddev_mse_fwd= []
+	stddev_mse_inv= []
+	stddev_slope= []
+	stddev_intercept = []
 
+	full_path = main_path + '/' + multiple_experiments_folder + '/'
 	for exp in range(num_experiments):
-		full_path= main_path + '/' + multiple_experiments_folder + '/exp' + str(exp) + '/'
 
-		for iter in range(exp_iteration_size):
+		full_path_exp = full_path+ 'exp' + str(exp) + '/'
 
+		data_mse_inv = []
+		data_mse_fwd = []
+		data_slope = []
+		data_intercept = []
 
-			directory = full_path + 'run_'+ str(iter) + '/'
+		for run in range(num_runs):
+
+			directory = full_path_exp + 'run_'+ str(run) + '/'
 
 			parameters = Parameters()
 			# parameters.set('goal_selection_mode', 'som')
-			parameters.set('run_id', iter)
+			parameters.set('run_id', run)
 			parameters.set('directory_main', directory)
 			parameters.set('directory_results', directory + 'results/')
 			parameters.set('directory_plots', directory + 'plots/')
 
 			data_mse_fwd.append( np.load(parameters.get('directory_results') + 'mse_fwd.npy') )
 			data_mse_inv.append( np.load(parameters.get('directory_results') + 'mse_inv.npy') )
-
 			regr = np.load(parameters.get('directory_results') + 'im_linregr_mse_vs_raw_mov.npy')
-			print (regr)
 			data_slope.append( regr[2] )
 			data_intercept.append(regr[4])
 
-		mean_mse_fwd = np.mean(data_mse_fwd, axis=0)
-		mean_mse_inv = np.mean(data_mse_inv, axis=0)
-		mean_slope = np.mean(data_slope, axis=0)
-		mean_intercept = np.mean(data_intercept, axis=0)
+		mean_mse_fwd.append(np.mean(np.asarray(data_mse_fwd), axis=0))
+		mean_mse_inv.append(np.mean(np.asarray(data_mse_inv), axis=0))
+		mean_slope.append(np.mean(np.asarray(data_slope), axis=0))
+		mean_intercept.append(np.mean(np.asarray(data_intercept), axis=0))
 
-		stddev_mse_fwd = np.std(data_mse_fwd, axis=0)
-		stddev_mse_inv = np.std(data_mse_inv, axis=0)
-		stddev_slope = np.std(data_slope, axis=0)
-		stddev_intercept = np.std(data_intercept, axis=0)
+		stddev_mse_fwd.append(np.std(np.asarray(data_mse_fwd), axis=0))
+		stddev_mse_inv.append(np.std(np.asarray(data_mse_inv), axis=0))
+		stddev_slope.append(np.std(np.asarray(data_slope), axis=0))
+		stddev_intercept.append(np.std(np.asarray(data_intercept), axis=0))
 
 		fig1 = plt.figure(figsize=(10, 10))
 		plt.title('MSE forward model')
 		plt.ylabel('MSE')
 		plt.xlabel('Time')
-		plot1, = plt.plot(mean_mse_fwd, color='#CC4F1B', label='db')
-		plt.fill_between(np.arange(len(mean_mse_fwd)), mean_mse_fwd-stddev_mse_fwd, mean_mse_fwd+stddev_mse_fwd, alpha=0.5, edgecolor='#CC4F1B', facecolor='#FF9848')
-
+		#plot1, = plt.plot(mean_mse_fwd, color='#CC4F1B', label='db')
+		#plt.fill_between(np.arange(len(mean_mse_fwd)), mean_mse_fwd-stddev_mse_fwd, mean_mse_fwd+stddev_mse_fwd, alpha=0.5, edgecolor='#CC4F1B', facecolor='#FF9848')
+		plt.errorbar(range(len(mean_mse_fwd[-1])), mean_mse_fwd[-1], stddev_mse_fwd[-1],   capsize=5,  errorevery=499)
 		if save:
-			filename =full_path +'multirun_mse_fwd.jpg'
+			filename =full_path_exp +'exp_'+str(exp)+'_mse_fwd.jpg'
 			plt.savefig(filename)
 			plt.close()
 
@@ -430,11 +442,12 @@ def plot_multiple_runs(main_path, num_experiments, multiple_experiments_folder, 
 		plt.title('MSE inverse model')
 		plt.ylabel('MSE')
 		plt.xlabel('Time')
-		plot1, = plt.plot(mean_mse_inv, color='#CC4F1B', label='db')
-		plt.fill_between(np.arange(len(mean_mse_inv)), mean_mse_inv-stddev_mse_inv, mean_mse_inv+stddev_mse_inv, alpha=0.5, edgecolor='#CC4F1B', facecolor='#FF9848')
+		#plot1, = plt.plot(mean_mse_inv, color='#CC4F1B', label='db')
+		#plt.fill_between(np.arange(len(mean_mse_inv)), mean_mse_inv-stddev_mse_inv, mean_mse_inv+stddev_mse_inv, alpha=0.5, edgecolor='#CC4F1B', facecolor='#FF9848')
+		plt.errorbar(range(len(mean_mse_inv[-1])), mean_mse_inv[-1], stddev_mse_inv[-1],  capsize=5,  errorevery=499)
 
 		if save:
-			filename = full_path +'multirun_mse_inv.jpg'
+			filename = full_path_exp +'exp_'+str(exp)+'_mse_inv.jpg'
 			plt.savefig(filename)
 			plt.close()
 
@@ -442,20 +455,47 @@ def plot_multiple_runs(main_path, num_experiments, multiple_experiments_folder, 
 		plt.title('MSE slopes VS movements')
 		plt.ylabel('Movement amplitude')
 		plt.xlabel('Slope of MSE')
-		for iter in range(exp_iteration_size):
+		for run in range(num_runs):
 			x_vals = np.array(plt.xlim())
-			y_vals = data_intercept[iter] + data_slope[iter] * x_vals
+			y_vals = data_intercept[run] + data_slope[run] * x_vals
 			plt.plot(x_vals, y_vals, '-', color='b', alpha=0.5)
 
 		x_vals = np.array(plt.xlim())
-		y_vals = mean_intercept + mean_slope * x_vals
+		y_vals = mean_intercept[-1] + mean_slope[-1] * x_vals
 		plt.plot(x_vals, y_vals, '--', color='r')
 
 		if save:
-			filename =full_path + 'multirun_correlation.jpg'
+			filename =full_path_exp + 'exp_'+str(exp)+'_correlation.jpg'
 			plt.savefig(filename)
 			plt.close()
 
+	fig1 = plt.figure(figsize=(10, 10))
+	plt.title('MSE forward model')
+	plt.ylabel('MSE')
+	#plt.ylim(0, 2)
+	plt.xlabel('Time')
+	for i in range(len(mean_mse_fwd)):
+		lab= 'exp_'+str(i)
+		plt.errorbar(range(len(mean_mse_fwd[i])), mean_mse_fwd[i], stddev_mse_fwd[i], label=lab, capsize=5,  errorevery=(500-20*i))
+	plt.legend()
+	if save:
+		filename =full_path +'multiexp_mse_fwd.jpg'
+		plt.savefig(filename)
+		plt.close()
+
+	fig1 = plt.figure(figsize=(10, 10))
+	plt.title('MSE inverse model')
+	plt.ylabel('MSE')
+	#plt.ylim(0, 2)
+	plt.xlabel('Time')
+	for i in range(len(mean_mse_inv)):
+		lab= 'exp_'+str(i)
+		plt.errorbar(range(len(mean_mse_inv[i])), mean_mse_inv[i], stddev_mse_inv[i], label=lab, capsize=5,  errorevery=(500-25*i))
+	plt.legend()
+	if save:
+		filename =full_path +'multiexp_mse_inv.jpg'
+		plt.savefig(filename)
+		plt.close()
 
 
 '''

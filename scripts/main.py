@@ -42,6 +42,8 @@ from doepy import build # design of experiments
 #os.environ["CUDA_VISIBLE_DEVICES"] = ""
 import tensorflow as tf
 
+#mirrored_strategy = tf.distribute.MirroredStrategy()
+#print ('Number of devices: {}'.format(strategy.num_replicas_in_sync))
 
 GPU_FRACTION = 1
 
@@ -184,7 +186,7 @@ class GoalBabbling():
 			# get the goal coordinates from the selected neuron coordinates in the SOM feature space
 			self.goal_code  = self.models.goal_som._weights[self.current_goal_x, self.current_goal_y].reshape(1, self.parameters.get('code_size'))
 
-			print ('goal code ', self.goal_code)
+			#print ('goal code ', self.goal_code)
 
 			# generate a motor command
 			cmd = utils.Position()
@@ -228,9 +230,9 @@ class GoalBabbling():
 				observed_codes_batch = self.models.encoder.predict(np.asarray(self.img[-(self.parameters.get('batch_size')):]).reshape(self.parameters.get('batch_size'), self.parameters.get('image_size'), self.parameters.get('image_size'), self.parameters.get('image_channels'))  )
 				observed_pos_batch = copy.deepcopy( self.pos[-(self.parameters.get('batch_size')):])
 
-				print ('code[0]', observed_codes_batch[0])
-				if len(self.models.memory_fwd.output_variables)>0:
-					print ('mem code[0]', self.models.memory_fwd.output_variables[0])
+				#print ('code[0]', observed_codes_batch[0])
+				#if len(self.models.memory_fwd.output_variables)>0:
+				#	print ('mem code[0]', self.models.memory_fwd.output_variables[0])
 				# fit the model with the current batch of observations and the memory!
 				# create then temporary input and output tensors containing batch and memory
 				obs_and_mem_pos = []
@@ -440,7 +442,7 @@ class RomiDataLoader:
 
 if __name__ == '__main__':
 
-	do_experiments = True
+	do_experiments = False
 	do_plots = True
 	number_of_runs = 5
 	multiple_experiments_folder = 'experiments'
@@ -464,7 +466,7 @@ if __name__ == '__main__':
 			# repeat it for number_of_runs times
 			for run in range(number_of_runs):
 
-				print('Starting experiment n.', str(iter))
+				print('Starting experiment n.', str(exp))
 
 				directory = main_path + '/' + multiple_experiments_folder + '/exp' + str(exp) + '/run_'+ str(run) + '/'
 				if not os.path.exists(directory):
@@ -531,7 +533,7 @@ if __name__ == '__main__':
 					goal_babbling.initialise(parameters)
 					goal_babbling.run_babbling()
 					goal_babbling.clear_session()
-					print ('Experiment ',str(exp), ' iter ' , str(iter), ' done')
+					print ('Experiment ',str(exp), ' iter ' , str(run), ' done')
 					#os.chdir('../')
 
 		print ('finished all the experiments!')
@@ -539,6 +541,6 @@ if __name__ == '__main__':
 	if do_plots:
 		print('plotting')
 
-		#plots.plot_multiple_runs(main_path, multiple_experiments_folder, number_of_runs)
+		plots.plot_multiple_runs(main_path=main_path, multiple_experiments_folder= multiple_experiments_folder, num_experiments=(doe.shape[0]),  num_runs=number_of_runs)
 		print ('plots done!')
 
