@@ -441,7 +441,6 @@ class IntrinsicMotivation():
 		plt.xlabel('time')
 		ax1.yaxis.grid(which="major", linestyle='-', linewidth=1)
 
-
 		ax1 = plt.subplot(6, 1, 4)
 		plt.plot(self.dyn_mov)
 		plt.ylabel('Movement slopes')

@@ -438,7 +438,7 @@ def plot_multiple_runs(main_path, multiple_experiments_folder,  num_experiments,
 			plt.close()
 
 
-		fig1 = plt.figure(figsize=(10, 10))
+		fig1 = plt.figure(figsize=(5, 5))
 		plt.title('MSE inverse model')
 		plt.ylabel('MSE')
 		plt.xlabel('Time')
@@ -451,7 +451,7 @@ def plot_multiple_runs(main_path, multiple_experiments_folder,  num_experiments,
 			plt.savefig(filename)
 			plt.close()
 
-		fig1 = plt.figure(figsize=(10, 10))
+		fig1 = plt.figure(figsize=(5, 5))
 		plt.title('MSE slopes VS movements')
 		plt.ylabel('Movement amplitude')
 		plt.xlabel('Slope of MSE')
@@ -469,9 +469,8 @@ def plot_multiple_runs(main_path, multiple_experiments_folder,  num_experiments,
 			plt.savefig(filename)
 			plt.close()
 
-	fig1 = plt.figure(figsize=(10, 10))
-	plt.title('MSE forward model')
-	plt.ylabel('MSE')
+	fig1 = plt.figure(figsize=(8, 6))
+	plt.ylabel('MSE forward model')
 	#plt.ylim(0, 2)
 	plt.xlabel('Time')
 	for i in range(len(mean_mse_fwd)):
@@ -483,9 +482,8 @@ def plot_multiple_runs(main_path, multiple_experiments_folder,  num_experiments,
 		plt.savefig(filename)
 		plt.close()
 
-	fig1 = plt.figure(figsize=(10, 10))
-	plt.title('MSE inverse model')
-	plt.ylabel('MSE')
+	fig1 = plt.figure(figsize=(8, 6))
+	plt.ylabel('MSE inverse models')
 	#plt.ylim(0, 2)
 	plt.xlabel('Time')
 	for i in range(len(mean_mse_inv)):

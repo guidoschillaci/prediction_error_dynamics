@@ -445,7 +445,7 @@ if __name__ == '__main__':
 	do_experiments = False
 	do_plots = True
 	number_of_runs = 5
-	multiple_experiments_folder = 'experiments'
+	multiple_experiments_folder = 'experiments_paper'
 	if not os.path.exists(multiple_experiments_folder):
 		os.makedirs(multiple_experiments_folder)
 
@@ -457,10 +457,11 @@ if __name__ == '__main__':
 		{'fixed_goal_som': [0, 1], 'fixed_expl_noise': [0, 1], 'random_cmd_rate': [0, 0.03]})
 
 	print(doe)
-	doe.to_csv(main_path + '/' + multiple_experiments_folder + '/doe.csv'  , index=True, header=True)
-
 
 	if do_experiments:
+
+		doe.to_csv(main_path + '/' + multiple_experiments_folder + '/doe.csv', index=True, header=True)
+
 		# for each row in the design of the experiment table
 		for exp in range(doe.shape[0]):
 			# repeat it for number_of_runs times
